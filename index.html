@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="de" style="--rot: #a51232; --rot-dunkel: #7d0e26; --rot-hell: #f6e7eb;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TSG 08 Roth · Rangliste & Setzliste</title>
+<style>
+  :root {
+    --rot: #a51232; --rot-dunkel: #7d0d25; --rot-hell: #fdeef1;
+    --gruen: #1e7d3c; --gruen-hell: #e6f4ea;
+    --grau-bg: #f3f4f6; --grau-rand: #d9dce1; --text: #1c1e21; --text-blass: #6b7280;
+    --gelb-hell: #fff8e1; --card: #fff; --zeile-hover: #fafbfc; --linie: #eceef1;
+  }
+  /* ---------- Dark Mode ---------- */
+  html.dark {
+    --grau-bg: #15171c; --grau-rand: #3a3f47; --text: #e7e9ec; --text-blass: #99a0a8;
+    --gelb-hell: #37320f; --card: #212429; --zeile-hover: #282c33; --linie: #2d313a;
+    color-scheme: dark;
+  }
+  html.dark .btn:hover, html.dark nav button:hover, html.dark .icon-btn:hover, html.dark .mult-btn:hover { background: #2b2f37; }
+  html.dark .hl-chip { background: #2b2f37; }
+  html.dark .badge.grau { background: #2b2f37; color: var(--text-blass); }
+  html.dark input.fehler { background: #4a1f1f; }
+  /* farbige Zellen/Kästchen behalten ihren hellen Hintergrund → Schrift dunkel erzwingen */
+  html.dark .p5 { color: #16181c; }
+  html.dark td.award { color: #123a1c; }
+  html.dark .award-tabelle tbody tr[style] td { color: #16181c; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--grau-bg); color: var(--text); font-size: 15px; }
+  button { font-family: inherit; }
+
+  /* ---------- Kopf & Navigation ---------- */
+  header { background: var(--rot); color: #fff; padding: 10px 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  header h1 { font-size: 19px; margin: 0; font-weight: 600; white-space: nowrap; }
+  header .saison { background: rgba(255,255,255,.15); padding: 3px 10px; border-radius: 20px; font-size: 13px; }
+  header .spacer { flex: 1; }
+  #saveStatus { font-size: 13px; opacity: .9; }
+  nav { background: var(--card); border-bottom: 2px solid var(--grau-rand); display: flex; gap: 0; padding: 0 10px; overflow-x: auto; }
+  nav button { background: none; border: none; border-bottom: 3px solid transparent; padding: 12px 16px; font-size: 15px; cursor: pointer; color: var(--text-blass); white-space: nowrap; }
+  nav button:hover { color: var(--text); background: var(--grau-bg); }
+  nav button.aktiv { color: var(--rot); border-bottom-color: var(--rot); font-weight: 600; }
+  main { max-width: 1250px; margin: 0 auto; padding: 18px 14px 80px; }
+
+  /* ---------- Bausteine ---------- */
+  .card { background: var(--card); border: 1px solid var(--grau-rand); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+  .card h2 { margin: 0 0 12px; font-size: 17px; }
+  .card h3 { margin: 0 0 8px; font-size: 15px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; background: var(--card); color: var(--text); border: 1px solid var(--grau-rand); border-radius: 8px; padding: 8px 14px; font-size: 14px; cursor: pointer; }
+  .btn:hover { background: var(--grau-bg); }
+  .btn.primaer { background: var(--rot); border-color: var(--rot); color: #fff; font-weight: 600; }
+  .btn.primaer:hover { background: var(--rot-dunkel); }
+  .btn.gruen { background: var(--gruen); border-color: var(--gruen); color: #fff; font-weight: 600; }
+  .btn.klein { padding: 3px 8px; font-size: 13px; }
+  .btn.gross { padding: 14px 22px; font-size: 17px; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .icon-btn { background: none; border: none; cursor: pointer; font-size: 15px; padding: 2px 5px; border-radius: 5px; color: var(--text-blass); }
+  .icon-btn:hover { background: var(--grau-bg); color: var(--text); }
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+  .badge.dk { background: var(--gelb-hell); color: #8a6d00; border: 1px solid #e6cc66; }
+  .badge.grau { background: var(--grau-bg); color: var(--text-blass); }
+  .badge.gruen { background: var(--gruen-hell); color: var(--gruen); }
+  .badge.rot { background: var(--rot-hell); color: var(--rot); }
+  .hinweis { background: var(--gelb-hell); border: 1px solid #e6cc66; border-radius: 8px; padding: 10px 14px; margin: 10px 0; font-size: 14px; }
+  .muted { color: var(--text-blass); }
+  input[type=text], input[type=number], input[type=date], select {
+    border: 1px solid var(--grau-rand); border-radius: 7px; padding: 7px 10px; font-size: 14px; font-family: inherit; background: var(--card); color: var(--text);
+  }
+  input:focus, select:focus { outline: 2px solid var(--rot); outline-offset: 0; border-color: var(--rot); }
+  input.mini { width: 58px; padding: 4px 6px; text-align: center; }
+  input.liste { width: 110px; padding: 4px 6px; }
+  input.fehler { border-color: #d33; background: #fdeaea; }
+  table.daten { border-collapse: collapse; width: 100%; font-size: 14px; }
+  table.daten th { text-align: left; padding: 6px 8px; border-bottom: 2px solid var(--grau-rand); font-size: 12.5px; color: var(--text-blass); text-transform: uppercase; letter-spacing: .03em; white-space: nowrap; }
+  table.daten td { padding: 5px 8px; border-bottom: 1px solid var(--linie); vertical-align: middle; }
+  table.daten tr:hover td { background: var(--zeile-hover); }
+  table.daten tr.markiert td { background: color-mix(in srgb, var(--rot) 12%, var(--card)); }
+  /* Positions-Veränderung (Rang-/Setzliste): grün = besser, rot = schlechter, grau = unverändert. Basis druckfreundlich (dunkel). */
+  .pd-auf, .pd-ab, .pd-gleich { font-size: .8em; font-weight: 700; }
+  .pd-auf { color: #1a7f37; } .pd-ab { color: #c0392b; } .pd-gleich { color: #9aa0a6; }
+  @media screen { html.dark .pd-auf { color: #3fb950; } html.dark .pd-ab { color: #f0665e; } html.dark .pd-gleich { color: #8b949e; } }
+  table.daten th.num, table.daten td.num { text-align: right; }
+  table.daten th.mitte, table.daten td.mitte { text-align: center; }
+  .flex { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* ---------- Spieltag / Gruppen ---------- */
+  .schritt { border-left: 4px solid var(--grau-rand); padding-left: 14px; margin-bottom: 22px; }
+  .schritt.fertig { border-left-color: var(--gruen); }
+  .schritt .titel { font-size: 16px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .gruppen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
+  .gruppe-card { border: 1px solid var(--grau-rand); border-radius: 10px; overflow: hidden; background: var(--card); }
+  .gruppe-card .kopf { background: var(--rot); color: #fff; padding: 8px 12px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .gruppe-card .kopf .icon-btn { color: rgba(255,255,255,.85); }
+  .gruppe-card .kopf .icon-btn:hover { background: rgba(255,255,255,.15); color: #fff; }
+  .gruppe-card table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .gruppe-card td, .gruppe-card th { padding: 4px 6px; border-bottom: 1px solid var(--linie); text-align: left; }
+  .gruppe-card th { font-size: 11px; color: var(--text-blass); text-transform: uppercase; }
+  .gruppe-card .platz { width: 22px; color: var(--text-blass); font-weight: 600; }
+  .gruppe-card .pkt { font-weight: 700; color: var(--rot); text-align: right; }
+  .such-liste { max-height: 350px; overflow-y: auto; border: 1px solid var(--grau-rand); border-radius: 8px; }
+  .such-liste .eintrag { padding: 7px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; border-bottom: 1px solid var(--linie); }
+  .such-liste .eintrag:hover { background: var(--rot-hell); }
+  .such-liste .eintrag .sl { margin-left: auto; color: var(--text-blass); font-size: 13px; }
+
+  /* letzte-5-Punkte Färbung – als klar abgetrennte Kästchen */
+  .p5 { display: inline-block; min-width: 27px; text-align: center; border-radius: 5px; padding: 2px 5px; margin: 1px 4px 1px 0; font-size: 12.5px; font-weight: 600; border: 1px solid rgba(0,0,0,.18); box-shadow: 0 1px 1.5px rgba(0,0,0,.12); }
+  .p5.raus { opacity: .5; text-decoration: line-through; filter: grayscale(.5); box-shadow: none; }
+  /* letzte-Punkte-Kacheln füllen die Spalte gleichmäßig (feste Slots, wie -4…0 in der Excel):
+     Kacheln normale Größe (max 56px), space-between verteilt sie über die ganze Spaltenbreite. */
+  td.letzte-sp { width: 34%; }
+  .p5wrap { display: flex; gap: 4px; align-items: stretch; justify-content: space-between; }
+  .p5wrap > .p5, .p5wrap > .p5slot { flex: 1 1 0; min-width: 0; max-width: 56px; margin: 0; }
+  #printArea td.raus { opacity: .55; text-decoration: line-through; }
+  /* dezente senkrechte Spaltentrennung in Rang- & Setzliste (Bildschirm) */
+  table.raster td, table.raster th { border-right: 1px solid var(--linie); }
+  table.raster td:last-child, table.raster th:last-child { border-right: none; }
+  /* kompakte Rangliste (viele Spalten) */
+  table.kompakt th, table.kompakt td { padding: 3px 7px; font-size: 12.5px; }
+  /* Name-Spalte beim horizontalen Scrollen fixiert, damit man die Zeile nicht verliert */
+  .sticky-n { position: sticky; left: 0; z-index: 2; box-shadow: 2px 0 4px -2px rgba(0,0,0,.18); }
+  thead .sticky-n { background: var(--card); z-index: 3; }
+
+  /* ---------- Highlights-Reiter ---------- */
+  .palette { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .palette .gruppe-label { font-size: 12px; color: var(--text-blass); text-transform: uppercase; letter-spacing: .04em; }
+  .hl-quelle { display: inline-flex; align-items: center; gap: 4px; background: var(--rot-hell); border: 1.5px solid var(--rot); color: var(--rot); border-radius: 18px; padding: 5px 12px; font-weight: 700; font-size: 14px; cursor: grab; user-select: none; }
+  .hl-quelle:active { cursor: grabbing; }
+  .hl-quelle.scharf { background: var(--rot); color: #fff; box-shadow: 0 0 0 3px rgba(165,18,50,.25); }
+  .hl-quelle.leg { background: var(--gruen-hell); border-color: var(--gruen); color: var(--gruen); }
+  .hl-quelle.leg.scharf { background: var(--gruen); color: #fff; box-shadow: 0 0 0 3px rgba(30,125,60,.25); }
+  .mult-btn { border: 1px solid var(--grau-rand); background: var(--card); color: var(--text); border-radius: 7px; padding: 5px 10px; cursor: pointer; font-weight: 700; }
+  .mult-btn.aktiv { background: #1c1e21; color: #fff; border-color: #1c1e21; }
+  .hl-chip { display: inline-flex; align-items: center; gap: 3px; background: #f1f3f5; border: 1px solid var(--grau-rand); border-radius: 14px; padding: 1px 6px; margin: 2px 3px 2px 0; font-size: 13px; white-space: nowrap; }
+  .hl-chip b { color: var(--rot); }
+  .hl-chip.leg b { color: var(--gruen); }
+  .hl-chip .pm { cursor: pointer; border: none; background: none; font-weight: 800; padding: 0 3px; color: var(--text-blass); font-size: 14px; }
+  .hl-chip .pm:hover { color: #000; }
+  tr.drop-ziel td { background: var(--rot-hell) !important; box-shadow: inset 0 0 0 2px var(--rot); }
+  .hl-zeile td { vertical-align: middle; }
+
+  /* ---------- Auszeichnungen (Rangliste) ---------- */
+  .award-tabelle td.award { background: #d6f0d6 !important; font-weight: 800; box-shadow: inset 0 0 0 2px #57b56b; }
+  .frau { color: #b03082; font-weight: 700; font-size: 12px; white-space: nowrap; }
+  .award-legende { display: flex; flex-wrap: wrap; gap: 14px; margin: 6px 0 10px; font-size: 13px; color: var(--text-blass); }
+  .award-legende span { display: inline-flex; align-items: center; gap: 5px; }
+  .award-legende i { width: 15px; height: 15px; border-radius: 3px; display: inline-block; border: 1px solid var(--grau-rand); }
+  .award-legende i.award-i { background: #d6f0d6; box-shadow: inset 0 0 0 2px #57b56b; border-color: #57b56b; }
+
+  /* Gleichstand-Kriterien Drag & Drop */
+  .tb-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--grau-rand); border-radius: 8px; margin-bottom: 6px; background: var(--card); }
+  .tb-item[draggable=true] { cursor: grab; }
+  .tb-item.tb-over { border-color: var(--rot); box-shadow: inset 0 3px 0 -1px var(--rot); }
+  .tb-handle { color: var(--text-blass); cursor: grab; font-size: 15px; }
+  .tb-num { font-weight: 700; color: var(--rot); min-width: 18px; text-align: right; }
+  .tb-final { background: var(--grau); }
+
+  /* ---------- Modal ---------- */
+  .modal-hg { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+  .modal { background: var(--card); border-radius: 12px; padding: 20px; max-width: 640px; width: 100%; max-height: 88vh; overflow-y: auto; }
+  .modal h2 { margin-top: 0; }
+  textarea { width: 100%; min-height: 140px; border: 1px solid var(--grau-rand); border-radius: 8px; padding: 10px; font-family: inherit; font-size: 14px; }
+
+  /* ---------- Start-Bildschirm ---------- */
+  #startScreen { max-width: 560px; margin: 60px auto; text-align: center; }
+  #startScreen .logo { font-size: 54px; }
+
+  /* ---------- Druck ---------- */
+  #printArea { display: none; }
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body > *:not(#printArea) { display: none !important; }
+    body { background: #fff; margin: 0; }
+    #printArea { display: block; font-size: 8.6pt; color: #1c1e21; }
+    #printArea .print-seite { page-break-after: always; padding: 11mm 10mm; box-sizing: border-box; }
+    #printArea .print-seite:last-child { page-break-after: auto; }
+    /* Titelkopf */
+    #printArea .druck-kopf { display: flex; align-items: baseline; justify-content: space-between;
+      border-bottom: 2.2pt solid var(--rot); padding-bottom: 4pt; margin-bottom: 8pt; }
+    #printArea .druck-kopf h1 { font-size: 15pt; margin: 0; color: var(--rot); font-weight: 800; letter-spacing: .2pt; }
+    #printArea .druck-kopf .sub { font-size: 9pt; color: #555; font-weight: 600; }
+    #printArea .druck-info { font-size: 8pt; color: #333; margin: 0 0 7pt; background: #faf3f5; border-left: 2.2pt solid var(--rot); padding: 3.5pt 7pt; border-radius: 2pt; }
+    #printArea h1 { font-size: 15pt; margin: 0 0 6pt; color: var(--rot); }
+    /* Tabelle: keine Vollgitter, nur ruhige Zeilenlinien + Zebra */
+    #printArea table { border-collapse: collapse; width: 100%; }
+    #printArea thead { display: table-header-group; }
+    #printArea th { background: var(--rot); color: #fff; padding: 3pt 4pt; text-align: left; font-size: 7.4pt;
+      font-weight: 700; text-transform: uppercase; letter-spacing: .2pt; border: none; }
+    #printArea th:first-child { border-top-left-radius: 3pt; }
+    #printArea th:last-child { border-top-right-radius: 3pt; }
+    #printArea td { padding: 2.6pt 4pt; text-align: left; border: none; border-bottom: .4pt solid #e2e2e2; vertical-align: middle; }
+    #printArea tbody tr:nth-child(even) { background: #faf3f5; }
+    #printArea td.num, #printArea th.num { text-align: right; }
+    #printArea td.mitte, #printArea th.mitte { text-align: center; }
+    #printArea td.name { font-weight: 600; white-space: nowrap; }
+    #printArea td.verein { color: #666; white-space: nowrap; font-size: 8pt; }
+    #printArea td.rang { font-weight: 800; font-size: 9pt; }
+    #printArea td.pkt { font-weight: 800; }
+    #printArea td.leer { color: #c7c7c7; }
+    /* Auszeichnungen: Zonen-Hintergrund kommt per Inline-Style pro Zeile */
+    #printArea td.award { background: #d6f0d6 !important; font-weight: 800; box-shadow: inset 0 0 0 .8pt #57b56b; }
+    #printArea .frau { color: #b03082; font-weight: 700; font-size: 7pt; white-space: nowrap; }
+    #printArea .award-legende { display: flex; flex-wrap: wrap; gap: 9pt; margin: 4pt 0 7pt; font-size: 7.5pt; color: #444; }
+    #printArea .award-legende span { display: inline-flex; align-items: center; gap: 3pt; }
+    #printArea .award-legende i { width: 9pt; height: 9pt; border-radius: 2pt; display: inline-block; border: .4pt solid #999; }
+    #printArea .award-legende i.award-i { background: #d6f0d6; box-shadow: inset 0 0 0 .8pt #57b56b; border-color: #57b56b; }
+    /* letzte-Punkte-Kästchen im Druck – klar abgetrennt */
+    #printArea .p5 { display: inline-block; min-width: 15pt; text-align: center; border-radius: 2.5pt; padding: 1pt 3pt; margin: 0 2.2pt 1pt 0; font-weight: 700; border: .5pt solid rgba(0,0,0,.28); }
+    #printArea .p5.raus { opacity: .5; text-decoration: line-through; border-color: rgba(0,0,0,.15); }
+    /* letzte-Punkte-Kacheln füllen die Spalte gleichmäßig */
+    #printArea td.letzte-sp { width: 34%; }
+    #printArea .p5wrap { display: flex; gap: 2.4pt; align-items: stretch; }
+    #printArea .p5wrap > .p5, #printArea .p5wrap > .p5slot { flex: 1 1 0; min-width: 0; margin: 0; }
+    /* dezente Spaltentrennung im Druck (Rang- & Setzliste) */
+    #printArea table.raster td, #printArea table.raster th { border-right: .4pt solid #dcdcdc; }
+    #printArea table.raster td:last-child, #printArea table.raster th:last-child { border-right: none; }
+    #printArea tr { page-break-inside: avoid; }
+    /* margin 0 => Edge/Chrome druckt KEINE automatische Kopf-/Fußzeile (URL, Seitenzahl) mehr;
+       der Seitenabstand kommt über das Padding der .print-seite */
+    @page { margin: 0; }
+  }
+</style>
+<style>
+  body { margin:0; background: var(--grau-bg); color: var(--text); }
+  .web-wrap { max-width: 1120px; margin: 0 auto; padding: 14px 16px 30px; }
+  .web-kopf { display:flex; align-items:center; gap:14px; margin: 6px 0 16px; }
+  .web-kopf img { height: 52px; width:auto; }
+  .web-kopf h1 { margin:0; font-size: 21px; color: var(--rot); }
+  .web-kopf .stand { color: var(--text-blass); font-size: 13.5px; margin-top:2px; }
+  .web-fuss { text-align:center; color: var(--text-blass); font-size: 12px; margin-top: 22px; }
+</style>
+</head>
+<body>
+  <div class="web-wrap">
+    <div class="web-kopf">
+      <img src="data:image/png;base64,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" alt="">
+      <div><h1>TSG 08 Roth · Competition</h1><div class="stand">Rangliste &amp; Setzliste · Stand 6.7.2026</div></div>
+    </div>
+    
+  <div class="card">
+    <h2 style="margin:0 0 8px">1. Competitionrangliste · Saison 2026/27</h2>
+    <div class="award-legende"><span><i style="background:#fbeecb"></i> Pokal (Top 10)</span><span><i style="background:#e3eefb"></i> Preisgeld (Top 20)</span><span><i class="award-i"></i> Bestwert (meiste 180, meiste 171+, höchstes Highfinish, meiste Highlights)</span><span><span class="frau">♀</span> beste 3 Frauen</span></div>
+    
+    <div style="overflow-x:auto"><table class="daten award-tabelle raster kompakt">
+      <thead><tr>
+        <th class="num">Platz</th><th class="sticky-n">Name</th><th>Verein</th><th class="mitte">DK</th>
+        <th class="num">Punkte</th><th class="num">Neu</th><th class="num">Teiln.</th><th class="num">Schnitt</th>
+        <th class="num" title="Highlights gesamt">HL</th><th class="num" title="">180</th><th class="num" title="">171+</th><th class="num" title="Legs in 16 Darts">16</th><th class="num" title="Legs in 17 Darts">17</th><th class="num" title="Legs in 18 Darts">18</th><th class="num" title="Legs in 19 Darts">19</th><th class="num" title="Legs in 20 Darts">20</th><th class="num" title="Anzahl Highfinishes">HF</th><th class="num" title="Höchstes Finish">TopHF</th><th class="num" title="Anzahl Bullfinishes">Bull</th><th class="num" title="Ø 3-Dart-Schnitt">ØAvg</th><th class="num">SL</th>
+      </tr></thead><tbody>
+      <tr style="background:#fbf1d0">
+          <td class="num " style="" title="neu"><b>1</b></td>
+          <td class="sticky-n" style="background:#fbf1d0">Benjamin Martin</td><td class="muted">Franken Power</td><td class="mitte"></td>
+          <td class="num"><b>15</b></td><td class="num">15</td>
+          <td class="num">1</td><td class="num">15</td>
+          <td class="num award">11</td><td class="num award">3</td><td class="num "></td><td class="num "></td><td class="num ">4</td><td class="num "></td><td class="num "></td><td class="num ">4</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">70,0</td>
+          <td class="num">14,8</td>
+        </tr><tr style="background:#eef0f2">
+          <td class="num " style="" title="neu"><b>2</b></td>
+          <td class="sticky-n" style="background:#eef0f2">Matthias Rau</td><td class="muted">SV Achteltal Darts</td><td class="mitte"></td>
+          <td class="num"><b>14</b></td><td class="num">14</td>
+          <td class="num">1</td><td class="num">14</td>
+          <td class="num ">1</td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">59,6</td>
+          <td class="num">13,0</td>
+        </tr><tr style="background:#f6e8dc">
+          <td class="num " style="" title="neu"><b>3</b></td>
+          <td class="sticky-n" style="background:#f6e8dc">Marco Jauch</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>14</b></td><td class="num">14</td>
+          <td class="num">1</td><td class="num">14</td>
+          <td class="num ">3</td><td class="num ">2</td><td class="num "></td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">55,1</td>
+          <td class="num">12,3</td>
+        </tr><tr style="background:#fbeecb">
+          <td class="num " style="" title="neu"><b>4</b></td>
+          <td class="sticky-n" style="background:#fbeecb">Ferdinand Schneck</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>13</b></td><td class="num">13</td>
+          <td class="num">1</td><td class="num">13</td>
+          <td class="num ">5</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num "></td><td class="num ">2</td><td class="num ">2</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">64,1</td>
+          <td class="num">14,0</td>
+        </tr><tr style="background:#fbeecb">
+          <td class="num " style="" title="neu"><b>5</b></td>
+          <td class="sticky-n" style="background:#fbeecb">Steffen Schreiber</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>13</b></td><td class="num">13</td>
+          <td class="num">1</td><td class="num">13</td>
+          <td class="num ">5</td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">2</td><td class="num ">2</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">59,0</td>
+          <td class="num">11,8</td>
+        </tr><tr style="background:#fbeecb">
+          <td class="num " style="" title="neu"><b>6</b></td>
+          <td class="sticky-n" style="background:#fbeecb">Christoph Reim</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>13</b></td><td class="num">13</td>
+          <td class="num">1</td><td class="num">13</td>
+          <td class="num ">3</td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">57,6</td>
+          <td class="num">11,8</td>
+        </tr><tr style="background:#fbeecb">
+          <td class="num " style="" title="neu"><b>7</b></td>
+          <td class="sticky-n" style="background:#fbeecb">Martin Sowa</td><td class="muted">Kornburg DartKnights</td><td class="mitte"></td>
+          <td class="num"><b>12</b></td><td class="num">12</td>
+          <td class="num">1</td><td class="num">12</td>
+          <td class="num ">5</td><td class="num ">2</td><td class="num "></td><td class="num "></td><td class="num ">2</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num ">100</td><td class="num "></td><td class="num ">63,7</td>
+          <td class="num">13,0</td>
+        </tr><tr style="background:#fbeecb">
+          <td class="num " style="" title="neu"><b>8</b></td>
+          <td class="sticky-n" style="background:#fbeecb">Patrick Lang</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>12</b></td><td class="num">12</td>
+          <td class="num">1</td><td class="num">12</td>
+          <td class="num ">3</td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num ">54,7</td>
+          <td class="num">12,3</td>
+        </tr><tr style="background:#fbeecb">
+          <td class="num " style="" title="neu"><b>9</b></td>
+          <td class="sticky-n" style="background:#fbeecb">Max Hempel</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>12</b></td><td class="num">12</td>
+          <td class="num">1</td><td class="num">12</td>
+          <td class="num ">3</td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num ">51,1</td>
+          <td class="num">11,3</td>
+        </tr><tr style="background:#fbeecb">
+          <td class="num " style="" title="neu"><b>10</b></td>
+          <td class="sticky-n" style="background:#fbeecb">Giuseppe Ruggeri</td><td class="muted">SC 04 Schwabach</td><td class="mitte"></td>
+          <td class="num"><b>12</b></td><td class="num">12</td>
+          <td class="num">1</td><td class="num">12</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">40,8</td>
+          <td class="num">10,3</td>
+        </tr><tr style="background:#e3eefb">
+          <td class="num " style="" title="neu"><b>11</b></td>
+          <td class="sticky-n" style="background:#e3eefb">Simon Thanner</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>11</b></td><td class="num">11</td>
+          <td class="num">1</td><td class="num">11</td>
+          <td class="num ">3</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num ">2</td><td class="num ">105</td><td class="num "></td><td class="num ">56,9</td>
+          <td class="num">12,0</td>
+        </tr><tr style="background:#e3eefb">
+          <td class="num " style="" title="neu"><b>12</b></td>
+          <td class="sticky-n" style="background:#e3eefb">Michael Kraut</td><td class="muted"></td><td class="mitte"></td>
+          <td class="num"><b>11</b></td><td class="num">11</td>
+          <td class="num">1</td><td class="num">11</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">52,4</td>
+          <td class="num">11,3</td>
+        </tr><tr style="background:#e3eefb">
+          <td class="num " style="" title="neu"><b>13</b></td>
+          <td class="sticky-n" style="background:#e3eefb">Frank Friedrich</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>11</b></td><td class="num">11</td>
+          <td class="num">1</td><td class="num">11</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">48,7</td>
+          <td class="num">11,5</td>
+        </tr><tr style="background:#e3eefb">
+          <td class="num " style="" title="neu"><b>14</b></td>
+          <td class="sticky-n" style="background:#e3eefb">André Nelle</td><td class="muted">1. DC Paradisvögel</td><td class="mitte"></td>
+          <td class="num"><b>11</b></td><td class="num">11</td>
+          <td class="num">1</td><td class="num">11</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">45,5</td>
+          <td class="num">9,8</td>
+        </tr><tr style="background:#e3eefb">
+          <td class="num " style="" title="neu"><b>15</b></td>
+          <td class="sticky-n" style="background:#e3eefb">Susanne Albert <span class="frau">♀1</span></td><td class="muted">Trocadero</td><td class="mitte">✓</td>
+          <td class="num"><b>11</b></td><td class="num">11</td>
+          <td class="num">1</td><td class="num">11</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">40,5</td>
+          <td class="num">9,8</td>
+        </tr><tr style="background:#e3eefb">
+          <td class="num " style="" title="neu"><b>16</b></td>
+          <td class="sticky-n" style="background:#e3eefb">Armend Krasniqi</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>10</b></td><td class="num">10</td>
+          <td class="num">1</td><td class="num">10</td>
+          <td class="num ">3</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num award">150</td><td class="num ">1</td><td class="num ">59,0</td>
+          <td class="num">11,3</td>
+        </tr><tr style="background:#e3eefb">
+          <td class="num " style="" title="neu"><b>17</b></td>
+          <td class="sticky-n" style="background:#e3eefb">Noah Hübner</td><td class="muted">Kornburg DartKnights</td><td class="mitte"></td>
+          <td class="num"><b>10</b></td><td class="num">10</td>
+          <td class="num">1</td><td class="num">10</td>
+          <td class="num ">4</td><td class="num ">2</td><td class="num award">1</td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">51,9</td>
+          <td class="num">10,5</td>
+        </tr><tr style="background:#e3eefb">
+          <td class="num " style="" title="neu"><b>18</b></td>
+          <td class="sticky-n" style="background:#e3eefb">Julian Rammler</td><td class="muted">SC 04 Schwabach</td><td class="mitte"></td>
+          <td class="num"><b>10</b></td><td class="num">10</td>
+          <td class="num">1</td><td class="num">10</td>
+          <td class="num ">2</td><td class="num ">2</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">51,6</td>
+          <td class="num">12,0</td>
+        </tr><tr style="background:#e3eefb">
+          <td class="num " style="" title="neu"><b>19</b></td>
+          <td class="sticky-n" style="background:#e3eefb">Felix Binder</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>10</b></td><td class="num">10</td>
+          <td class="num">1</td><td class="num">10</td>
+          <td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">41,8</td>
+          <td class="num">9,3</td>
+        </tr><tr style="background:#e3eefb">
+          <td class="num " style="" title="neu"><b>20</b></td>
+          <td class="sticky-n" style="background:#e3eefb">Tobi Grimm</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>10</b></td><td class="num">10</td>
+          <td class="num">1</td><td class="num">10</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">40,4</td>
+          <td class="num">9,3</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>21</b></td>
+          <td class="sticky-n" style="background:var(--card)">Alex Walter</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>10</b></td><td class="num">10</td>
+          <td class="num">1</td><td class="num">10</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">37,8</td>
+          <td class="num">9,5</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>22</b></td>
+          <td class="sticky-n" style="background:var(--card)">Jonas Pröbsting</td><td class="muted"></td><td class="mitte"></td>
+          <td class="num"><b>9</b></td><td class="num">9</td>
+          <td class="num">1</td><td class="num">9</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">50,1</td>
+          <td class="num">9,7</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>23</b></td>
+          <td class="sticky-n" style="background:var(--card)">Jürgen Prichta</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>9</b></td><td class="num">9</td>
+          <td class="num">1</td><td class="num">9</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">45,0</td>
+          <td class="num">11,3</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>24</b></td>
+          <td class="sticky-n" style="background:var(--card)">Philipp Langhans</td><td class="muted"></td><td class="mitte"></td>
+          <td class="num"><b>9</b></td><td class="num">9</td>
+          <td class="num">1</td><td class="num">9</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">41,3</td>
+          <td class="num">8,8</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>25</b></td>
+          <td class="sticky-n" style="background:var(--card)">Tizian Nauck</td><td class="muted"></td><td class="mitte"></td>
+          <td class="num"><b>9</b></td><td class="num">9</td>
+          <td class="num">1</td><td class="num">9</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">39,5</td>
+          <td class="num">9,3</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>26</b></td>
+          <td class="sticky-n" style="background:var(--card)">Andy Weitz</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>9</b></td><td class="num">9</td>
+          <td class="num">1</td><td class="num">9</td>
+          <td class="num ">1</td><td class="num "></td><td class="num award">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">38,2</td>
+          <td class="num">8,3</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>27</b></td>
+          <td class="sticky-n" style="background:var(--card)">Hans-Peter Koch</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>9</b></td><td class="num">9</td>
+          <td class="num">1</td><td class="num">9</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">33,2</td>
+          <td class="num">8,0</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>28</b></td>
+          <td class="sticky-n" style="background:var(--card)">Jonathan Schön</td><td class="muted"></td><td class="mitte"></td>
+          <td class="num"><b>8</b></td><td class="num">8</td>
+          <td class="num">1</td><td class="num">8</td>
+          <td class="num ">1</td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">1</td><td class="num ">115</td><td class="num "></td><td class="num ">44,3</td>
+          <td class="num">9,5</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>29</b></td>
+          <td class="sticky-n" style="background:var(--card)">René Pusch</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>8</b></td><td class="num">8</td>
+          <td class="num">1</td><td class="num">8</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">43,9</td>
+          <td class="num">9,3</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>30</b></td>
+          <td class="sticky-n" style="background:var(--card)">Helmut Gampper</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>8</b></td><td class="num">8</td>
+          <td class="num">1</td><td class="num">8</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">40,2</td>
+          <td class="num">8,8</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>31</b></td>
+          <td class="sticky-n" style="background:var(--card)">Dominik Kugler</td><td class="muted"></td><td class="mitte"></td>
+          <td class="num"><b>8</b></td><td class="num">8</td>
+          <td class="num">1</td><td class="num">8</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">39,8</td>
+          <td class="num">7,8</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>32</b></td>
+          <td class="sticky-n" style="background:var(--card)">Manuel Speil</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>8</b></td><td class="num">8</td>
+          <td class="num">1</td><td class="num">8</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">29,1</td>
+          <td class="num">7,0</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>33</b></td>
+          <td class="sticky-n" style="background:var(--card)">Tom Brodtke</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>7</b></td><td class="num">7</td>
+          <td class="num">1</td><td class="num">7</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">44,7</td>
+          <td class="num">8,8</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>34</b></td>
+          <td class="sticky-n" style="background:var(--card)">Bianca Friedrich <span class="frau">♀2</span></td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>7</b></td><td class="num">7</td>
+          <td class="num">1</td><td class="num">7</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">38,0</td>
+          <td class="num">8,0</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>35</b></td>
+          <td class="sticky-n" style="background:var(--card)">Thomas Gerngroß</td><td class="muted"></td><td class="mitte"></td>
+          <td class="num"><b>7</b></td><td class="num">7</td>
+          <td class="num">1</td><td class="num">7</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">31,6</td>
+          <td class="num">7,3</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>36</b></td>
+          <td class="sticky-n" style="background:var(--card)">Stefan Albert</td><td class="muted">Trocadero</td><td class="mitte">✓</td>
+          <td class="num"><b>6</b></td><td class="num">6</td>
+          <td class="num">1</td><td class="num">6</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">37,0</td>
+          <td class="num">7,0</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>37</b></td>
+          <td class="sticky-n" style="background:var(--card)">Manuel Bresler</td><td class="muted"></td><td class="mitte"></td>
+          <td class="num"><b>6</b></td><td class="num">6</td>
+          <td class="num">1</td><td class="num">6</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">29,4</td>
+          <td class="num">7,3</td>
+        </tr><tr >
+          <td class="num " style="" title="neu"><b>38</b></td>
+          <td class="sticky-n" style="background:var(--card)">Lukas Keim</td><td class="muted">TSG 08 Roth</td><td class="mitte">✓</td>
+          <td class="num"><b>5</b></td><td class="num">5</td>
+          <td class="num">1</td><td class="num">5</td>
+          <td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num "></td><td class="num ">26,6</td>
+          <td class="num">6,0</td>
+        </tr>
+      </tbody></table></div>
+  </div>
+  <div class="card">
+    <h2 style="margin:0 0 8px">Setzliste <span class="muted" style="font-weight:400;font-size:14px">(Schnitt der letzten 4 Teilnahmen – bestimmt die Gruppeneinteilung)</span></h2>
+    <div style="overflow-x:auto"><table class="daten raster">
+      <thead><tr><th class="num">Platz</th><th>Name</th><th>Verein</th><th class="num">Teiln. (Saison)</th>
+        <th class="num">Setzliste</th><th class="num">vorher</th><th>letzte Punkte</th></tr></thead>
+      <tbody>
+      <tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>1</b> <span class="pd-gleich">–</span></td><td>Benjamin Martin </td>
+          <td class="muted">Franken Power</td><td class="num">1</td>
+          <td class="num"><b>14,8</b></td><td class="num muted">14,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(120, 230, 130);" title="aus dem Schnitt gefallen">15</span><span class="p5 " style="background: rgb(120, 230, 130);" >15</span><span class="p5 " style="background: rgb(120, 230, 130);" >15</span><span class="p5 " style="background: rgb(133.33333333333334, 223, 130);" >14</span><span class="p5 " style="background: rgb(120, 230, 130);" >15</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>2</b> <span class="pd-gleich">–</span></td><td>Ferdinand Schneck <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>14,0</b></td><td class="num muted">13,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(173.33333333333334, 203, 130);" title="aus dem Schnitt gefallen">11</span><span class="p5 " style="background: rgb(133.33333333333334, 223, 130);" >14</span><span class="p5 " style="background: rgb(133.33333333333334, 223, 130);" >14</span><span class="p5 " style="background: rgb(120, 230, 130);" >15</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 4"><b>3</b> <span class="pd-auf">▲1</span></td><td>Matthias Rau </td>
+          <td class="muted">SV Achteltal Darts</td><td class="num">1</td>
+          <td class="num"><b>13,0</b></td><td class="num muted">12,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(146.66666666666666, 217, 130);" title="aus dem Schnitt gefallen">13</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(133.33333333333334, 223, 130);" >14</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 3"><b>4</b> <span class="pd-ab">▼1</span></td><td>Martin Sowa </td>
+          <td class="muted">Kornburg DartKnights</td><td class="num">1</td>
+          <td class="num"><b>13,0</b></td><td class="num muted">13,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(133.33333333333334, 223, 130);" title="aus dem Schnitt gefallen">14</span><span class="p5 " style="background: rgb(120, 230, 130);" >15</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(120, 230, 130);" >15</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>5</b> <span class="pd-gleich">–</span></td><td>Max Zimmermann </td>
+          <td class="muted">Kangaroots</td><td class="num">0</td>
+          <td class="num"><b>12,8</b></td><td class="num muted">12,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(160, 210, 130);" title="aus dem Schnitt gefallen">12</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(133.33333333333334, 223, 130);" >14</span><span class="p5 " style="background: rgb(120, 230, 130);" >15</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 7"><b>6</b> <span class="pd-auf">▲1</span></td><td>David Schöniger </td>
+          <td class="muted">Dartsjäger Weißenburg</td><td class="num">0</td>
+          <td class="num"><b>12,3</b></td><td class="num muted">12,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5slot"></span><span class="p5slot"></span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(133.33333333333334, 223, 130);" >14</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 12"><b>7</b> <span class="pd-auf">▲5</span></td><td>Marco Jauch <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>12,3</b></td><td class="num muted">12,0</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(146.66666666666666, 217, 130);" title="aus dem Schnitt gefallen">13</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(133.33333333333334, 223, 130);" >14</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(133.33333333333334, 223, 130);" >14</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 11"><b>8</b> <span class="pd-auf">▲3</span></td><td>Patrick Lang <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>12,3</b></td><td class="num muted">12,0</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(173.33333333333334, 203, 130);" title="aus dem Schnitt gefallen">11</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(133.33333333333334, 223, 130);" >14</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 6"><b>9</b> <span class="pd-ab">▼3</span></td><td>Simon Thanner <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>12,0</b></td><td class="num muted">12,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(146.66666666666666, 217, 130);" title="aus dem Schnitt gefallen">13</span><span class="p5 " style="background: rgb(133.33333333333334, 223, 130);" >14</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 9"><b>10</b> <span class="pd-ab">▼1</span></td><td>Julian Rammler </td>
+          <td class="muted">SC 04 Schwabach</td><td class="num">1</td>
+          <td class="num"><b>12,0</b></td><td class="num muted">12,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(173.33333333333334, 203, 130);" title="aus dem Schnitt gefallen">11</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(120, 230, 130);" >15</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 10"><b>11</b> <span class="pd-ab">▼1</span></td><td>Michael Böhme <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">0</td>
+          <td class="num"><b>12,0</b></td><td class="num muted">12,0</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(160, 210, 130);" title="aus dem Schnitt gefallen">12</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 14"><b>12</b> <span class="pd-auf">▲2</span></td><td>Steffen Schreiber <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>11,8</b></td><td class="num muted">11,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(146.66666666666666, 217, 130);" title="aus dem Schnitt gefallen">13</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 19"><b>13</b> <span class="pd-auf">▲6</span></td><td>Christoph Reim <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>11,8</b></td><td class="num muted">11,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(160, 210, 130);" title="aus dem Schnitt gefallen">12</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 13"><b>14</b> <span class="pd-ab">▼1</span></td><td>Kevin Wagner <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">0</td>
+          <td class="num"><b>11,8</b></td><td class="num muted">11,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(186.66666666666666, 197, 130);" title="aus dem Schnitt gefallen">10</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 16"><b>15</b> <span class="pd-auf">▲1</span></td><td>Dominic Ötter </td>
+          <td class="muted">SC 04 Schwabach</td><td class="num">0</td>
+          <td class="num"><b>11,8</b></td><td class="num muted">11,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(186.66666666666666, 197, 130);" title="aus dem Schnitt gefallen">10</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(133.33333333333334, 223, 130);" >14</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 17"><b>16</b> <span class="pd-auf">▲1</span></td><td>Matthias Herzog <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">0</td>
+          <td class="num"><b>11,8</b></td><td class="num muted">11,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(173.33333333333334, 203, 130);" title="aus dem Schnitt gefallen">11</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 18"><b>17</b> <span class="pd-auf">▲1</span></td><td>Frank Friedrich <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>11,5</b></td><td class="num muted">11,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(173.33333333333334, 203, 130);" title="aus dem Schnitt gefallen">11</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 20"><b>18</b> <span class="pd-auf">▲2</span></td><td>Kevin Hupfer </td>
+          <td class="muted">Phoenix Deining</td><td class="num">0</td>
+          <td class="num"><b>11,5</b></td><td class="num muted">11,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5slot"></span><span class="p5slot"></span><span class="p5slot"></span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 22"><b>19</b> <span class="pd-auf">▲3</span></td><td>Max Hempel <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>11,3</b></td><td class="num muted">11,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(160, 210, 130);" title="aus dem Schnitt gefallen">12</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 24"><b>20</b> <span class="pd-auf">▲4</span></td><td>Michael Kraut </td>
+          <td class="muted"></td><td class="num">1</td>
+          <td class="num"><b>11,3</b></td><td class="num muted">11,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(173.33333333333334, 203, 130);" title="aus dem Schnitt gefallen">11</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 8"><b>21</b> <span class="pd-ab">▼13</span></td><td>Armend Krasniqi <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>11,3</b></td><td class="num muted">12,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(133.33333333333334, 223, 130);" title="aus dem Schnitt gefallen">14</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 15"><b>22</b> <span class="pd-ab">▼7</span></td><td>Jürgen Prichta <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>11,3</b></td><td class="num muted">11,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(173.33333333333334, 203, 130);" title="aus dem Schnitt gefallen">11</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 21"><b>23</b> <span class="pd-ab">▼2</span></td><td>Devin Vogel <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">0</td>
+          <td class="num"><b>11,3</b></td><td class="num muted">11,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(160, 210, 130);" title="aus dem Schnitt gefallen">12</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 25"><b>24</b> <span class="pd-auf">▲1</span></td><td>Christoph Tzabazis </td>
+          <td class="muted">SC 04 Schwabach</td><td class="num">0</td>
+          <td class="num"><b>10,8</b></td><td class="num muted">10,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(160, 210, 130);" title="aus dem Schnitt gefallen">12</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 23"><b>25</b> <span class="pd-ab">▼2</span></td><td>Noah Hübner </td>
+          <td class="muted">Kornburg DartKnights</td><td class="num">1</td>
+          <td class="num"><b>10,5</b></td><td class="num muted">11,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(146.66666666666666, 217, 130);" title="aus dem Schnitt gefallen">13</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>26</b> <span class="pd-gleich">–</span></td><td>Alpay Kökyar <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">0</td>
+          <td class="num"><b>10,5</b></td><td class="num muted">10,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(146.66666666666666, 217, 130);" title="aus dem Schnitt gefallen">13</span><span class="p5 " style="background: rgb(146.66666666666666, 217, 130);" >13</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>27</b> <span class="pd-gleich">–</span></td><td>Maximilian Gwizdala </td>
+          <td class="muted">Phoenix Deining</td><td class="num">0</td>
+          <td class="num"><b>10,5</b></td><td class="num muted">10,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5slot"></span><span class="p5slot"></span><span class="p5slot"></span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 35"><b>28</b> <span class="pd-auf">▲7</span></td><td>Giuseppe Ruggeri </td>
+          <td class="muted">SC 04 Schwabach</td><td class="num">1</td>
+          <td class="num"><b>10,3</b></td><td class="num muted">9,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 190, 130);" title="aus dem Schnitt gefallen">9</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 28"><b>29</b> <span class="pd-ab">▼1</span></td><td>Andi Netter <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">0</td>
+          <td class="num"><b>10,0</b></td><td class="num muted">10,0</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 177, 130);" title="aus dem Schnitt gefallen">7</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 39"><b>30</b> <span class="pd-auf">▲9</span></td><td>André Nelle </td>
+          <td class="muted">1. DC Paradisvögel</td><td class="num">1</td>
+          <td class="num"><b>9,8</b></td><td class="num muted">9,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(186.66666666666666, 197, 130);" title="aus dem Schnitt gefallen">10</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>31</b> <span class="pd-gleich">–</span></td><td>Susanne Albert <span class="badge dk">DK</span></td>
+          <td class="muted">Trocadero</td><td class="num">1</td>
+          <td class="num"><b>9,8</b></td><td class="num muted">9,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(173.33333333333334, 203, 130);" title="aus dem Schnitt gefallen">11</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 33"><b>32</b> <span class="pd-auf">▲1</span></td><td>Benedikt Hönisch <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">0</td>
+          <td class="num"><b>9,8</b></td><td class="num muted">9,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(133.33333333333334, 223, 130);" title="aus dem Schnitt gefallen">14</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 29"><b>33</b> <span class="pd-ab">▼4</span></td><td>Jonas Pröbsting </td>
+          <td class="muted"></td><td class="num">1</td>
+          <td class="num"><b>9,7</b></td><td class="num muted">10,0</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5slot"></span><span class="p5slot"></span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>34</b> <span class="pd-gleich">–</span></td><td>Alex Walter <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>9,5</b></td><td class="num muted">9,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(186.66666666666666, 197, 130);" title="aus dem Schnitt gefallen">10</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 32"><b>35</b> <span class="pd-ab">▼3</span></td><td>Jonathan Schön </td>
+          <td class="muted"></td><td class="num">1</td>
+          <td class="num"><b>9,5</b></td><td class="num muted">9,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 190, 130);" title="aus dem Schnitt gefallen">9</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 38"><b>36</b> <span class="pd-auf">▲2</span></td><td>Werner Janke </td>
+          <td class="muted">SC 04 Schwabach</td><td class="num">0</td>
+          <td class="num"><b>9,5</b></td><td class="num muted">9,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(186.66666666666666, 197, 130);" title="aus dem Schnitt gefallen">10</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 40"><b>37</b> <span class="pd-auf">▲3</span></td><td>Simon Heinz <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">0</td>
+          <td class="num"><b>9,5</b></td><td class="num muted">9,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(186.66666666666666, 197, 130);" title="aus dem Schnitt gefallen">10</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 48"><b>38</b> <span class="pd-auf">▲10</span></td><td>Felix Binder <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>9,3</b></td><td class="num muted">8,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 177, 130);" title="aus dem Schnitt gefallen">7</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 37"><b>39</b> <span class="pd-ab">▼2</span></td><td>Tobi Grimm <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>9,3</b></td><td class="num muted">9,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(173.33333333333334, 203, 130);" title="aus dem Schnitt gefallen">11</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 36"><b>40</b> <span class="pd-ab">▼4</span></td><td>Tizian Nauck </td>
+          <td class="muted"></td><td class="num">1</td>
+          <td class="num"><b>9,3</b></td><td class="num muted">9,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(186.66666666666666, 197, 130);" title="aus dem Schnitt gefallen">10</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 30"><b>41</b> <span class="pd-ab">▼11</span></td><td>René Pusch <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>9,3</b></td><td class="num muted">9,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(186.66666666666666, 197, 130);" title="aus dem Schnitt gefallen">10</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>42</b> <span class="pd-gleich">–</span></td><td>Niklas Rau </td>
+          <td class="muted">SC 04 Schwabach</td><td class="num">0</td>
+          <td class="num"><b>9,0</b></td><td class="num muted">9,0</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(133.33333333333334, 223, 130);" title="aus dem Schnitt gefallen">14</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>43</b> <span class="pd-gleich">–</span></td><td>Jan Albert <span class="badge dk">DK</span></td>
+          <td class="muted">Trocadero</td><td class="num">0</td>
+          <td class="num"><b>9,0</b></td><td class="num muted">9,0</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 183, 130);" title="aus dem Schnitt gefallen">8</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>44</b> <span class="pd-gleich">–</span></td><td>Angelo H&#39;Lawatscheck </td>
+          <td class="muted"></td><td class="num">0</td>
+          <td class="num"><b>9,0</b></td><td class="num muted">9,0</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 190, 130);" title="aus dem Schnitt gefallen">9</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 46"><b>45</b> <span class="pd-auf">▲1</span></td><td>Philipp Langhans </td>
+          <td class="muted"></td><td class="num">1</td>
+          <td class="num"><b>8,8</b></td><td class="num muted">8,7</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5slot"></span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 45"><b>46</b> <span class="pd-ab">▼1</span></td><td>Helmut Gampper <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>8,8</b></td><td class="num muted">8,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 183, 130);" title="aus dem Schnitt gefallen">8</span><span class="p5 " style="background: rgb(160, 210, 130);" >12</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 41"><b>47</b> <span class="pd-ab">▼6</span></td><td>Tom Brodtke <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>8,8</b></td><td class="num muted">9,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 190, 130);" title="aus dem Schnitt gefallen">9</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 47"><b>48</b> <span class="pd-ab">▼1</span></td><td>Fabian Wiedbrauck <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">0</td>
+          <td class="num"><b>8,5</b></td><td class="num muted">8,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 190, 130);" title="aus dem Schnitt gefallen">9</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 50"><b>49</b> <span class="pd-auf">▲1</span></td><td>Andy Weitz <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>8,3</b></td><td class="num muted">8,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 190, 130);" title="aus dem Schnitt gefallen">9</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(244, 170, 130);" >6</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 56"><b>50</b> <span class="pd-auf">▲6</span></td><td>Hans-Peter Koch <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>8,0</b></td><td class="num muted">7,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 170, 130);" title="aus dem Schnitt gefallen">6</span><span class="p5 " style="background: rgb(244, 170, 130);" >6</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>51</b> <span class="pd-gleich">–</span></td><td>Bianca Friedrich <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>8,0</b></td><td class="num muted">8,0</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 177, 130);" title="aus dem Schnitt gefallen">7</span><span class="p5 " style="background: rgb(244, 163, 130);" >5</span><span class="p5 " style="background: rgb(173.33333333333334, 203, 130);" >11</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 53"><b>52</b> <span class="pd-auf">▲1</span></td><td>Dominik Kugler </td>
+          <td class="muted"></td><td class="num">1</td>
+          <td class="num"><b>7,8</b></td><td class="num muted">7,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 177, 130);" title="aus dem Schnitt gefallen">7</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 52"><b>53</b> <span class="pd-ab">▼1</span></td><td>Bernd Miederer <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">0</td>
+          <td class="num"><b>7,8</b></td><td class="num muted">7,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 183, 130);" title="aus dem Schnitt gefallen">8</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>54</b> <span class="pd-gleich">–</span></td><td>Maccioni Raffaella <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">0</td>
+          <td class="num"><b>7,5</b></td><td class="num muted">7,5</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 177, 130);" title="aus dem Schnitt gefallen">7</span><span class="p5 " style="background: rgb(244, 170, 130);" >6</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(186.66666666666666, 197, 130);" >10</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 57"><b>55</b> <span class="pd-auf">▲2</span></td><td>Thomas Gerngroß </td>
+          <td class="muted"></td><td class="num">1</td>
+          <td class="num"><b>7,3</b></td><td class="num muted">6,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 163, 130);" title="aus dem Schnitt gefallen">5</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 163, 130);" >5</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 55"><b>56</b> <span class="pd-ab">▼1</span></td><td>Manuel Bresler </td>
+          <td class="muted"></td><td class="num">1</td>
+          <td class="num"><b>7,3</b></td><td class="num muted">7,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 170, 130);" title="aus dem Schnitt gefallen">6</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 170, 130);" >6</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(244, 170, 130);" >6</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(46,160,67,.20)" title="vorher Platz 58"><b>57</b> <span class="pd-auf">▲1</span></td><td>Manuel Speil <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>7,0</b></td><td class="num muted">6,8</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 177, 130);" title="aus dem Schnitt gefallen">7</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(244, 170, 130);" >6</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(224,49,49,.18)" title="vorher Platz 49"><b>58</b> <span class="pd-ab">▼9</span></td><td>Stefan Albert <span class="badge dk">DK</span></td>
+          <td class="muted">Trocadero</td><td class="num">1</td>
+          <td class="num"><b>7,0</b></td><td class="num muted">8,3</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(173.33333333333334, 203, 130);" title="aus dem Schnitt gefallen">11</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(244, 177, 130);" >7</span><span class="p5 " style="background: rgb(244, 183, 130);" >8</span><span class="p5 " style="background: rgb(244, 170, 130);" >6</span></div></td>
+        </tr><tr>
+          <td class="num " style="background:rgba(140,143,148,.13)" title="unverändert"><b>59</b> <span class="pd-gleich">–</span></td><td>Lukas Keim <span class="badge dk">DK</span></td>
+          <td class="muted">TSG 08 Roth</td><td class="num">1</td>
+          <td class="num"><b>6,0</b></td><td class="num muted">6,0</td>
+          <td class="letzte-sp"><div class="p5wrap"><span class="p5 raus" style="background: rgb(244, 163, 130);" title="aus dem Schnitt gefallen">5</span><span class="p5 " style="background: rgb(244, 157, 130);" >4</span><span class="p5 " style="background: rgb(244, 190, 130);" >9</span><span class="p5 " style="background: rgb(244, 170, 130);" >6</span><span class="p5 " style="background: rgb(244, 163, 130);" >5</span></div></td>
+        </tr>
+      </tbody></table></div>
+  </div>
+    <div class="web-fuss">Nur-Ansicht · automatisch aus dem TSG-Competition-Programm erzeugt · Stand 6.7.2026</div>
+  </div>
+</body>
+</html>
