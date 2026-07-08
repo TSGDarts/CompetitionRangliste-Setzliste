@@ -402,6 +402,11 @@
   .pub-news-text { font-size:14px; line-height:1.6; color:var(--text); }
   tr.finde-treffer td { box-shadow: inset 0 0 0 2px var(--rot); }
   .pub-finde { margin:0 0 10px; }
+  .pub-rl-stand { text-align:center; margin:0 0 10px; font-size:13.5px; color:var(--text-blass); }
+  .pub-rl-stand select { font-size:13px; padding:5px 8px; border:1px solid var(--grau-rand); border-radius:8px; background:var(--card); color:var(--text); }
+  .stat-wahl { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:0 0 14px; }
+  .stat-wahl button { border:1px solid var(--grau-rand); border-radius:20px; background:var(--card); color:var(--text); font:inherit; font-size:13px; font-weight:600; padding:7px 16px; cursor:pointer; }
+  .stat-wahl button.active { background:var(--rot); color:#fff; border-color:var(--rot); }
   .pub-finde input { max-width:280px; width:100%; box-sizing:border-box; padding:8px 14px; border:1px solid var(--grau-rand); border-radius:20px; background:var(--card); color:var(--text); font-size:14px; }
   .rek-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; }
   .rek-karte { flex:0 1 224px; box-sizing:border-box; border:1px solid var(--grau-rand); border-radius:12px; background:var(--grau-bg); padding:16px 14px; text-align:center; cursor:pointer; font-family:inherit; color:var(--text); }
@@ -941,7 +946,7 @@ function spielGamesHtml(games) {
   return `<div class="spiel-liste">${games.map((g, i) => {
     const l1 = +g.l1 || 0, l2 = +g.l2 || 0;
     return `<div class="spiel-row"><span class="sp-nr">${i + 1}</span>
-      <span class="sp-seite li ${l1 > l2 ? 'sp-win' : ''}"><span class="sp-name">${nm(g, 1)}</span>${g.a1 != null ? `<span class="sp-avg">Ø${fmt1(g.a1)}</span>` : ''}</span>
+      <span class="sp-seite li ${l1 > l2 ? 'sp-win' : ''}">${g.a1 != null ? `<span class="sp-avg">Ø${fmt1(g.a1)}</span>` : ''}<span class="sp-name">${nm(g, 1)}</span></span>
       <span class="sp-legs">${l1}<span class="sp-tr">:</span>${l2}</span>
       <span class="sp-seite re ${l2 > l1 ? 'sp-win' : ''}"><span class="sp-name">${nm(g, 2)}</span>${g.a2 != null ? `<span class="sp-avg">Ø${fmt1(g.a2)}</span>` : ''}</span>
     </div>`;
@@ -990,6 +995,7 @@ function pubRanglisteHtml() {
   return `
   <div class="card">
     <h2 style="margin:0 0 8px">${nSpieltage}. Competitionrangliste · Saison ${esc(sn.name)}</h2>
+    ${(() => { const tg = pubTage(), eff = pubTagNr(); return tg.length ? `<div class="pub-rl-stand">Stand nach Spieltag <select onchange="pubSpieltag(this.value)">${tg.map((t, i) => `<option value="${t.nr}" ${t.nr === eff ? 'selected' : ''}>Spieltag ${t.nr}${i === 0 ? ' (neuester)' : ''}${datumKurz(t.date) ? ' · ' + esc(datumKurz(t.date)) : ''}</option>`).join('')}</select></div>` : ''; })()}
     <div class="pub-finde"><input type="search" placeholder="🔎 Deinen Namen finden…" autocomplete="off" oninput="pubFindeMich(this.value)"></div>
     ${auszLegende(ausz)}
     ${!zeilen.length ? '<p class="muted">Noch keine abgeschlossenen Spieltage in dieser Saison.</p>' : `
@@ -1433,17 +1439,17 @@ function pubStatistikHtml() {
     ['Ø Average (Saison)', seasonAvg != null ? 'Ø' + fmt1(seasonAvg) : '–'],
     ['Ø Teilnehmer / Comp.', fmt1(avgTeiln)]
   ].map(function (c) { return `<div class="stat-sum"><div class="rek-wert">${c[1]}</div><div class="rek-tit">${c[0]}</div></div>`; }).join('');
+  const wahl = `<div class="stat-wahl">
+    ${metriken.map(function (x) { return `<button class="${x.key === mKey ? 'active' : ''}" onclick="pubStatMetric('${x.key}')">${x.label}</button>`; }).join('')}
+    <button class="${mKey === 'anwesenheit' ? 'active' : ''}" onclick="pubStatMetric('anwesenheit')">Teilnahme-Statistik</button>
+  </div>`;
   return `<div class="card">
     <h2 style="margin:0 0 12px;text-align:center">📊 Statistiken · Saison ${esc(sn.name)}</h2>
     <div class="rek-grid" style="margin:0 0 18px">${summary}</div>
-    <div class="pub-filter" style="justify-content:flex-start;margin:0 0 6px">Diagramm:
-      <select onchange="pubStatMetric(this.value)">${metriken.map(function (x) { return `<option value="${x.key}" ${x.key === mKey ? 'selected' : ''}>${x.label}</option>`; }).join('')}</select>
-      <span class="muted">pro Spieltag</span></div>
-    ${pubStatChart(daten, m)}
-    <details class="es-wrap stat-anw" style="margin-top:20px">
-      <summary>Teilnahme-Statistik (${spielerAnz} Spieler)</summary>
-      <div class="es-body">${pubStatAnwesenheit(tage)}</div>
-    </details>
+    ${wahl}
+    ${mKey === 'anwesenheit'
+      ? `<h3 style="margin:4px 0 8px;text-align:center">Teilnahme-Statistik <span class="muted" style="font-weight:400;font-size:13px">(${spielerAnz} Spieler)</span></h3>${pubStatAnwesenheit(tage)}`
+      : `<p class="muted" style="text-align:center;margin:0 0 4px;font-size:13px">${m.label} pro Spieltag</p>${pubStatChart(daten, m)}`}
   </div>`;
 }
 
