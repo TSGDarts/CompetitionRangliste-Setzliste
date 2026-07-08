@@ -382,7 +382,7 @@
   .duell-scope button { border:none; background:var(--card); color:var(--text); font:inherit; font-size:12.5px; padding:5px 13px; cursor:pointer; }
   .duell-scope button + button { border-left:1px solid var(--grau-rand); }
   .duell-scope button.active { background:var(--rot); color:#fff; }
-  .duell-steuer { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin:0 0 8px; }
+  .duell-steuer { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px 12px; margin:0 0 10px; }
   .duell-ctrl { font-size:12.5px; color:var(--text-blass); }
   .duell-ctrl select { font-size:12.5px; padding:3px 6px; margin-left:3px; }
   .duell-suche { font-size:13px; padding:5px 11px; border:1px solid var(--grau-rand); border-radius:18px; background:var(--card); color:var(--text); max-width:190px; }
@@ -930,7 +930,40 @@ function spielTabelle(games) {
     if (l1 > l2) { A.s++; B.n++; A.pkt += 2; } else if (l2 > l1) { B.s++; A.n++; B.pkt += 2; } else { A.u++; B.u++; A.pkt++; B.pkt++; }
     if (g.a1 != null) { A.as += +g.a1; A.an++; } if (g.a2 != null) { B.as += +g.a2; B.an++; }
   });
-  return Object.values(st).sort((a, b) => b.pkt - a.pkt || (b.lw - b.ll) - (a.lw - a.ll) || b.lw - a.lw || (a.name || '').localeCompare(b.name || '', 'de'));
+  // Sortierung: Punkte; bei Gleichstand die Tiebreak-Kette aus den Einstellungen (Standard: direkter Vergleich → Leg-Differenz → gewonnene Legs)
+  const kette = (S().gruppenTiebreak && S().gruppenTiebreak.length) ? S().gruppenTiebreak : ['direkt', 'legdiff', 'legs'];
+  const key = function (r) { return r.pid || ('?' + r.name); };
+  const rows = Object.values(st).sort((a, b) => b.pkt - a.pkt);
+  const out = [];
+  let i = 0;
+  while (i < rows.length) {
+    let j = i; while (j < rows.length && rows[j].pkt === rows[i].pkt) j++;
+    const cl = rows.slice(i, j);
+    if (cl.length > 1) {
+      // Direkter Vergleich: Mini-Tabelle NUR aus den Spielen der punktgleichen Spieler untereinander
+      const sub = {}; cl.forEach(function (r) { sub[key(r)] = { pkt: 0, lw: 0, ll: 0 }; });
+      (games || []).forEach(function (g) {
+        const k1 = g.p1 || ('?' + g.name1), k2 = g.p2 || ('?' + g.name2);
+        if (!sub[k1] || !sub[k2]) return;
+        const l1 = +g.l1 || 0, l2 = +g.l2 || 0;
+        sub[k1].lw += l1; sub[k1].ll += l2; sub[k2].lw += l2; sub[k2].ll += l1;
+        if (l1 > l2) sub[k1].pkt += 2; else if (l2 > l1) sub[k2].pkt += 2; else { sub[k1].pkt++; sub[k2].pkt++; }
+      });
+      cl.sort(function (a, b) {
+        for (const k of kette) {
+          let c = 0;
+          if (k === 'direkt') { const sa = sub[key(a)], sb = sub[key(b)]; c = sb.pkt - sa.pkt || ((sb.lw - sb.ll) - (sa.lw - sa.ll)); }
+          else if (k === 'legdiff') c = (b.lw - b.ll) - (a.lw - a.ll);
+          else if (k === 'legs') c = b.lw - a.lw;
+          if (c) return c;
+        }
+        return ((b.an ? b.as / b.an : 0) - (a.an ? a.as / a.an : 0)) || (a.name || '').localeCompare(b.name || '', 'de');
+      });
+    }
+    for (const r of cl) out.push(r);
+    i = j;
+  }
+  return out;
 }
 
 function spielTabelleHtml(games) {
@@ -1459,22 +1492,62 @@ function pubProfilSchliessen() { PUB.profilPid = null; PUB.profilTag = null; pub
 
 function pubProfilTag(v) { PUB.profilTag = (v === '' || v == null) ? null : +v; pubRender(); }
 
-function pubProfilVerlaufSvg(pid) {
+function pubProfilChartDefs() {
+  return [
+    { key: 'platz', label: 'Ranglisten-Platz', invert: true, fmt: function (v) { return 'Platz ' + v; } },
+    { key: 'setzwert', label: 'Setzwert', invert: false, fmt: function (v) { return 'SL ' + fmt1(v); } },
+    { key: 'punkte', label: 'Punkte pro Spieltag', invert: false, fmt: function (v) { return v + ' Punkte'; } },
+    { key: 'avg', label: 'Ø pro Competition', invert: false, fmt: function (v) { return 'Ø' + fmt1(v); } },
+    { key: 'spielavg', label: 'Ø pro Spiel', invert: false, fmt: function (v) { return 'Ø' + fmt1(v); } }
+  ];
+}
+
+function pubProfilVerlaufPunkte(pid, art) {
   const sn = aktSaison();
   const tage = (sn.days || []).filter(t => t.status === 'abgeschlossen').slice().sort((a, b) => a.nr - b.nr);
   const pts = [];
-  tage.forEach(t => { const z = ranglisteZeilen(pubSaisonBisTag(t.nr)).find(x => x.pid === pid); if (z) pts.push({ tag: t.nr, platz: z.platz }); });
+  if (art === 'platz') {
+    tage.forEach(function (t) { const z = ranglisteZeilen(pubSaisonBisTag(t.nr)).find(x => x.pid === pid); if (z) pts.push({ x: '' + t.nr, val: z.platz, tip: 'Spieltag ' + t.nr }); });
+  } else if (art === 'setzwert') {
+    const alle = alleAbgeschlossenenTage();
+    tage.forEach(function (t) { const i = alle.findIndex(e => e.saison === sn && e.tag.nr === t.nr); const v = setzwert(pid, i < 0 ? null : i + 1); if (v != null) pts.push({ x: '' + t.nr, val: v, tip: 'Stand nach Spieltag ' + t.nr }); });
+  } else if (art === 'punkte') {
+    tage.forEach(function (t) { const r = t.results && t.results[pid]; if (r && r.points != null) pts.push({ x: '' + t.nr, val: r.points, tip: 'Spieltag ' + t.nr }); });
+  } else if (art === 'avg') {
+    tage.forEach(function (t) { const r = t.results && t.results[pid]; if (r && r.avg != null) pts.push({ x: '' + t.nr, val: r.avg, tip: 'Spieltag ' + t.nr }); });
+  } else if (art === 'spielavg') {
+    let n = 0;
+    pubAlleSpiele(sn).forEach(function (sp) {
+      const gn = function (p2, fb) { return (spieler(p2) || {}).name || fb || '?'; };
+      if (sp.p1 === pid && sp.a1 != null) { n++; pts.push({ x: '' + n, val: sp.a1, tip: 'Spieltag ' + sp.tag + ' · vs ' + gn(sp.p2, sp.name2) }); }
+      else if (sp.p2 === pid && sp.a2 != null) { n++; pts.push({ x: '' + n, val: sp.a2, tip: 'Spieltag ' + sp.tag + ' · vs ' + gn(sp.p1, sp.name1) }); }
+    });
+  }
+  return pts;
+}
+
+function pubProfilChartWahl(v) { PUB.profilChart = v || 'platz'; pubRender(); }
+
+function pubProfilVerlaufSvg(pid) {
+  const art = PUB.profilChart || 'platz';
+  const cfg = pubProfilChartDefs().find(function (c) { return c.key === art; }) || pubProfilChartDefs()[0];
+  const pts = pubProfilVerlaufPunkte(pid, cfg.key);
   if (!pts.length) return '';
   const W = 560, H = 180, pad = 30;
-  const maxP = Math.max(5, ...pts.map(p => p.platz));
+  let min = Math.min.apply(null, pts.map(p => p.val)), max = Math.max.apply(null, pts.map(p => p.val));
+  if (cfg.key === 'platz') { min = 1; max = Math.max(5, max); }
+  if (min === max) { min -= 1; max += 1; }
   const xs = i => pts.length === 1 ? W / 2 : pad + i * (W - 2 * pad) / (pts.length - 1);
-  const ys = pl => pad + (pl - 1) * (H - 2 * pad - 12) / Math.max(1, maxP - 1);
-  const linie = pts.map((p, i) => (i ? 'L' : 'M') + xs(i).toFixed(1) + ',' + ys(p.platz).toFixed(1)).join(' ');
-  const dots = pts.map((p, i) => `<circle cx="${xs(i).toFixed(1)}" cy="${ys(p.platz).toFixed(1)}" r="4" fill="var(--rot)"><title>Spieltag ${p.tag}: Platz ${p.platz}</title></circle>`).join('');
-  const labels = pts.map((p, i) => `<text x="${xs(i).toFixed(1)}" y="${H - 6}" font-size="10" text-anchor="middle" fill="var(--text-blass)">${p.tag}</text>`).join('');
-  return `<div style="overflow-x:auto"><svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;height:auto" role="img" aria-label="Platzierungs-Verlauf">
-    <text x="4" y="${(ys(1) + 3).toFixed(1)}" font-size="10" fill="var(--text-blass)">1.</text>
-    <text x="4" y="${(ys(maxP) + 3).toFixed(1)}" font-size="10" fill="var(--text-blass)">${maxP}.</text>
+  const ys = v => { const t = (v - min) / (max - min); return pad + (cfg.invert ? t : 1 - t) * (H - 2 * pad - 12); };
+  const linie = pts.map((p, i) => (i ? 'L' : 'M') + xs(i).toFixed(1) + ',' + ys(p.val).toFixed(1)).join(' ');
+  const dots = pts.map((p, i) => `<circle cx="${xs(i).toFixed(1)}" cy="${ys(p.val).toFixed(1)}" r="4" fill="var(--rot)"><title>${p.tip}: ${cfg.fmt(p.val)}</title></circle>`).join('');
+  const schritt = Math.max(1, Math.ceil(pts.length / 25));   // x-Beschriftung ausdünnen bei vielen Punkten
+  const labels = pts.map((p, i) => (i % schritt) ? '' : `<text x="${xs(i).toFixed(1)}" y="${H - 6}" font-size="10" text-anchor="middle" fill="var(--text-blass)">${p.x}</text>`).join('');
+  const oben = cfg.invert ? min : max, unten = cfg.invert ? max : min;
+  const lbl = v => cfg.key === 'platz' ? v + '.' : (cfg.key === 'punkte' ? '' + v : fmt1(v));
+  return `<div style="overflow-x:auto"><svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;height:auto" role="img" aria-label="Verlauf">
+    <text x="4" y="${(ys(oben) + 3).toFixed(1)}" font-size="10" fill="var(--text-blass)">${lbl(oben)}</text>
+    <text x="4" y="${(ys(unten) + 3).toFixed(1)}" font-size="10" fill="var(--text-blass)">${lbl(unten)}</text>
     <path d="${linie}" fill="none" stroke="var(--rot)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}${labels}
   </svg></div>`;
 }
@@ -1499,7 +1572,14 @@ function pubProfilHtml(pid) {
     </div>
     <div class="pt-zeile" style="margin-top:8px"><span class="pt-label">Rangliste</span> ${rlInfo}</div>
     <div class="pt-zeile"><span class="pt-label">Setzliste</span> ${slInfo}</div>
-    ${graph ? `<h3 style="margin:18px 0 6px">📈 Platzierungs-Verlauf (Saison ${esc(sn.name)})</h3>${graph}` : ''}
+    ${(() => {
+      const art = PUB.profilChart || 'platz';
+      const defs = pubProfilChartDefs();
+      const hatIrgendwas = defs.some(function (c) { return pubProfilVerlaufPunkte(pid, c.key).length; });
+      if (!hatIrgendwas) return '';
+      const pills = `<div class="stat-wahl" style="margin:0 0 10px">${defs.map(function (c) { return `<button class="${c.key === art ? 'active' : ''}" onclick="pubProfilChartWahl('${c.key}')">${c.label}</button>`; }).join('')}</div>`;
+      return `<h3 style="margin:18px 0 8px;text-align:center">📈 Verlauf (Saison ${esc(sn.name)})</h3>${pills}${graph || '<p class="muted" style="text-align:center;margin:2px 0 6px">Für diese Ansicht sind noch keine Daten vorhanden.</p>'}`;
+    })()}
     ${(() => {
       const alle = !!PUB.duellAlle;
       const duelleAll = pubDuelle(pid, alle);
@@ -1509,10 +1589,10 @@ function pubProfilHtml(pid) {
       const scope = `<span class="duell-scope"><button class="${!alle ? 'active' : ''}" onclick="pubDuellScope(false)">Diese Saison</button><button class="${alle ? 'active' : ''}" onclick="pubDuellScope(true)">Alle Saisons</button></span>`;
       const limitSel = `<label class="duell-ctrl">meiste <select onchange="pubDuellLimit(this.value)">${[5, 10, 15, 25, 9999].map(n => `<option value="${n}" ${limit === n ? 'selected' : ''}>${n >= 9999 ? 'alle' : n}</option>`).join('')}</select></label>`;
       const suche = `<input type="search" class="duell-suche" placeholder="🔍 Gegner suchen…" autocomplete="off" oninput="pubDuellFilter(this.value)">`;
-      return `<h3 style="margin:18px 0 6px">⚔️ Direkte Duelle <span class="muted" style="font-size:13px;font-weight:400">· Bilanz aus den Einzelspielen · nach Häufigkeit</span></h3>
+      return `<h3 style="margin:18px 0 8px;text-align:center">⚔️ Direkte Duelle <span class="muted" style="font-size:13px;font-weight:400">· Bilanz aus den Einzelspielen · nach Häufigkeit</span></h3>
       <div class="duell-steuer">${scope}${limitSel}${suche}</div>
-      ${duelleAll.length ? `<div style="overflow-x:auto"><table class="daten" id="duellTab" data-limit="${limAktiv}"><thead><tr><th>Gegner</th><th class="num">Spiele</th><th class="num" title="Siege : Niederlagen">Bilanz</th><th class="num">Legs</th></tr></thead><tbody>
-      ${duelleAll.map((d, i) => `<tr${(i >= limit && limit < 9999) ? ' style="display:none"' : ''}><td><span class="pub-name-link" onclick="pubProfilOeffnen('${d.opp}')">${esc((spieler(d.opp) || {}).name || '?')}</span></td><td class="num">${d.sp}</td><td class="num"><b class="${d.w > d.l ? 'bil-plus' : d.l > d.w ? 'bil-minus' : ''}">${d.w}:${d.l}</b></td><td class="num">${d.lw}:${d.ll}</td></tr>`).join('')}
+      ${duelleAll.length ? `<div style="overflow-x:auto"><table class="daten rek-tab" id="duellTab" data-limit="${limAktiv}"><thead><tr><th class="name">Gegner</th><th class="num">Spiele</th><th class="num" title="Siege : Niederlagen">Bilanz</th><th class="num">Legs</th></tr></thead><tbody>
+      ${duelleAll.map((d, i) => `<tr${(i >= limit && limit < 9999) ? ' style="display:none"' : ''}><td class="name"><span class="pub-name-link" onclick="pubProfilOeffnen('${d.opp}')">${esc((spieler(d.opp) || {}).name || '?')}</span></td><td class="num">${d.sp}</td><td class="num"><b class="${d.w > d.l ? 'bil-plus' : d.l > d.w ? 'bil-minus' : ''}">${d.w}:${d.l}</b></td><td class="num">${d.lw}:${d.ll}</td></tr>`).join('')}
       </tbody></table></div>` : `<p class="muted" style="margin:2px 0 0">In dieser Saison noch keine Einzelspiele.</p>`}` })()}
     ${tage.length ? `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:18px 0 8px">
         <h3 style="margin:0">📅 Spieltage (${tage.length})</h3>
@@ -1658,7 +1738,7 @@ const PUB = { tab: "rangliste", saisonIdx: 2, filterTage: 5, alleSetz: false,
   farbe: lsGet("tsgPubFarbe") || null,
   spalten: (function(){ var d = {"hl":true,"d180":true,"d171":false,"hf":false,"topHf":false,"bull":false,"avg":true,"s140":false,"s100":false,"s80":false,"a9":false,"a12":false,"a15":false,"a18":false,"leg9":false,"leg10":false,"leg11":false,"leg12":false,"leg13":false,"leg14":false,"leg15":false,"leg16":false,"leg17":false,"leg18":false,"leg19":false,"leg20":false}; try { return Object.assign({}, d, JSON.parse(lsGet("tsgPubSpalten")) || {}); } catch(e){ return d; } })(),
   hlFarben: (function(){ try { return JSON.parse(lsGet("tsgPubHlFarben")) || null; } catch(e){ return null; } })(),
-  suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {}, profilPid: null, profilTag: null, rekordKey: null, rekordLimit: 15, legFilter: null, duellAlle: false, duellLimit: 10, statMetric: "teiln" };
+  suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {}, profilPid: null, profilTag: null, rekordKey: null, rekordLimit: 15, legFilter: null, duellAlle: false, duellLimit: 10, profilChart: "platz", statMetric: "teiln" };
 function aktSaison(){ return data.seasons[PUB.saisonIdx] || data.seasons[0]; }
 PUB.hlFarbenDefault = (function(){ var cs = getComputedStyle(document.documentElement); var o = {}; ["180","171","hf","leg","bull","avg"].forEach(function(k){ o[k] = cs.getPropertyValue("--hlc-"+k).trim(); }); return o; })();
 pubApplyTheme();
