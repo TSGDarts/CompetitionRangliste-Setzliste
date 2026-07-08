@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" style="--rot: #231f20; --rot-dunkel: #1b1818; --rot-hell: #e9e9e9;">
+<html lang="de" style="--rot: #231f20; --rot-dunkel: #1b1818; --rot-hell: #e9e9e9; --hlc-180: #d6a616; --hlc-171: #e67e14; --hlc-hf: #1e9e4a; --hlc-leg: #2d6ed7; --hlc-bull: #c92d2d; --hlc-avg: #8a9099;">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -117,18 +117,23 @@
   .gruppe-card th { font-size: 11px; color: var(--text-blass); text-transform: uppercase; }
   .gruppe-card .platz { width: 22px; color: var(--text-blass); font-weight: 600; }
   .gruppe-card .pkt { font-weight: 700; color: var(--rot); text-align: right; }
-  /* Highlight-Badges – kategorisierte, farbige Pillen (statt gequetschter Textzeile). Eigenes hlb-Präfix, um nicht mit den Editor-Chips (.hl-chip) zu kollidieren. */
-  .hlb-chips { display: inline-flex; flex-wrap: wrap; gap: 4px; vertical-align: middle; }
+  /* Highlight-Badges – kategorisierte, farbige Pillen, je Kategorie eine feste Zeile. hlb-Präfix (kollidiert nicht mit den Editor-Chips .hl-chip). Farbe je Kategorie über CSS-Variablen (in Einstellungen anpassbar); Tint/Rand/Schrift werden per color-mix aus der Basisfarbe abgeleitet. */
+  :root { --hlc-180: #d6a616; --hlc-171: #e67e14; --hlc-hf: #1e9e4a; --hlc-leg: #2d6ed7; --hlc-bull: #c92d2d; --hlc-avg: #8a9099; }
+  .hlb-box { display: inline-flex; flex-wrap: wrap; gap: 3px 4px; vertical-align: middle; text-align: left; }
   .hlb-chip { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; line-height: 1; padding: 3px 7px; border-radius: 999px; white-space: nowrap; border: 1px solid transparent; letter-spacing: .01em; }
-  .hlb-180  { background: rgba(214,166,22,.18); color: #8a6a00; border-color: rgba(214,166,22,.38); }
-  .hlb-171  { background: rgba(230,126,20,.16); color: #9c530c; border-color: rgba(230,126,20,.34); }
-  .hlb-hf   { background: rgba(30,158,74,.15);  color: #1c7a3c; border-color: rgba(30,158,74,.32); }
-  .hlb-leg  { background: rgba(45,110,215,.13); color: #2359ad; border-color: rgba(45,110,215,.3); }
-  .hlb-bull { background: rgba(201,45,45,.14);  color: #b02a2a; border-color: rgba(201,45,45,.32); }
-  .hlb-avg  { background: var(--grau-bg); color: var(--text-blass); border-color: var(--linie); font-weight: 500; }
+  .hlb-180  { background: color-mix(in srgb, var(--hlc-180) 16%, transparent); border-color: color-mix(in srgb, var(--hlc-180) 40%, transparent); color: color-mix(in srgb, var(--hlc-180) 82%, #000); }
+  .hlb-171  { background: color-mix(in srgb, var(--hlc-171) 16%, transparent); border-color: color-mix(in srgb, var(--hlc-171) 40%, transparent); color: color-mix(in srgb, var(--hlc-171) 82%, #000); }
+  .hlb-hf   { background: color-mix(in srgb, var(--hlc-hf) 15%, transparent);  border-color: color-mix(in srgb, var(--hlc-hf) 38%, transparent);  color: color-mix(in srgb, var(--hlc-hf) 80%, #000); }
+  .hlb-leg  { background: color-mix(in srgb, var(--hlc-leg) 14%, transparent); border-color: color-mix(in srgb, var(--hlc-leg) 36%, transparent); color: color-mix(in srgb, var(--hlc-leg) 82%, #000); }
+  .hlb-bull { background: color-mix(in srgb, var(--hlc-bull) 14%, transparent);border-color: color-mix(in srgb, var(--hlc-bull) 38%, transparent); color: color-mix(in srgb, var(--hlc-bull) 80%, #000); }
+  .hlb-avg  { background: color-mix(in srgb, var(--hlc-avg) 14%, transparent); border-color: color-mix(in srgb, var(--hlc-avg) 34%, transparent); color: color-mix(in srgb, var(--hlc-avg) 88%, #000); font-weight: 500; }
   @media screen {
-    html.dark .hlb-180 { color: #ecc65a; } html.dark .hlb-171 { color: #f0a35a; }
-    html.dark .hlb-hf  { color: #5fce85; } html.dark .hlb-leg { color: #7fabf2; } html.dark .hlb-bull { color: #f28080; }
+    html.dark .hlb-180 { background: color-mix(in srgb, var(--hlc-180) 24%, transparent); color: color-mix(in srgb, var(--hlc-180) 72%, #fff); }
+    html.dark .hlb-171 { background: color-mix(in srgb, var(--hlc-171) 24%, transparent); color: color-mix(in srgb, var(--hlc-171) 72%, #fff); }
+    html.dark .hlb-hf  { background: color-mix(in srgb, var(--hlc-hf) 22%, transparent);  color: color-mix(in srgb, var(--hlc-hf) 70%, #fff); }
+    html.dark .hlb-leg { background: color-mix(in srgb, var(--hlc-leg) 22%, transparent); color: color-mix(in srgb, var(--hlc-leg) 74%, #fff); }
+    html.dark .hlb-bull{ background: color-mix(in srgb, var(--hlc-bull) 22%, transparent);color: color-mix(in srgb, var(--hlc-bull) 74%, #fff); }
+    html.dark .hlb-avg { background: color-mix(in srgb, var(--hlc-avg) 20%, transparent); color: color-mix(in srgb, var(--hlc-avg) 80%, #fff); }
   }
   .such-liste { max-height: 350px; overflow-y: auto; border: 1px solid var(--grau-rand); border-radius: 8px; }
   .such-liste .eintrag { padding: 7px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; border-bottom: 1px solid var(--linie); }
@@ -292,6 +297,10 @@
   .pub-spalten-legs { display:flex; flex-wrap:wrap; gap:6px 12px; justify-content:center; align-items:center; padding:10px 14px 12px; margin-top:2px; border-top:1px solid var(--linie); font-size:13.5px; }
   .pub-spalten-legs .pub-legs-label { color:var(--text-blass); font-weight:600; }
   .pub-spalten-legs label { display:inline-flex; align-items:center; gap:4px; cursor:pointer; }
+  .pub-farb-body { display:flex; flex-wrap:wrap; gap:10px 18px; justify-content:center; align-items:center; padding:6px 14px 14px; font-size:13.5px; }
+  .pub-farb { display:inline-flex; align-items:center; gap:6px; }
+  .pub-farb input[type=color] { width:34px; height:26px; border:1px solid var(--grau-rand); border-radius:6px; padding:0; cursor:pointer; background:none; }
+  .pub-farb-reset { border:1px solid var(--grau-rand); background:var(--grau-bg); color:var(--text); border-radius:8px; padding:5px 12px; font-size:13px; cursor:pointer; }
   .pub-suchbar { max-width:520px; margin:0 auto 16px; }
   .pub-suchbar input { width:100%; box-sizing:border-box; padding:12px 18px; font-size:16px; border:1px solid var(--grau-rand); border-radius:24px; background:var(--card); color:var(--text); }
   .pub-suchbar input:focus { outline:2px solid var(--rot); border-color:var(--rot); }
@@ -343,6 +352,10 @@
       <summary>⚙ Weitere Spalten anzeigen (Highlights &amp; Statistik)</summary>
       <div class="pub-spalten-body"><label><input type="checkbox" data-sp="hl" checked onchange="pubSpalte('hl',this.checked)"> Highlights</label><label><input type="checkbox" data-sp="d180" checked onchange="pubSpalte('d180',this.checked)"> 180</label><label><input type="checkbox" data-sp="d171"  onchange="pubSpalte('d171',this.checked)"> 171+</label><label><input type="checkbox" data-sp="hf"  onchange="pubSpalte('hf',this.checked)"> Highfinishes</label><label><input type="checkbox" data-sp="topHf"  onchange="pubSpalte('topHf',this.checked)"> höchstes HF</label><label><input type="checkbox" data-sp="bull"  onchange="pubSpalte('bull',this.checked)"> Bullfinishes</label><label><input type="checkbox" data-sp="avg" checked onchange="pubSpalte('avg',this.checked)"> Ø Average</label><label><input type="checkbox" data-sp="s140"  onchange="pubSpalte('s140',this.checked)"> 140+</label><label><input type="checkbox" data-sp="s100"  onchange="pubSpalte('s100',this.checked)"> 100+</label><label><input type="checkbox" data-sp="s80"  onchange="pubSpalte('s80',this.checked)"> 80+</label><label><input type="checkbox" data-sp="a9"  onchange="pubSpalte('a9',this.checked)"> First 9</label><label><input type="checkbox" data-sp="a12"  onchange="pubSpalte('a12',this.checked)"> First 12</label><label><input type="checkbox" data-sp="a15"  onchange="pubSpalte('a15',this.checked)"> First 15</label><label><input type="checkbox" data-sp="a18"  onchange="pubSpalte('a18',this.checked)"> First 18</label></div>
       <div class="pub-spalten-legs"><span class="pub-legs-label">Best legs (in Darts):</span> <label><input type="checkbox" data-sp="leg9" onchange="pubSpalte('leg9',this.checked)"> 9</label><label><input type="checkbox" data-sp="leg10" onchange="pubSpalte('leg10',this.checked)"> 10</label><label><input type="checkbox" data-sp="leg11" onchange="pubSpalte('leg11',this.checked)"> 11</label><label><input type="checkbox" data-sp="leg12" onchange="pubSpalte('leg12',this.checked)"> 12</label><label><input type="checkbox" data-sp="leg13" onchange="pubSpalte('leg13',this.checked)"> 13</label><label><input type="checkbox" data-sp="leg14" onchange="pubSpalte('leg14',this.checked)"> 14</label><label><input type="checkbox" data-sp="leg15" onchange="pubSpalte('leg15',this.checked)"> 15</label><label><input type="checkbox" data-sp="leg16" onchange="pubSpalte('leg16',this.checked)"> 16</label><label><input type="checkbox" data-sp="leg17" onchange="pubSpalte('leg17',this.checked)"> 17</label><label><input type="checkbox" data-sp="leg18" onchange="pubSpalte('leg18',this.checked)"> 18</label><label><input type="checkbox" data-sp="leg19" onchange="pubSpalte('leg19',this.checked)"> 19</label><label><input type="checkbox" data-sp="leg20" onchange="pubSpalte('leg20',this.checked)"> 20</label></div>
+    </details>
+    <details id="pubFarbBox" class="pub-spalten">
+      <summary>🎨 Highlight-Farben anpassen</summary>
+      <div class="pub-farb-body"><label class="pub-farb"><span>180</span><input type="color" data-hlk="180" value="#d6a616" oninput="pubSetHlFarbe('180',this.value)"></label><label class="pub-farb"><span>171+</span><input type="color" data-hlk="171" value="#e67e14" oninput="pubSetHlFarbe('171',this.value)"></label><label class="pub-farb"><span>Highfinish</span><input type="color" data-hlk="hf" value="#1e9e4a" oninput="pubSetHlFarbe('hf',this.value)"></label><label class="pub-farb"><span>Low Legs</span><input type="color" data-hlk="leg" value="#2d6ed7" oninput="pubSetHlFarbe('leg',this.value)"></label><label class="pub-farb"><span>Bull</span><input type="color" data-hlk="bull" value="#c92d2d" oninput="pubSetHlFarbe('bull',this.value)"></label><label class="pub-farb"><span>Ø</span><input type="color" data-hlk="avg" value="#8a9099" oninput="pubSetHlFarbe('avg',this.value)"></label><button class="pub-farb-reset" onclick="pubHlFarbenReset()">↺ Standard</button></div>
     </details>
     <div id="pubSuchBar" class="pub-suchbar" style="display:none">
       <input type="search" id="pubSuchFeld" placeholder="🔍 Name oder Nachname suchen…" autocomplete="off" oninput="pubSuche(this.value)">
@@ -734,7 +747,7 @@ function hlBadges(r) {
   if (r.legs && r.legs.length) hlGruppiert(r.legs).forEach(x => c.push(chip(x.wert + 'D' + (x.anzahl > 1 ? ' ×' + x.anzahl : ''), 'hlb-leg')));
   if (r.bull && r.bull.length) hlGruppiert(r.bull).forEach(x => c.push(chip('Bull ' + x.wert + (x.anzahl > 1 ? ' ×' + x.anzahl : ''), 'hlb-bull')));
   if (r.avg) c.push(chip('Ø ' + fmt2(r.avg), 'hlb-avg'));
-  return c.length ? '<span class="hlb-chips">' + c.join('') + '</span>' : '';
+  return c.length ? '<span class="hlb-box">' + c.join('') + '</span>' : '';
 }
 
 function hatStatistik(tag) {
@@ -1011,11 +1024,26 @@ function pubApplyTheme() {
   const inp = document.getElementById('pubFarbeInput'); if (inp) inp.value = base;
   const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', PUB.dark ? '#15171c' : base);
   try { localStorage.setItem('tsgPubDark', PUB.dark ? '1' : '0'); if (PUB.farbe) localStorage.setItem('tsgPubFarbe', PUB.farbe); else localStorage.removeItem('tsgPubFarbe'); } catch (e) {}
+  pubApplyHlFarben();
 }
 
 function pubToggleDark() { PUB.dark = !PUB.dark; pubApplyTheme(); }
 
 function pubSetFarbe(hex) { PUB.farbe = hex; pubApplyTheme(); }
+
+function pubApplyHlFarben() {
+  var f = Object.assign({}, PUB.hlFarbenDefault || {}, PUB.hlFarben || {});
+  var r = document.documentElement.style;
+  ['180', '171', 'hf', 'leg', 'bull', 'avg'].forEach(function (k) { if (f[k]) r.setProperty('--hlc-' + k, f[k]); });
+  try { if (PUB.hlFarben) localStorage.setItem('tsgPubHlFarben', JSON.stringify(PUB.hlFarben)); else localStorage.removeItem('tsgPubHlFarben'); } catch (e) {}
+}
+
+function pubSetHlFarbe(k, hex) { if (!PUB.hlFarben) PUB.hlFarben = {}; PUB.hlFarben[k] = hex; pubApplyHlFarben(); }
+
+function pubHlFarbenReset() {
+  PUB.hlFarben = null; pubApplyHlFarben();
+  document.querySelectorAll('#pubFarbBox input[data-hlk]').forEach(function (inp) { inp.value = (PUB.hlFarbenDefault || {})[inp.dataset.hlk] || inp.value; });
+}
 
 function pubSpalte(k, an) {
   PUB.spalten[k] = !!an;
@@ -1051,8 +1079,10 @@ const PUB = { tab: "rangliste", saisonIdx: 2, filterTage: 5, alleSetz: false,
   dark: (lsGet("tsgPubDark")===null ? false : lsGet("tsgPubDark")==="1"),
   farbe: lsGet("tsgPubFarbe") || null,
   spalten: (function(){ var d = {"hl":true,"d180":true,"d171":false,"hf":false,"topHf":false,"bull":false,"avg":true,"s140":false,"s100":false,"s80":false,"a9":false,"a12":false,"a15":false,"a18":false,"leg9":false,"leg10":false,"leg11":false,"leg12":false,"leg13":false,"leg14":false,"leg15":false,"leg16":false,"leg17":false,"leg18":false,"leg19":false,"leg20":false}; try { return Object.assign({}, d, JSON.parse(lsGet("tsgPubSpalten")) || {}); } catch(e){ return d; } })(),
+  hlFarben: (function(){ try { return JSON.parse(lsGet("tsgPubHlFarben")) || null; } catch(e){ return null; } })(),
   suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {} };
 function aktSaison(){ return data.seasons[PUB.saisonIdx] || data.seasons[0]; }
+PUB.hlFarbenDefault = (function(){ var cs = getComputedStyle(document.documentElement); var o = {}; ["180","171","hf","leg","bull","avg"].forEach(function(k){ o[k] = cs.getPropertyValue("--hlc-"+k).trim(); }); return o; })();
 pubApplyTheme();
 pubRender();
 pubNeuCheck();
