@@ -28,9 +28,11 @@ $payload = @{
 } | ConvertTo-Json -Depth 6
 
 $bytes = [System.Text.Encoding]::UTF8.GetBytes($payload)
+# Neues Key-Format (os_v2_...) braucht "Key", alter Legacy-Key "Basic".
+if ($key -like 'os_v2_*') { $auth = "Key $key" } else { $auth = "Basic $key" }
 try {
   $resp = Invoke-RestMethod -Method Post -Uri 'https://onesignal.com/api/v1/notifications' `
-    -Headers @{ Authorization = "Basic $key" } -ContentType 'application/json; charset=utf-8' -Body $bytes
+    -Headers @{ Authorization = $auth } -ContentType 'application/json; charset=utf-8' -Body $bytes
   if ($null -ne $resp.recipients) {
     Write-Host ("Push gesendet an {0} Geraet(e). (ID {1})" -f $resp.recipients, $resp.id) -ForegroundColor Green
   } else {
