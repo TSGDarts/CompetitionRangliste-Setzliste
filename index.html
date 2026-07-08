@@ -155,6 +155,9 @@
   .sp-legs { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .sp-tr { color: var(--text-blass); padding: 0 1px; }
   .spieltab td, .spieltab th { white-space: nowrap; }
+  .tb-mark { color: #d23b3b; font-weight: 700; font-size: 11.5px; margin-right: 4px; cursor: help; }
+  .tb-mark.gleich { color: var(--text-blass); }
+  .tb-legende { font-size: 12px; color: var(--text-blass); margin: 6px 0 0; }
   /* Highlight-Badges – kategorisierte, farbige Pillen, je Kategorie eine feste Zeile. hlb-Präfix (kollidiert nicht mit den Editor-Chips .hl-chip). Farbe je Kategorie über CSS-Variablen (in Einstellungen anpassbar); Tint/Rand/Schrift werden per color-mix aus der Basisfarbe abgeleitet. */
   :root { --hlc-180: #d6a616; --hlc-171: #e67e14; --hlc-hf: #1e9e4a; --hlc-leg: #2d6ed7; --hlc-bull: #c92d2d; --hlc-avg: #8a9099; }
   .hlb-box { display: inline-flex; flex-wrap: wrap; gap: 3px 4px; vertical-align: middle; text-align: left; }
@@ -398,6 +401,7 @@
   .pub-filter input[type=number] { width:56px; }
   .web-fuss { text-align:center; color: var(--text-blass); font-size: 12px; margin-top: 22px; }
   .pub-name-link { cursor:pointer; border-bottom:1px dotted var(--text-blass); }
+  #printArea .pub-name-link { border-bottom:none; }
   .pub-name-link:hover { color:var(--rot); border-bottom-color:var(--rot); }
   .pub-news { max-width:820px; margin:0 auto 16px; background:var(--rot-hell); border:1px solid var(--rot); border-radius:12px; padding:12px 16px; }
   .pub-news-kopf { font-weight:700; color:var(--rot); font-size:14px; margin-bottom:4px; }
@@ -934,8 +938,13 @@ function spielTabelle(games) {
     if (l1 > l2) { A.s++; B.n++; A.pkt += 2; } else if (l2 > l1) { B.s++; A.n++; B.pkt += 2; } else { A.u++; B.u++; A.pkt++; B.pkt++; }
     if (g.a1 != null) { A.as += +g.a1; A.an++; } if (g.a2 != null) { B.as += +g.a2; B.an++; }
   });
-  // Sortierung: Punkte; bei Gleichstand die Tiebreak-Kette aus den Einstellungen (Standard: direkter Vergleich → Leg-Differenz → gewonnene Legs)
-  const kette = (S().gruppenTiebreak && S().gruppenTiebreak.length) ? S().gruppenTiebreak : ['direkt', 'legdiff', 'legs'];
+  // Sortierung: Punkte (= Punktedifferenz/Punkte positiv); bei Gleichstand die aktive Tiebreak-Kette aus den Einstellungen.
+  // Standard = exakt 3K: Sets-Differenz → Sets gewonnen → Legs-Differenz → Legs gewonnen → direkter Vergleich.
+  // Weitere Kriterien (z. B. Ø) nur wenn in den Einstellungen aktiviert. Bleibt alles gleich -> Spieler bleiben gleichauf (wie 3K).
+  const std = ['setsdiff', 'sets', 'legdiff', 'legs', 'direkt'];
+  const bekannt = ['setsdiff', 'sets', 'legdiff', 'legs', 'direkt', 'avg'];
+  const gk = S().gruppenTiebreak2;
+  const kette = (gk && gk.length && gk.every(function (x) { return bekannt.indexOf(x) >= 0; })) ? gk : std;
   const key = function (r) { return r.pid || ('?' + r.name); };
   const rows = Object.values(st).sort((a, b) => b.pkt - a.pkt);
   const out = [];
@@ -953,16 +962,27 @@ function spielTabelle(games) {
         sub[k1].lw += l1; sub[k1].ll += l2; sub[k2].lw += l2; sub[k2].ll += l1;
         if (l1 > l2) sub[k1].pkt += 2; else if (l2 > l1) sub[k2].pkt += 2; else { sub[k1].pkt++; sub[k2].pkt++; }
       });
-      cl.sort(function (a, b) {
+      // Vergleich zweier Punktgleicher: liefert {c, k} – k = das Kriterium, das entschieden hat (null = komplett gleichauf)
+      const vergleiche = function (a, b) {
         for (const k of kette) {
           let c = 0;
           if (k === 'direkt') { const sa = sub[key(a)], sb = sub[key(b)]; c = sb.pkt - sa.pkt || ((sb.lw - sb.ll) - (sa.lw - sa.ll)); }
+          else if (k === 'setsdiff') c = (b.s - b.n) - (a.s - a.n);
+          else if (k === 'sets') c = b.s - a.s;
           else if (k === 'legdiff') c = (b.lw - b.ll) - (a.lw - a.ll);
           else if (k === 'legs') c = b.lw - a.lw;
-          if (c) return c;
+          else if (k === 'avg') c = (b.an ? b.as / b.an : 0) - (a.an ? a.as / a.an : 0);
+          if (c) return { c: c, k: k };
         }
-        return ((b.an ? b.as / b.an : 0) - (a.an ? a.as / a.an : 0)) || (a.name || '').localeCompare(b.name || '', 'de');
-      });
+        return { c: 0, k: null };   // alles gleich -> gleichauf lassen (wie 3K), KEIN automatischer Ø-/Namens-Fallback
+      };
+      cl.sort(function (a, b) { return vergleiche(a, b).c; });
+      // Markierung (wie die roten Pfeile in 3K): Nachbarn, deren Reihenfolge der direkte Vergleich entschied bzw. die komplett gleichauf sind
+      for (let p = 0; p + 1 < cl.length; p++) {
+        const k = vergleiche(cl[p], cl[p + 1]).k;
+        if (k === 'direkt') { cl[p].tbDirekt = true; cl[p + 1].tbDirekt = true; }
+        else if (k === null) { cl[p].tbGleich = true; cl[p + 1].tbGleich = true; }
+      }
     }
     for (const r of cl) out.push(r);
     i = j;
@@ -974,9 +994,11 @@ function spielTabelleHtml(games) {
   const rows = spielTabelle(games); if (!rows.length) return '';
   const klick = typeof PUB !== 'undefined';   // Namen nur auf der öffentlichen Seite klickbar (Profil)
   const nz = r => klick && r.pid ? `<span class="pub-name-link" onclick="pubProfilOeffnen('${r.pid}')">${esc(r.name || '?')}</span>` : esc(r.name || '?');
+  const mark = r => r.tbDirekt ? '<span class="tb-mark" title="Platzierung durch direkten Vergleich entschieden">⇅</span>' : (r.tbGleich ? '<span class="tb-mark gleich" title="Punktgleich – alle Kriterien gleich (gleichauf)">=</span>' : '');
+  const hatDirekt = rows.some(r => r.tbDirekt), hatGleich = rows.some(r => r.tbGleich);
   return `<div style="overflow-x:auto"><table class="daten spieltab"><thead><tr><th class="num">Pl.</th><th>Spieler</th><th class="num">Sp</th><th class="num">S</th><th class="num">U</th><th class="num">N</th><th class="num">Pkt</th><th class="num">Legs</th><th class="num">Ø</th></tr></thead><tbody>
-    ${rows.map((r, i) => `<tr><td class="num muted">${i + 1}</td><td>${nz(r)}</td><td class="num">${r.sp}</td><td class="num">${r.s}</td><td class="num">${r.u}</td><td class="num">${r.n}</td><td class="num"><b>${r.pkt}</b></td><td class="num">${r.lw}:${r.ll}</td><td class="num">${r.an ? ('Ø' + fmt1(r.as / r.an)) : '–'}</td></tr>`).join('')}
-  </tbody></table></div>`;
+    ${rows.map((r, i) => `<tr><td class="num muted">${mark(r)}${i + 1}</td><td>${nz(r)}</td><td class="num">${r.sp}</td><td class="num">${r.s}</td><td class="num">${r.u}</td><td class="num">${r.n}</td><td class="num"><b>${r.pkt}</b></td><td class="num">${r.lw}:${r.ll}</td><td class="num">${r.an ? ('Ø' + fmt1(r.as / r.an)) : '–'}</td></tr>`).join('')}
+    </tbody></table>${hatDirekt || hatGleich ? `<p class="tb-legende">${hatDirekt ? '<span class="tb-mark">⇅</span> Platzierung durch direkten Vergleich entschieden' : ''}${hatDirekt && hatGleich ? ' · ' : ''}${hatGleich ? '<span class="tb-mark gleich">=</span> komplett gleichauf' : ''}</p>` : ''}</div>`;
 }
 
 function spielGamesHtml(games) {
