@@ -365,6 +365,17 @@
   .pt-tagbox { margin-top:8px; padding:9px 12px; border-radius:9px; background:var(--grau-bg); border:1px solid var(--grau-rand); font-size:13.5px; }
   .pt-taghl { margin-top:4px; }
   .pt-tagstat { margin-top:4px; color:var(--text-blass); font-size:12.5px; }
+  .pt-tagspiele { margin-top:7px; display:flex; flex-wrap:wrap; gap:5px 8px; }
+  .pt-spiel { font-size:12.5px; padding:2px 8px; border-radius:20px; background:var(--card); border:1px solid var(--grau-rand); white-space:nowrap; }
+  .pt-spiel .pt-erg { font-weight:700; font-variant-numeric:tabular-nums; }
+  .pt-spiel.sp-w .pt-erg { color:#2e9e4f; }
+  .pt-spiel.sp-verl .pt-erg { color:#d23b3b; }
+  .bil-plus { color:#2e9e4f; }
+  .bil-minus { color:#d23b3b; }
+  .duell-scope { display:inline-flex; margin:0 0 8px; border:1px solid var(--grau-rand); border-radius:20px; overflow:hidden; }
+  .duell-scope button { border:none; background:var(--card); color:var(--text); font:inherit; font-size:12.5px; padding:5px 13px; cursor:pointer; }
+  .duell-scope button + button { border-left:1px solid var(--grau-rand); }
+  .duell-scope button.active { background:var(--rot); color:#fff; }
   .pub-filter { display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin:2px 0 12px; font-size:14px; color:var(--text-blass); }
   .pub-filter input[type=number] { width:56px; }
   .web-fuss { text-align:center; color: var(--text-blass); font-size: 12px; margin-top: 22px; }
@@ -1081,7 +1092,14 @@ function pubSpielerTagDetailHtml(pid, t) {
   if (st.a12 != null) stat.push('First12 Ø' + fmt1(st.a12));
   const kopf = `<b>Spieltag ${t.nr}</b>${gi >= 0 ? ` · Gruppe ${gi + 1}, Platz ${pi + 1}` : ''} · ${r.points != null ? r.points + ' Punkte' : '–'}`;
   const hl = hlBadges(r);
-  return `<div class="pt-tagbox">${kopf}${hl ? `<div class="pt-taghl">${hl}</div>` : ''}${stat.length ? `<div class="pt-tagstat">${stat.join(' · ')}</div>` : ''}</div>`;
+  // Einzelspiele dieses Spielers an diesem Tag (vs Gegner · Ergebnis · Ø)
+  const meineSpiele = (gi >= 0 && t.groups[gi].games) ? t.groups[gi].games.filter(sp => sp.p1 === pid || sp.p2 === pid) : [];
+  const spieleHtml = meineSpiele.length ? `<div class="pt-tagspiele">${meineSpiele.map(sp => {
+    const bin1 = sp.p1 === pid, meinL = bin1 ? (+sp.l1 || 0) : (+sp.l2 || 0), oppL = bin1 ? (+sp.l2 || 0) : (+sp.l1 || 0);
+    const oppPid = bin1 ? sp.p2 : sp.p1, oppName = (oppPid ? (spieler(oppPid) || {}).name : null) || (bin1 ? sp.name2 : sp.name1) || '?', meinAvg = bin1 ? sp.a1 : sp.a2;
+    return `<div class="pt-spiel ${meinL > oppL ? 'sp-w' : oppL > meinL ? 'sp-verl' : ''}"><span class="pt-erg">${meinL}:${oppL}</span> vs ${oppPid ? `<span class="pub-name-link" onclick="pubProfilOeffnen('${oppPid}')">${esc(oppName)}</span>` : esc(oppName)}${meinAvg != null ? ` <span class="muted">Ø${fmt1(meinAvg)}</span>` : ''}</div>`;
+  }).join('')}</div>` : '';
+  return `<div class="pt-tagbox">${kopf}${hl ? `<div class="pt-taghl">${hl}</div>` : ''}${stat.length ? `<div class="pt-tagstat">${stat.join(' · ')}</div>` : ''}${spieleHtml}</div>`;
 }
 
 function pubTage() { return ((aktSaison().days) || []).filter(t => t.status === 'abgeschlossen').slice().sort((a, b) => b.nr - a.nr); }
@@ -1211,6 +1229,7 @@ function pubRekordeHtml() {
 function pubRekordDefs() {
   return [
     { key: 'avgTag', icon: '🎯', titel: 'Höchster Tages-Schnitt', typ: 'tag', get: function (r) { return r.avg; }, fmt: function (v) { return 'Ø' + fmt1(v); }, richtung: 'max' },
+    { key: 'spielAvg', icon: '🥇', titel: 'Bestes Einzelspiel (Ø)', typ: 'spiel', fmt: function (v) { return 'Ø' + fmt1(v); }, richtung: 'max' },
     { key: 'd180Tag', icon: '💯', titel: 'Meiste 180 an einem Tag', typ: 'tag', get: function (r) { return r.d180; }, fmt: function (v) { return v + '×'; }, richtung: 'max' },
     { key: 'd180S', icon: '🏆', titel: 'Meiste 180 gesamt', typ: 'saison', sumKey: 'd180', fmt: function (v) { return v + '×'; }, richtung: 'max' },
     { key: 'hf', icon: '🎪', titel: 'Höchstes Highfinish', typ: 'multi', arr: function (r) { return r.hf; }, fmt: function (v) { return '' + v; }, richtung: 'max' },
@@ -1232,6 +1251,12 @@ function pubRekordEintraege(cfg) {
       s.d180 += r.d180 || 0; s.d171 += r.d171 || 0; s.hf += (r.hf ? r.hf.length : 0);
     }));
     Object.keys(summe).forEach(function (pid) { const v = summe[pid][cfg.sumKey]; if (v > 0) eintr.push({ pid: pid, val: v }); });
+  } else if (cfg.typ === 'spiel') {
+    const gn = function (pid, fb) { return esc((spieler(pid) || {}).name || fb || '?'); };
+    pubAlleSpiele(sn).forEach(function (sp) {
+      if (sp.p1 && sp.a1 != null) eintr.push({ pid: sp.p1, tag: sp.tag, val: sp.a1, wannText: 'Spieltag ' + sp.tag + ' · vs ' + gn(sp.p2, sp.name2) + ' ' + (+sp.l1 || 0) + ':' + (+sp.l2 || 0) });
+      if (sp.p2 && sp.a2 != null) eintr.push({ pid: sp.p2, tag: sp.tag, val: sp.a2, wannText: 'Spieltag ' + sp.tag + ' · vs ' + gn(sp.p1, sp.name1) + ' ' + (+sp.l2 || 0) + ':' + (+sp.l1 || 0) });
+    });
   } else {
     tage.forEach(t => Object.keys(t.results || {}).forEach(function (pid) {
       const r = t.results[pid] || {};
@@ -1260,7 +1285,7 @@ function pubRekordDetailHtml(key) {
   let rang = 0, letzter = null;
   const rows = zeige.map(function (e, i) {
     if (legFilterAktiv) { rang = i + 1; } else if (e.val !== letzter) { rang = i + 1; letzter = e.val; }
-    return `<tr><td class="num muted">${rang}</td><td><span class="pub-name-link" onclick="pubProfilOeffnen('${e.pid}')">${esc((spieler(e.pid) || {}).name || '?')}</span></td><td class="num"><b>${cfg.fmt(e.val)}</b></td><td>${e.tag ? ('Spieltag ' + e.tag) : '<span class="muted">Saison gesamt</span>'}</td></tr>`;
+    return `<tr><td class="num muted">${rang}</td><td><span class="pub-name-link" onclick="pubProfilOeffnen('${e.pid}')">${esc((spieler(e.pid) || {}).name || '?')}</span></td><td class="num"><b>${cfg.fmt(e.val)}</b></td><td>${e.wannText ? e.wannText : (e.tag ? ('Spieltag ' + e.tag) : '<span class="muted">Saison gesamt</span>')}</td></tr>`;
   }).join('');
   return `<div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
@@ -1284,6 +1309,33 @@ function pubRekordSchliessen() { PUB.rekordKey = null; PUB.legFilter = null; pub
 function pubRekordLimit(v) { PUB.rekordLimit = (+v) || 15; pubRender(); }
 
 function pubRekordLegFilter(v) { PUB.legFilter = (v === '' || v == null) ? null : +v; PUB.rekordLimit = 15; pubRender(); }
+
+function pubAlleSpiele(sn) {
+  const out = [];
+  (sn.days || []).filter(t => t.status === 'abgeschlossen').forEach(function (t) {
+    (t.groups || []).forEach(function (g, gi) {
+      (g.games || []).forEach(function (sp) { out.push({ p1: sp.p1, p2: sp.p2, a1: sp.a1, a2: sp.a2, l1: sp.l1, l2: sp.l2, name1: sp.name1, name2: sp.name2, tag: t.nr, gruppe: gi + 1 }); });
+    });
+  });
+  return out;
+}
+
+function pubDuelle(pid, alle) {
+  const spiele = alle ? (data.seasons || []).reduce(function (a, s) { return a.concat(pubAlleSpiele(s)); }, []) : pubAlleSpiele(aktSaison());
+  const map = {};
+  spiele.forEach(function (sp) {
+    let opp, myL, oppL;
+    if (sp.p1 === pid) { opp = sp.p2; myL = +sp.l1 || 0; oppL = +sp.l2 || 0; }
+    else if (sp.p2 === pid) { opp = sp.p1; myL = +sp.l2 || 0; oppL = +sp.l1 || 0; }
+    else return;
+    if (!opp) return;
+    const d = map[opp] || (map[opp] = { opp: opp, sp: 0, w: 0, l: 0, lw: 0, ll: 0 });
+    d.sp++; d.lw += myL; d.ll += oppL; if (myL > oppL) d.w++; else if (oppL > myL) d.l++;
+  });
+  return Object.values(map).sort(function (a, b) { return b.sp - a.sp || (b.w - b.l) - (a.w - a.l) || ((spieler(a.opp) || {}).name || '').localeCompare((spieler(b.opp) || {}).name || '', 'de'); });
+}
+
+function pubDuellScope(v) { PUB.duellAlle = !!v; pubRender(); }
 
 function pubStatMetric(v) { PUB.statMetric = v; pubRender(); }
 
@@ -1408,6 +1460,16 @@ function pubProfilHtml(pid) {
     <div class="pt-zeile" style="margin-top:8px"><span class="pt-label">Rangliste</span> ${rlInfo}</div>
     <div class="pt-zeile"><span class="pt-label">Setzliste</span> ${slInfo}</div>
     ${graph ? `<h3 style="margin:18px 0 6px">📈 Platzierungs-Verlauf (Saison ${esc(sn.name)})</h3>${graph}` : ''}
+    ${(() => {
+      const alle = !!PUB.duellAlle;
+      const duelle = pubDuelle(pid, alle);
+      if (!duelle.length && !pubDuelle(pid, !alle).length) return '';
+      const scope = `<span class="duell-scope"><button class="${!alle ? 'active' : ''}" onclick="pubDuellScope(false)">Diese Saison</button><button class="${alle ? 'active' : ''}" onclick="pubDuellScope(true)">Alle Saisons</button></span>`;
+      return `<h3 style="margin:18px 0 6px">⚔️ Direkte Duelle <span class="muted" style="font-size:13px;font-weight:400">· Bilanz aus den Einzelspielen</span></h3>
+      ${scope}
+      ${duelle.length ? `<div style="overflow-x:auto"><table class="daten"><thead><tr><th>Gegner</th><th class="num">Spiele</th><th class="num" title="Siege : Niederlagen">Bilanz</th><th class="num">Legs</th></tr></thead><tbody>
+      ${duelle.map(d => `<tr><td><span class="pub-name-link" onclick="pubProfilOeffnen('${d.opp}')">${esc((spieler(d.opp) || {}).name || '?')}</span></td><td class="num">${d.sp}</td><td class="num"><b class="${d.w > d.l ? 'bil-plus' : d.l > d.w ? 'bil-minus' : ''}">${d.w}:${d.l}</b></td><td class="num">${d.lw}:${d.ll}</td></tr>`).join('')}
+      </tbody></table></div>` : `<p class="muted" style="margin:2px 0 0">In dieser Saison noch keine Einzelspiele.</p>`}` })()}
     ${tage.length ? `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:18px 0 8px">
         <h3 style="margin:0">📅 Spieltage (${tage.length})</h3>
         <label style="font-size:13px;color:var(--text-blass)">Spieltag <select onchange="pubProfilTag(this.value)"><option value="">alle anzeigen</option>${tage.map(t => `<option value="${t.nr}" ${PUB.profilTag === t.nr ? 'selected' : ''}>Spieltag ${t.nr}${datumDE(t.date) ? ' · ' + esc(datumDE(t.date)) : ''}</option>`).join('')}</select></label>
@@ -1552,7 +1614,7 @@ const PUB = { tab: "rangliste", saisonIdx: 2, filterTage: 5, alleSetz: false,
   farbe: lsGet("tsgPubFarbe") || null,
   spalten: (function(){ var d = {"hl":true,"d180":true,"d171":false,"hf":false,"topHf":false,"bull":false,"avg":true,"s140":false,"s100":false,"s80":false,"a9":false,"a12":false,"a15":false,"a18":false,"leg9":false,"leg10":false,"leg11":false,"leg12":false,"leg13":false,"leg14":false,"leg15":false,"leg16":false,"leg17":false,"leg18":false,"leg19":false,"leg20":false}; try { return Object.assign({}, d, JSON.parse(lsGet("tsgPubSpalten")) || {}); } catch(e){ return d; } })(),
   hlFarben: (function(){ try { return JSON.parse(lsGet("tsgPubHlFarben")) || null; } catch(e){ return null; } })(),
-  suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {}, profilPid: null, profilTag: null, rekordKey: null, rekordLimit: 15, legFilter: null, statMetric: "teiln" };
+  suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {}, profilPid: null, profilTag: null, rekordKey: null, rekordLimit: 15, legFilter: null, duellAlle: false, statMetric: "teiln" };
 function aktSaison(){ return data.seasons[PUB.saisonIdx] || data.seasons[0]; }
 PUB.hlFarbenDefault = (function(){ var cs = getComputedStyle(document.documentElement); var o = {}; ["180","171","hf","leg","bull","avg"].forEach(function(k){ o[k] = cs.getPropertyValue("--hlc-"+k).trim(); }); return o; })();
 pubApplyTheme();
