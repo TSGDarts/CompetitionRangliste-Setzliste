@@ -414,6 +414,8 @@
   tr.finde-treffer td { box-shadow: inset 0 0 0 2px var(--rot); }
   .pub-finde { margin:0 0 10px; }
   .form-legende { text-align:center; font-size:12px; color:var(--text-blass); margin:0 0 8px; }
+  .pub-termine .pub-news-text > div { padding:1px 0; }
+  .termin-vorbei { opacity:.5; }
   .vgl-zeile { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .vgl-zeile select { font-size:14px; padding:6px 8px; border:1px solid var(--grau-rand); border-radius:8px; background:var(--card); color:var(--text); max-width:220px; }
   .vgl-kopf { display:flex; align-items:center; justify-content:center; gap:14px; font-size:17px; font-weight:700; margin-top:4px; }
@@ -495,6 +497,7 @@
       <div style="text-align:right;margin-top:8px"><button class="pub-farb-reset" onclick="pubHlFarbenReset()">↺ Standard</button></div>
     </div>
     <div class="pub-news"><div class="pub-news-kopf">📢 News</div><div class="pub-news-text">Absofort geht die Anmeldung über 3k! Über den Button Anmeldung ist die Anmeldeseite erreichbar<br><br>Wer die Competition anfängt und nicht Zuende Spielt bekommt 0 Punkte für den Spieltag!</div></div>
+    
     <div id="pubNeuBanner" class="pub-neu-banner" style="display:none">
       <span class="pnb-text"></span>
       <button class="pnb-close" onclick="pubBannerSchliessen()" title="Schließen">×</button>
@@ -512,6 +515,7 @@
     <p class="muted" style="margin-top:0">Das Podium aller abgeschlossenen Saisons (in Klammern: Punkte). Name antippen öffnet das Profil in der jeweiligen Saison.</p>
     <div style="overflow-x:auto"><table class="daten"><thead><tr><th>Saison</th><th>🥇 Meister</th><th>🥈 Zweiter</th><th>🥉 Dritter</th></tr></thead><tbody><tr><td><b>2025/26</b></td><td>🥇 <span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('ferdinand-schneck')">Ferdinand Schneck</span> <span class="muted">(609)</span></td><td>🥈 <span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('simon-thanner')">Simon Thanner</span> <span class="muted">(572)</span></td><td>🥉 <span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('matthias-rau')">Matthias Rau</span> <span class="muted">(542)</span></td></tr></tbody></table></div>
   </div></details>
+    
     
     <details class="pub-install">
       <summary>🤺 Spieler-Vergleich (Head-to-Head)</summary>
