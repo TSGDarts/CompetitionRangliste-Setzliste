@@ -266,6 +266,9 @@
   .pub-spalten summary::-webkit-details-marker { display:none; }
   .pub-spalten-body { display:flex; flex-wrap:wrap; gap:8px 18px; justify-content:center; padding:4px 14px 12px; font-size:14px; }
   .pub-spalten-body label { display:inline-flex; align-items:center; gap:5px; cursor:pointer; }
+  .pub-spalten-legs { display:flex; flex-wrap:wrap; gap:6px 12px; justify-content:center; align-items:center; padding:10px 14px 12px; margin-top:2px; border-top:1px solid var(--linie); font-size:13.5px; }
+  .pub-spalten-legs .pub-legs-label { color:var(--text-blass); font-weight:600; }
+  .pub-spalten-legs label { display:inline-flex; align-items:center; gap:4px; cursor:pointer; }
   .pub-suchbar { max-width:520px; margin:0 auto 16px; }
   .pub-suchbar input { width:100%; box-sizing:border-box; padding:12px 18px; font-size:16px; border:1px solid var(--grau-rand); border-radius:24px; background:var(--card); color:var(--text); }
   .pub-suchbar input:focus { outline:2px solid var(--rot); border-color:var(--rot); }
@@ -311,7 +314,8 @@
     </div>
     <details id="pubSpaltenBox" class="pub-spalten">
       <summary>⚙ Weitere Spalten anzeigen (Highlights &amp; Statistik)</summary>
-      <div class="pub-spalten-body"><label><input type="checkbox" data-sp="hl" checked onchange="pubSpalte('hl',this.checked)"> Highlights</label><label><input type="checkbox" data-sp="d180" checked onchange="pubSpalte('d180',this.checked)"> 180</label><label><input type="checkbox" data-sp="d171"  onchange="pubSpalte('d171',this.checked)"> 171+</label><label><input type="checkbox" data-sp="hf"  onchange="pubSpalte('hf',this.checked)"> Highfinishes</label><label><input type="checkbox" data-sp="topHf"  onchange="pubSpalte('topHf',this.checked)"> höchstes HF</label><label><input type="checkbox" data-sp="bull"  onchange="pubSpalte('bull',this.checked)"> Bullfinishes</label><label><input type="checkbox" data-sp="avg" checked onchange="pubSpalte('avg',this.checked)"> Ø Average</label><label><input type="checkbox" data-sp="s140"  onchange="pubSpalte('s140',this.checked)"> 140+</label><label><input type="checkbox" data-sp="s100"  onchange="pubSpalte('s100',this.checked)"> 100+</label><label><input type="checkbox" data-sp="s80"  onchange="pubSpalte('s80',this.checked)"> 80+</label><label><input type="checkbox" data-sp="a9"  onchange="pubSpalte('a9',this.checked)"> First 9</label><label><input type="checkbox" data-sp="a12"  onchange="pubSpalte('a12',this.checked)"> First 12</label><label><input type="checkbox" data-sp="a15"  onchange="pubSpalte('a15',this.checked)"> First 15</label><label><input type="checkbox" data-sp="a18"  onchange="pubSpalte('a18',this.checked)"> First 18</label><label><input type="checkbox" data-sp="legs"  onchange="pubSpalte('legs',this.checked)"> Best legs (9–20)</label></div>
+      <div class="pub-spalten-body"><label><input type="checkbox" data-sp="hl" checked onchange="pubSpalte('hl',this.checked)"> Highlights</label><label><input type="checkbox" data-sp="d180" checked onchange="pubSpalte('d180',this.checked)"> 180</label><label><input type="checkbox" data-sp="d171"  onchange="pubSpalte('d171',this.checked)"> 171+</label><label><input type="checkbox" data-sp="hf"  onchange="pubSpalte('hf',this.checked)"> Highfinishes</label><label><input type="checkbox" data-sp="topHf"  onchange="pubSpalte('topHf',this.checked)"> höchstes HF</label><label><input type="checkbox" data-sp="bull"  onchange="pubSpalte('bull',this.checked)"> Bullfinishes</label><label><input type="checkbox" data-sp="avg" checked onchange="pubSpalte('avg',this.checked)"> Ø Average</label><label><input type="checkbox" data-sp="s140"  onchange="pubSpalte('s140',this.checked)"> 140+</label><label><input type="checkbox" data-sp="s100"  onchange="pubSpalte('s100',this.checked)"> 100+</label><label><input type="checkbox" data-sp="s80"  onchange="pubSpalte('s80',this.checked)"> 80+</label><label><input type="checkbox" data-sp="a9"  onchange="pubSpalte('a9',this.checked)"> First 9</label><label><input type="checkbox" data-sp="a12"  onchange="pubSpalte('a12',this.checked)"> First 12</label><label><input type="checkbox" data-sp="a15"  onchange="pubSpalte('a15',this.checked)"> First 15</label><label><input type="checkbox" data-sp="a18"  onchange="pubSpalte('a18',this.checked)"> First 18</label></div>
+      <div class="pub-spalten-legs"><span class="pub-legs-label">Best legs (in Darts):</span> <label><input type="checkbox" data-sp="leg9" onchange="pubSpalte('leg9',this.checked)"> 9</label><label><input type="checkbox" data-sp="leg10" onchange="pubSpalte('leg10',this.checked)"> 10</label><label><input type="checkbox" data-sp="leg11" onchange="pubSpalte('leg11',this.checked)"> 11</label><label><input type="checkbox" data-sp="leg12" onchange="pubSpalte('leg12',this.checked)"> 12</label><label><input type="checkbox" data-sp="leg13" onchange="pubSpalte('leg13',this.checked)"> 13</label><label><input type="checkbox" data-sp="leg14" onchange="pubSpalte('leg14',this.checked)"> 14</label><label><input type="checkbox" data-sp="leg15" onchange="pubSpalte('leg15',this.checked)"> 15</label><label><input type="checkbox" data-sp="leg16" onchange="pubSpalte('leg16',this.checked)"> 16</label><label><input type="checkbox" data-sp="leg17" onchange="pubSpalte('leg17',this.checked)"> 17</label><label><input type="checkbox" data-sp="leg18" onchange="pubSpalte('leg18',this.checked)"> 18</label><label><input type="checkbox" data-sp="leg19" onchange="pubSpalte('leg19',this.checked)"> 19</label><label><input type="checkbox" data-sp="leg20" onchange="pubSpalte('leg20',this.checked)"> 20</label></div>
     </details>
     <div id="pubSuchBar" class="pub-suchbar" style="display:none">
       <input type="search" id="pubSuchFeld" placeholder="🔍 Name oder Nachname suchen…" autocomplete="off" oninput="pubSuche(this.value)">
@@ -724,9 +728,12 @@ function pubRanglisteHtml() {
   const zeilen = ranglisteZeilen(sn);
   const nSpieltage = (sn.days || []).filter(t => t.status === 'abgeschlossen').length;
   // Spalten nach Besucher-Auswahl (PUB.spalten) statt Vereins-Config – jeder wählt selbst
+  const anyLeg = Object.keys(PUB.spalten).some(k => /^leg\d+$/.test(k) && PUB.spalten[k]);
   const savedSp = data.settings.pdfSpalten;
-  data.settings.pdfSpalten = PUB.spalten;
-  const cols = ranglisteSpalten().filter(c => zeilen.some(z => { const v = c.wert(z); return v !== '' && v != null; }));
+  data.settings.pdfSpalten = Object.assign({}, PUB.spalten, { legs: anyLeg });
+  const cols = ranglisteSpalten()
+    .filter(c => !(c.titel && c.titel.startsWith('Legs in')) || PUB.spalten['leg' + c.kopf])   // nur einzeln gewählte Legs
+    .filter(c => zeilen.some(z => { const v = c.wert(z); return v !== '' && v != null; }));
   data.settings.pdfSpalten = savedSp;
   const zeigeAlt = zeilen.some(z => z.platzAlt != null);
   const zeigeDK = zeilen.some(z => spieler(z.pid)?.dk);
@@ -954,7 +961,7 @@ const PUB = { tab: "rangliste", saisonIdx: 2, filterTage: 5, alleSetz: false,
   farbeDefault: "#231f20",
   dark: (lsGet("tsgPubDark")===null ? false : lsGet("tsgPubDark")==="1"),
   farbe: lsGet("tsgPubFarbe") || null,
-  spalten: (function(){ var d = {"hl":true,"d180":true,"d171":false,"hf":false,"topHf":false,"bull":false,"avg":true,"s140":false,"s100":false,"s80":false,"a9":false,"a12":false,"a15":false,"a18":false,"legs":false}; try { return Object.assign({}, d, JSON.parse(lsGet("tsgPubSpalten")) || {}); } catch(e){ return d; } })(),
+  spalten: (function(){ var d = {"hl":true,"d180":true,"d171":false,"hf":false,"topHf":false,"bull":false,"avg":true,"s140":false,"s100":false,"s80":false,"a9":false,"a12":false,"a15":false,"a18":false,"leg9":false,"leg10":false,"leg11":false,"leg12":false,"leg13":false,"leg14":false,"leg15":false,"leg16":false,"leg17":false,"leg18":false,"leg19":false,"leg20":false}; try { return Object.assign({}, d, JSON.parse(lsGet("tsgPubSpalten")) || {}); } catch(e){ return d; } })(),
   suche: "", tagNr: null };
 function aktSaison(){ return data.seasons[PUB.saisonIdx] || data.seasons[0]; }
 pubApplyTheme();
