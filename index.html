@@ -329,12 +329,20 @@
   .web-fuss { text-align:center; color: var(--text-blass); font-size: 12px; margin-top: 22px; }
   .pub-name-link { cursor:pointer; border-bottom:1px dotted var(--text-blass); }
   .pub-name-link:hover { color:var(--rot); border-bottom-color:var(--rot); }
-  .rek-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:12px; }
-  .rek-karte { border:1px solid var(--grau-rand); border-radius:12px; background:var(--grau-bg); padding:16px 14px; text-align:center; }
+  .pub-news { max-width:820px; margin:0 auto 16px; background:var(--rot-hell); border:1px solid var(--rot); border-radius:12px; padding:12px 16px; }
+  .pub-news-kopf { font-weight:700; color:var(--rot); font-size:14px; margin-bottom:4px; }
+  .pub-news-text { font-size:14px; line-height:1.6; color:var(--text); }
+  tr.finde-treffer td { box-shadow: inset 0 0 0 2px var(--rot); }
+  .pub-finde { margin:0 0 10px; }
+  .pub-finde input { max-width:280px; width:100%; box-sizing:border-box; padding:8px 14px; border:1px solid var(--grau-rand); border-radius:20px; background:var(--card); color:var(--text); font-size:14px; }
+  .rek-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; }
+  .rek-karte { flex:0 1 224px; box-sizing:border-box; border:1px solid var(--grau-rand); border-radius:12px; background:var(--grau-bg); padding:16px 14px; text-align:center; cursor:pointer; font-family:inherit; color:var(--text); }
+  .rek-karte:hover { border-color:var(--rot); }
   .rek-ic { font-size:26px; line-height:1; }
   .rek-wert { font-size:26px; font-weight:800; color:var(--rot); margin:6px 0 2px; }
   .rek-tit { font-size:12px; color:var(--text-blass); text-transform:uppercase; letter-spacing:.03em; }
   .rek-name { font-size:15px; font-weight:600; margin-top:7px; }
+  .rek-mehr { font-size:12px; color:var(--rot); font-weight:600; margin-top:9px; }
   .pub-tagliste { display:flex; flex-direction:column; gap:8px; max-width:820px; margin:0 auto; }
   .pub-tagrow { display:flex; align-items:center; gap:6px 14px; flex-wrap:wrap; width:100%; box-sizing:border-box; text-align:left; background:var(--grau-bg); border:1px solid var(--grau-rand); border-radius:10px; padding:12px 16px; cursor:pointer; color:var(--text); font-size:15px; font-family:inherit; }
   .pub-tagrow:hover { border-color:var(--rot); background:var(--rot-hell); }
@@ -384,6 +392,7 @@
       <div class="pfp-grid"><label class="pub-farb"><span>180</span><input type="color" data-hlk="180" value="#d6a616" oninput="pubSetHlFarbe('180',this.value)"></label><label class="pub-farb"><span>171+</span><input type="color" data-hlk="171" value="#e67e14" oninput="pubSetHlFarbe('171',this.value)"></label><label class="pub-farb"><span>Highfinish</span><input type="color" data-hlk="hf" value="#1e9e4a" oninput="pubSetHlFarbe('hf',this.value)"></label><label class="pub-farb"><span>Low Legs</span><input type="color" data-hlk="leg" value="#2d6ed7" oninput="pubSetHlFarbe('leg',this.value)"></label><label class="pub-farb"><span>Bull</span><input type="color" data-hlk="bull" value="#c92d2d" oninput="pubSetHlFarbe('bull',this.value)"></label><label class="pub-farb"><span>Ø</span><input type="color" data-hlk="avg" value="#8a9099" oninput="pubSetHlFarbe('avg',this.value)"></label></div>
       <div style="text-align:right;margin-top:8px"><button class="pub-farb-reset" onclick="pubHlFarbenReset()">↺ Standard</button></div>
     </div>
+    
     <div id="pubNeuBanner" class="pub-neu-banner" style="display:none">
       <span class="pnb-text"></span>
       <button class="pnb-close" onclick="pubBannerSchliessen()" title="Schließen">×</button>
@@ -872,6 +881,7 @@ function pubRanglisteHtml() {
   return `
   <div class="card">
     <h2 style="margin:0 0 8px">${nSpieltage}. Competitionrangliste · Saison ${esc(sn.name)}</h2>
+    <div class="pub-finde"><input type="search" placeholder="🔎 Deinen Namen finden…" autocomplete="off" oninput="pubFindeMich(this.value)"></div>
     ${auszLegende(ausz)}
     ${!zeilen.length ? '<p class="muted">Noch keine abgeschlossenen Spieltage in dieser Saison.</p>' : `
     <div style="overflow-x:auto"><table class="daten award-tabelle raster kompakt">
@@ -1072,46 +1082,102 @@ function pubSpieltagListe() { PUB.spieltagAnsicht = null; pubRender(); }
 function pubSpieltag(v) { PUB.tagNr = (v === '' || v == null) ? null : +v; pubRender(); }
 
 function pubRekordeHtml() {
+  if (PUB.rekordKey) return pubRekordDetailHtml(PUB.rekordKey);
   const sn = aktSaison();
   const tage = (sn.days || []).filter(t => t.status === 'abgeschlossen');
   if (!tage.length) return '<p class="muted" style="text-align:center;padding:22px 0">Noch keine abgeschlossenen Spieltage in dieser Saison.</p>';
-  const summe = {};
-  let b180 = null, bHF = null, bLeg = null, bAvg = null, bBull = null, b171T = null;
-  tage.forEach(t => Object.entries(t.results || {}).forEach(function (e) {
-    const pid = e[0], r = e[1] || {};
-    const s = summe[pid] || (summe[pid] = { d180: 0, d171: 0, hf: 0 });
-    s.d180 += r.d180 || 0; s.d171 += r.d171 || 0; s.hf += (r.hf ? r.hf.length : 0);
-    if (r.d180 && (!b180 || r.d180 > b180.v)) b180 = { v: r.d180, pid: pid, tag: t.nr };
-    if (r.d171 && (!b171T || r.d171 > b171T.v)) b171T = { v: r.d171, pid: pid, tag: t.nr };
-    (r.hf || []).forEach(function (x) { if (!bHF || x > bHF.v) bHF = { v: x, pid: pid, tag: t.nr }; });
-    (r.legs || []).forEach(function (x) { if (!bLeg || x < bLeg.v) bLeg = { v: x, pid: pid, tag: t.nr }; });
-    if (r.avg != null && (!bAvg || r.avg > bAvg.v)) bAvg = { v: r.avg, pid: pid, tag: t.nr };
-    (r.bull || []).forEach(function (x) { if (!bBull || x > bBull.v) bBull = { v: x, pid: pid, tag: t.nr }; });
-  }));
-  const topS = function (key) { let b = null; Object.keys(summe).forEach(function (pid) { const v = summe[pid][key]; if (v > 0 && (!b || v > b.v)) b = { v: v, pid: pid }; }); return b; };
   const nm = function (pid) { return esc((spieler(pid) || {}).name || '?'); };
-  const karte = function (icon, titel, rec, fmtv) {
-    if (!rec) return '';
-    return `<div class="rek-karte"><div class="rek-ic">${icon}</div><div class="rek-wert">${fmtv(rec.v)}</div><div class="rek-tit">${titel}</div><div class="rek-name">${nm(rec.pid)}${rec.tag ? ` <span class="muted">· Spieltag ${rec.tag}</span>` : ''}</div></div>`;
-  };
-  const cards = [
-    karte('🎯', 'Höchster Tages-Schnitt', bAvg, function (v) { return 'Ø' + fmt1(v); }),
-    karte('💯', 'Meiste 180 an einem Tag', b180, function (v) { return v + '×'; }),
-    karte('🏆', 'Meiste 180 gesamt', topS('d180'), function (v) { return v + '×'; }),
-    karte('🎪', 'Höchstes Highfinish', bHF, function (v) { return v; }),
-    karte('⚡', 'Bestes Leg (wenigste Darts)', bLeg, function (v) { return v + ' Darts'; }),
-    karte('🔴', 'Höchster Bullfinish', bBull, function (v) { return v; }),
-    karte('✨', 'Meiste 171+ gesamt', topS('d171'), function (v) { return v + '×'; }),
-    karte('🎖️', 'Meiste Highfinishes gesamt', topS('hf'), function (v) { return v + '×'; })
-  ].filter(Boolean).join('');
+  const cards = pubRekordDefs().map(function (cfg) {
+    const eintr = pubRekordEintraege(cfg);
+    if (!eintr.length) return '';
+    const best = eintr[0].val;
+    const halter = eintr.filter(function (e) { return e.val === best; });
+    const seen = {}, namen = [];
+    halter.forEach(function (h) { if (!seen[h.pid]) { seen[h.pid] = 1; namen.push(nm(h.pid)); } });
+    const nameStr = namen.slice(0, 3).join(', ') + (namen.length > 3 ? ' +' + (namen.length - 3) : '');
+    const tagStr = (namen.length === 1 && halter.length === 1 && halter[0].tag) ? ` <span class="muted">· Spieltag ${halter[0].tag}</span>`
+      : (namen.length > 1 ? ` <span class="muted">· ${namen.length}× geteilt</span>` : '');
+    return `<button class="rek-karte" onclick="pubRekordOeffnen('${cfg.key}')">
+      <div class="rek-ic">${cfg.icon}</div><div class="rek-wert">${cfg.fmt(best)}</div>
+      <div class="rek-tit">${cfg.titel}</div><div class="rek-name">${nameStr}${tagStr}</div>
+      <div class="rek-mehr">ganze Liste ›</div></button>`;
+  }).filter(Boolean).join('');
   return `<div class="card"><h2 style="margin:0 0 4px;text-align:center">🏅 Rekorde · Saison ${esc(sn.name)}</h2>
-    <p class="muted" style="text-align:center;margin:0 0 14px">Die Bestleistungen dieser Saison – über alle Spieltage</p>
+    <p class="muted" style="text-align:center;margin:0 0 16px">Die Bestleistungen dieser Saison – tippe eine Karte für die komplette Rangliste</p>
     <div class="rek-grid">${cards || '<p class="muted" style="text-align:center">Noch keine Highlights erfasst.</p>'}</div></div>`;
 }
 
-function pubProfilOeffnen(pid) { PUB.profilPid = pid; pubRender(); window.scrollTo(0, 0); }
+function pubRekordDefs() {
+  return [
+    { key: 'avgTag', icon: '🎯', titel: 'Höchster Tages-Schnitt', typ: 'tag', get: function (r) { return r.avg; }, fmt: function (v) { return 'Ø' + fmt1(v); }, richtung: 'max' },
+    { key: 'd180Tag', icon: '💯', titel: 'Meiste 180 an einem Tag', typ: 'tag', get: function (r) { return r.d180; }, fmt: function (v) { return v + '×'; }, richtung: 'max' },
+    { key: 'd180S', icon: '🏆', titel: 'Meiste 180 gesamt', typ: 'saison', sumKey: 'd180', fmt: function (v) { return v + '×'; }, richtung: 'max' },
+    { key: 'hf', icon: '🎪', titel: 'Höchstes Highfinish', typ: 'multi', arr: function (r) { return r.hf; }, fmt: function (v) { return '' + v; }, richtung: 'max' },
+    { key: 'leg', icon: '⚡', titel: 'Bestes Leg (wenigste Darts)', typ: 'multi', arr: function (r) { return r.legs; }, fmt: function (v) { return v + ' Darts'; }, richtung: 'min' },
+    { key: 'bull', icon: '🔴', titel: 'Höchster Bullfinish', typ: 'multi', arr: function (r) { return r.bull; }, fmt: function (v) { return '' + v; }, richtung: 'max' },
+    { key: 'd171S', icon: '✨', titel: 'Meiste 171+ gesamt', typ: 'saison', sumKey: 'd171', fmt: function (v) { return v + '×'; }, richtung: 'max' },
+    { key: 'hfS', icon: '🎖️', titel: 'Meiste Highfinishes gesamt', typ: 'saison', sumKey: 'hf', fmt: function (v) { return v + '×'; }, richtung: 'max' }
+  ];
+}
 
-function pubProfilSchliessen() { PUB.profilPid = null; pubRender(); }
+function pubRekordEintraege(cfg) {
+  const sn = aktSaison();
+  const tage = (sn.days || []).filter(t => t.status === 'abgeschlossen');
+  const eintr = [];
+  if (cfg.typ === 'saison') {
+    const summe = {};
+    tage.forEach(t => Object.keys(t.results || {}).forEach(function (pid) {
+      const r = t.results[pid] || {}; const s = summe[pid] || (summe[pid] = { d180: 0, d171: 0, hf: 0 });
+      s.d180 += r.d180 || 0; s.d171 += r.d171 || 0; s.hf += (r.hf ? r.hf.length : 0);
+    }));
+    Object.keys(summe).forEach(function (pid) { const v = summe[pid][cfg.sumKey]; if (v > 0) eintr.push({ pid: pid, val: v }); });
+  } else {
+    tage.forEach(t => Object.keys(t.results || {}).forEach(function (pid) {
+      const r = t.results[pid] || {};
+      if (cfg.typ === 'tag') { const v = cfg.get(r); if (v != null && v > 0) eintr.push({ pid: pid, tag: t.nr, val: v }); }
+      else { (cfg.arr(r) || []).forEach(function (v) { eintr.push({ pid: pid, tag: t.nr, val: v }); }); }
+    }));
+  }
+  eintr.sort(function (a, b) { return cfg.richtung === 'min' ? a.val - b.val : b.val - a.val; });
+  return eintr;
+}
+
+function pubRekordDetailHtml(key) {
+  const cfg = pubRekordDefs().find(function (c) { return c.key === key; });
+  if (!cfg) { PUB.rekordKey = null; return pubRekordeHtml(); }
+  const eintr = pubRekordEintraege(cfg);
+  const limit = PUB.rekordLimit || 15;
+  const zeige = eintr.slice(0, limit);
+  let rang = 0, letzter = null;
+  const rows = zeige.map(function (e, i) {
+    if (e.val !== letzter) { rang = i + 1; letzter = e.val; }
+    return `<tr><td class="num muted">${rang}</td><td><span class="pub-name-link" onclick="pubProfilOeffnen('${e.pid}')">${esc((spieler(e.pid) || {}).name || '?')}</span></td><td class="num"><b>${cfg.fmt(e.val)}</b></td><td>${e.tag ? ('Spieltag ' + e.tag) : '<span class="muted">Saison gesamt</span>'}</td></tr>`;
+  }).join('');
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <h2 style="margin:0">${cfg.icon} ${cfg.titel}</h2>
+      <button class="btn klein" onclick="pubRekordSchliessen()">← Zurück zu den Rekorden</button>
+    </div>
+    <div class="pub-filter" style="justify-content:flex-start;margin:10px 0 0">Anzeigen:
+      <select onchange="pubRekordLimit(this.value)">${[15, 25, 50, 9999].map(function (n) { return `<option value="${n}" ${limit === n ? 'selected' : ''}>${n >= 9999 ? 'alle' : 'Top ' + n}</option>`; }).join('')}</select>
+      <span class="muted">(${eintr.length} Einträge gesamt)</span>
+    </div>
+    <div style="overflow-x:auto"><table class="daten"><thead><tr><th class="num">#</th><th>Name</th><th class="num">Wert</th><th>Wann</th></tr></thead>
+    <tbody>${rows || '<tr><td colspan="4" class="muted" style="text-align:center">Keine Einträge.</td></tr>'}</tbody></table></div>
+  </div>`;
+}
+
+function pubRekordOeffnen(key) { PUB.rekordKey = key; PUB.rekordLimit = 15; pubRender(); window.scrollTo(0, 0); }
+
+function pubRekordSchliessen() { PUB.rekordKey = null; pubRender(); }
+
+function pubRekordLimit(v) { PUB.rekordLimit = (+v) || 15; pubRender(); }
+
+function pubProfilOeffnen(pid) { PUB.profilPid = pid; PUB.profilTag = null; pubRender(); window.scrollTo(0, 0); }
+
+function pubProfilSchliessen() { PUB.profilPid = null; PUB.profilTag = null; pubRender(); }
+
+function pubProfilTag(v) { PUB.profilTag = (v === '' || v == null) ? null : +v; pubRender(); }
 
 function pubProfilVerlaufSvg(pid) {
   const sn = aktSaison();
@@ -1154,7 +1220,11 @@ function pubProfilHtml(pid) {
     <div class="pt-zeile" style="margin-top:8px"><span class="pt-label">Rangliste</span> ${rlInfo}</div>
     <div class="pt-zeile"><span class="pt-label">Setzliste</span> ${slInfo}</div>
     ${graph ? `<h3 style="margin:18px 0 6px">📈 Platzierungs-Verlauf (Saison ${esc(sn.name)})</h3>${graph}` : ''}
-    ${tage.length ? `<h3 style="margin:18px 0 8px">📅 Spieltage (${tage.length})</h3>${tage.map(t => pubSpielerTagDetailHtml(pid, t)).join('')}` : '<p class="muted" style="margin-top:14px">In dieser Saison noch keine Teilnahme.</p>'}
+    ${tage.length ? `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:18px 0 8px">
+        <h3 style="margin:0">📅 Spieltage (${tage.length})</h3>
+        <label style="font-size:13px;color:var(--text-blass)">Spieltag <select onchange="pubProfilTag(this.value)"><option value="">alle anzeigen</option>${tage.map(t => `<option value="${t.nr}" ${PUB.profilTag === t.nr ? 'selected' : ''}>Spieltag ${t.nr}${datumDE(t.date) ? ' · ' + esc(datumDE(t.date)) : ''}</option>`).join('')}</select></label>
+      </div>
+      ${tage.filter(t => PUB.profilTag == null || t.nr === PUB.profilTag).map(t => pubSpielerTagDetailHtml(pid, t)).join('')}` : '<p class="muted" style="margin-top:14px">In dieser Saison noch keine Teilnahme.</p>'}
   </div>`;
 }
 
@@ -1179,9 +1249,9 @@ function pubRender() {
   document.getElementById('pubInhalt').innerHTML = inh;
 }
 
-function pubTab(t) { PUB.profilPid = null; PUB.tab = t; pubRender(); window.scrollTo(0, 0); if (t === 'suchen') { const f = document.getElementById('pubSuchFeld'); if (f) f.focus(); } }
+function pubTab(t) { PUB.profilPid = null; PUB.profilTag = null; PUB.rekordKey = null; PUB.tab = t; pubRender(); window.scrollTo(0, 0); if (t === 'suchen') { const f = document.getElementById('pubSuchFeld'); if (f) f.focus(); } }
 
-function pubSaison(v) { PUB.saisonIdx = +v; PUB.tagNr = null; PUB.spieltagAnsicht = null; PUB.suchTag = {}; PUB.profilPid = null; pubRender(); }
+function pubSaison(v) { PUB.saisonIdx = +v; PUB.tagNr = null; PUB.spieltagAnsicht = null; PUB.suchTag = {}; PUB.profilPid = null; PUB.profilTag = null; PUB.rekordKey = null; pubRender(); }
 
 function pubFilter(v) { const n = parseInt(v, 10); PUB.filterTage = isNaN(n) ? 10 : Math.max(1, n); PUB.alleSetz = false; pubRender(); }
 
@@ -1229,6 +1299,19 @@ function pubSpalte(k, an) {
 
 function pubSuche(q) { PUB.suche = q; pubRender(); }
 
+function pubFindeMich(q) {
+  const nq = (q || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#pubInhalt table.daten tbody tr');
+  let first = null;
+  rows.forEach(function (r) {
+    const zelle = r.querySelector('.sticky-n') || r.cells[1];
+    const treffer = !!nq && zelle && zelle.textContent.toLowerCase().indexOf(nq) >= 0;
+    r.classList.toggle('finde-treffer', treffer);
+    if (treffer && !first) first = r;
+  });
+  if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 function pubNeuesterSpieltag() {
   let best = null;
   data.seasons.forEach((s, i) => { if (s.carryOnly) return; (s.days || []).forEach(t => { if (t.status === 'abgeschlossen' && (!best || i > best.si || (i === best.si && t.nr > best.nr))) best = { si: i, nr: t.nr, name: s.name }; }); });
@@ -1256,7 +1339,7 @@ const PUB = { tab: "rangliste", saisonIdx: 2, filterTage: 5, alleSetz: false,
   farbe: lsGet("tsgPubFarbe") || null,
   spalten: (function(){ var d = {"hl":true,"d180":true,"d171":false,"hf":false,"topHf":false,"bull":false,"avg":true,"s140":false,"s100":false,"s80":false,"a9":false,"a12":false,"a15":false,"a18":false,"leg9":false,"leg10":false,"leg11":false,"leg12":false,"leg13":false,"leg14":false,"leg15":false,"leg16":false,"leg17":false,"leg18":false,"leg19":false,"leg20":false}; try { return Object.assign({}, d, JSON.parse(lsGet("tsgPubSpalten")) || {}); } catch(e){ return d; } })(),
   hlFarben: (function(){ try { return JSON.parse(lsGet("tsgPubHlFarben")) || null; } catch(e){ return null; } })(),
-  suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {}, profilPid: null };
+  suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {}, profilPid: null, profilTag: null, rekordKey: null, rekordLimit: 15 };
 function aktSaison(){ return data.seasons[PUB.saisonIdx] || data.seasons[0]; }
 PUB.hlFarbenDefault = (function(){ var cs = getComputedStyle(document.documentElement); var o = {}; ["180","171","hf","leg","bull","avg"].forEach(function(k){ o[k] = cs.getPropertyValue("--hlc-"+k).trim(); }); return o; })();
 pubApplyTheme();
