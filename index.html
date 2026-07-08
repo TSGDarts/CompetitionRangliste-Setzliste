@@ -413,6 +413,14 @@
   .pub-news-text { font-size:14px; line-height:1.6; color:var(--text); }
   tr.finde-treffer td { box-shadow: inset 0 0 0 2px var(--rot); }
   .pub-finde { margin:0 0 10px; }
+  .form-legende { text-align:center; font-size:12px; color:var(--text-blass); margin:0 0 8px; }
+  .vgl-zeile { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .vgl-zeile select { font-size:14px; padding:6px 8px; border:1px solid var(--grau-rand); border-radius:8px; background:var(--card); color:var(--text); max-width:220px; }
+  .vgl-kopf { display:flex; align-items:center; justify-content:center; gap:14px; font-size:17px; font-weight:700; margin-top:4px; }
+  .vgl-bilanz { font-size:24px; font-weight:800; }
+  .form5 { display:inline-flex; gap:2px; }
+  .form5 .p5 { font-size:10.5px; min-width:17px; padding:1px 2px; margin:0; cursor:help; }
+  .form-td { white-space:nowrap; }
   .pub-rl-stand { text-align:center; margin:0 0 10px; font-size:13.5px; color:var(--text-blass); }
   .pub-rl-stand select { font-size:13px; padding:5px 8px; border:1px solid var(--grau-rand); border-radius:8px; background:var(--card); color:var(--text); }
   #pubInhalt .regel-card { max-width:760px; margin-left:auto; margin-right:auto; text-align:left; }
@@ -500,6 +508,24 @@
       <input type="search" id="pubSuchFeld" placeholder="🔍 Spieler suchen → Profil öffnen (Name/Nachname)…" autocomplete="off" oninput="pubSuche(this.value)">
     </div>
     <div id="pubInhalt"></div>
+    <details class="pub-install"><summary>🏆 Hall of Fame – Saisonsieger</summary><div class="pub-install-body">
+    <p class="muted" style="margin-top:0">Das Podium aller abgeschlossenen Saisons (in Klammern: Punkte). Name antippen öffnet das Profil in der jeweiligen Saison.</p>
+    <div style="overflow-x:auto"><table class="daten"><thead><tr><th>Saison</th><th>🥇 Meister</th><th>🥈 Zweiter</th><th>🥉 Dritter</th></tr></thead><tbody><tr><td><b>2025/26</b></td><td>🥇 <span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('ferdinand-schneck')">Ferdinand Schneck</span> <span class="muted">(609)</span></td><td>🥈 <span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('simon-thanner')">Simon Thanner</span> <span class="muted">(572)</span></td><td>🥉 <span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('matthias-rau')">Matthias Rau</span> <span class="muted">(542)</span></td></tr></tbody></table></div>
+  </div></details>
+    
+    <details class="pub-install">
+      <summary>🤺 Spieler-Vergleich (Head-to-Head)</summary>
+      <div class="pub-install-body">
+        <p class="muted" style="margin-top:0">Zwei Spieler wählen – zeigt die direkte Bilanz aus den erfassten Einzelspielen.</p>
+        <div class="vgl-zeile">
+          <select id="vglA" onchange="pubVergleich()"><option value="">– Spieler A –</option><option value="aaron-albrecht">Aaron Albrecht</option><option value="achim-stoof">Achim Stoof</option><option value="alex-rammig">Alex Rammig</option><option value="alex-walter">Alex Walter</option><option value="alexander-boos">Alexander Boos</option><option value="alexander-domme">Alexander Domme</option><option value="alexander-gall">Alexander Gall</option><option value="alexander-pruy">Alexander Pruy</option><option value="alexander-schwendner">Alexander Schwendner</option><option value="alpay-koekyar">Alpay Kökyar</option><option value="andi-netter">Andi Netter</option><option value="andr-nelle">André Nelle</option><option value="andr-opitsch">André Opitsch</option><option value="andreas-hager">Andreas Hager</option><option value="andy-rachinger">Andy Rachinger</option><option value="andy-weitz">Andy Weitz</option><option value="h-lawatscheck-angelo">Angelo H&#39;Lawatscheck</option><option value="anthony-franke">Anthony Franke</option><option value="armend-krasniqi">Armend Krasniqi</option><option value="armin-braun">Armin Braun</option><option value="bastian-boehm">Bastian Böhm</option><option value="benedikt-billmaier">Benedikt Billmaier</option><option value="benedikt-hoenisch">Benedikt Hönisch</option><option value="benedikt-schwegler">Benedikt Schwegler</option><option value="benjamin-martin">Benjamin Martin</option><option value="benjamin-winter">Benjamin Winter</option><option value="benni-ibrahimaj">Benni Ibrahimaj</option><option value="bernd-miederer">Bernd Miederer</option><option value="bianca-friedrich">Bianca Friedrich</option><option value="bjoern-reitz">Björn Reitz</option><option value="candy-heigwer">Candy Heigwer</option><option value="carsten-sprenger">Carsten Sprenger</option><option value="cathrin-friedrich">Cathrin Friedrich</option><option value="chalkidis-dimitrios">Chalkidis Dimitrios</option><option value="chris-diroff">Chris Diroff</option><option value="chris-rachinger">Chris Rachinger</option><option value="christian-aue">Christian Aue</option><option value="christina-nessler">Christina Neßler</option><option value="christine-kopp">Christine Kopp</option><option value="christoph-netter">Christoph Netter</option><option value="christoph-reim">Christoph Reim</option><option value="christoph-schwendner">Christoph Schwendner</option><option value="christoph-tzabazis">Christoph Tzabazis</option><option value="christoph-zwingel">Christoph Zwingel</option><option value="christopher-deetz">Christopher Deetz</option><option value="christopher-scholz">Christopher Scholz</option><option value="connor-musick">Connor Musick</option><option value="daniel-caputo">Daniel Caputo</option><option value="daniel-eulitz">Daniel Eulitz</option><option value="daniel-gassmann">Daniel Gaßmann</option><option value="daniel-kaeser">Daniel Käser</option><option value="daniel-kugler">Daniel Kugler</option><option value="daniel-stanko">Daniel Stanko</option><option value="daniel-walthier">Daniel Walthier</option><option value="daniel-wolff">Daniel Wolff</option><option value="danny-jones">Danny Jones</option><option value="david-frysztacki">David Frysztacki</option><option value="david-schoeniger">David Schöniger</option><option value="dennis-bologna">Dennis Bologna</option><option value="devin-vogel">Devin Vogel</option><option value="domenic-koeppel">Domenic Köppel</option><option value="dominic-oetter">Dominic Ötter</option><option value="dominic-winkler">Dominic Winkler</option><option value="dominik-doetschel">Dominik Dötschel</option><option value="dominik-huettinger">Dominik Hüttinger</option><option value="dominik-kugler">Dominik Kugler</option><option value="dustin-bonia">Dustin Bonia</option><option value="elias-aidoudi">Elias Aidoudi</option><option value="elias-gerner">Elias Gerner</option><option value="elias-krause">Elias Krause</option><option value="emre-oezel">Emre Özel</option><option value="enno-feuerherm">Enno Feuerherm</option><option value="erhard-setz">Erhard Setz</option><option value="eva-huebner">Eva Hübner</option><option value="fabian-schuessler">Fabian Schüssler</option><option value="fabian-wagner">Fabian Wagner</option><option value="fabian-wiedbrauck">Fabian Wiedbrauck</option><option value="fahri-savas">Fahri Savas</option><option value="felix-binder">Felix Binder</option><option value="ferdinand-schneck">Ferdinand Schneck</option><option value="florian-blochberger">Florian Blochberger</option><option value="florian-doetsch">Florian Dötsch</option><option value="florian-feuerlein">Florian Feuerlein</option><option value="florian-raddatz">Florian Raddatz</option><option value="florian-will">Florian Will</option><option value="frank-enzenhoefer">Frank Enzenhöfer</option><option value="frank-friedrich">Frank Friedrich</option><option value="frank-illing">Frank Illing</option><option value="gerhard-gerner">Gerhard Gerner</option><option value="giuseppe-giurdanella">Giuseppe Giurdanella</option><option value="giuseppe-ruggeri">Giuseppe Ruggeri</option><option value="hans-peter-koch">Hans-Peter Koch</option><option value="harald-buckl">Harald Buckl</option><option value="heiner-hahn">Heiner Hahn</option><option value="helmut-gampper">Helmut Gampper</option><option value="holger-schoen">Holger Schön</option><option value="jan-albert">Jan Albert</option><option value="jan-eibl">Jan Eibl</option><option value="jan-nitsche">Jan Nitsche</option><option value="jan-vaethjunker">Jan Väthjunker</option><option value="jan-wagner">Jan Wagner</option><option value="jannik-mueller">Jannik Müller</option><option value="jannik-timov">Jannik Timov</option><option value="jano-heim">Jano Heim</option><option value="joe-guethlein">Joe Güthlein</option><option value="johannes-knautz">Johannes Knautz</option><option value="johannes-roth">Johannes Roth</option><option value="johannes-willner">Johannes Willner</option><option value="johannes-zwingel">Johannes Zwingel</option><option value="jonas-laumer">Jonas Laumer</option><option value="jonas-mayer">Jonas Mayer</option><option value="jonas-proebsting">Jonas Pröbsting</option><option value="jonathan-hoelzl">Jonathan Hölzl</option><option value="jonathan-schoen">Jonathan Schön</option><option value="joerg-peine">Jörg Peine</option><option value="joerg-siemantel">Jörg Siemantel</option><option value="jozsef-gyoergy">Jozsef György</option><option value="julian-friess">Julian Frieß</option><option value="julian-hoefler">Julian Höfler</option><option value="julian-rammler">Julian Rammler</option><option value="juergen-prichta">Jürgen Prichta</option><option value="juergen-schuetz">Jürgen Schütz</option><option value="justin-junker">Justin Junker</option><option value="kai-bayer">Kai Bayer</option><option value="kai-volgardt">Kai Volgardt</option><option value="karin-drechsel">Karin Drechsel</option><option value="karl-heinz-beck">Karl-Heinz Beck</option><option value="katrin-preuss">Katrin Preuß</option><option value="kevin-hupfer">Kevin Hupfer</option><option value="kevin-wagner">Kevin Wagner</option><option value="kira-mertens">Kira Mertens</option><option value="klaus-bayer">Klaus Bayer</option><option value="lennard-peine">Lennard Peine</option><option value="leo-hafenbraedl">Leo Hafenbrädl</option><option value="leon-lehmeyer">Leon Lehmeyer</option><option value="leon-schweiger">Leon Schweiger</option><option value="lissi-link">Lissi Link</option><option value="louis-hager">Louis Hager</option><option value="lucas-gerner">Lucas Gerner</option><option value="lukas-burkhartsmaier">Lukas Burkhartsmaier</option><option value="lukas-gussner">Lukas Gußner</option><option value="lukas-keim">Lukas Keim</option><option value="lukas-kuenzel">Lukas Künzel</option><option value="lukas-lehmeier">Lukas Lehmeier</option><option value="lukas-rauh">Lukas Rauh</option><option value="maccioni-raffaella">Maccioni Raffaella</option><option value="manuel-bresler">Manuel Bresler</option><option value="manuel-richter">Manuel Richter</option><option value="manuel-speil">Manuel Speil</option><option value="marcel-wanka">Marcel Wanka</option><option value="marco-fichtner">Marco Fichtner</option><option value="marco-hein">Marco Hein</option><option value="marco-jauch">Marco Jauch</option><option value="marco-kagel">Marco Kagel</option><option value="marco-morgalla">Marco Morgalla</option><option value="marcus-grafe">Marcus Grafe</option><option value="mario-zeller">Mario Zeller</option><option value="mark-bayer">Mark Bayer</option><option value="markus-braun">Markus Braun</option><option value="markus-kelber">Markus Kelber</option><option value="markus-summerer">Markus Summerer</option><option value="marlin-strobel">Marlin Strobel</option><option value="martin-freisleben">Martin Freisleben</option><option value="martin-friedrich">Martin Friedrich</option><option value="martin-sowa">Martin Sowa</option><option value="matthias-aechtner">Matthias Aechtner</option><option value="matthias-bischoff">Matthias Bischoff</option><option value="matthias-herzog">Matthias Herzog</option><option value="matthias-rau">Matthias Rau</option><option value="matthias-waelzlein">Matthias Wälzlein</option><option value="max-hammer">Max Hammer</option><option value="max-hempel">Max Hempel</option><option value="max-laub">Max Laub</option><option value="max-roenz">Max Rönz</option><option value="max-wunder">Max Wunder</option><option value="max-zimmermann">Max Zimmermann</option><option value="maximilian-bartenschlager">Maximilian Bartenschlager</option><option value="maximilian-biller">Maximilian Biller</option><option value="maximilian-eberlein">Maximilian Eberlein</option><option value="maximilian-gwizdala">Maximilian Gwizdala</option><option value="maximilian-riesner">Maximilian Riesner</option><option value="maximilian-valta">Maximilian Valta</option><option value="melanie-daffner">Melanie Daffner</option><option value="michael-boehme">Michael Böhme</option><option value="michael-kraut">Michael Kraut</option><option value="michael-merstorf">Michael Merstorf</option><option value="michael-noeth">Michael Nöth</option><option value="michael-sengenleitner">Michael Sengenleitner</option><option value="michael-werzinger">Michael Werzinger</option><option value="michelle-riedl">Michelle Riedl</option><option value="nick-lemke">Nick Lemke</option><option value="nico-fichtner">Nico Fichtner</option><option value="nico-reinsch">Nico Reinsch</option><option value="niklas-rau">Niklas Rau</option><option value="nikolai-beckstein">Nikolai Beckstein</option><option value="nils-fischer">Nils Fischer</option><option value="noah-huebner">Noah Hübner</option><option value="noah-nikolic">Noah Nikolic</option><option value="norik-kroczek">Norik Kroczek</option><option value="norman-goetz">Norman Götz</option><option value="oliver-blechschmidt">Oliver Blechschmidt</option><option value="oliver-gesell">Oliver Gesell</option><option value="paddy-mccarthy">Paddy McCarthy</option><option value="pascal-bierlein">Pascal Bierlein</option><option value="pascal-linder">Pascal Linder</option><option value="patrick-kagel">Patrick Kagel</option><option value="patrick-lang">Patrick Lang</option><option value="patrick-wanka">Patrick Wanka</option><option value="paul-hegendoerfer">Paul Hegendörfer</option><option value="paul-iwanski">Paul Iwanski</option><option value="philipp-langhans">Philipp Langhans</option><option value="philipp-merlein">Philipp Merlein</option><option value="philipp-reisenhauer">Philipp Reisenhauer</option><option value="philipp-seitz">Philipp Seitz</option><option value="phillip-loetsch">Phillip Lötsch</option><option value="ren-pusch">René Pusch</option><option value="ren-wolf">René Wolf</option><option value="robert-kaski">Robert Kaski</option><option value="rolf-kluzik">Rolf Kluzik</option><option value="ronan-cummins">Ronan Cummins</option><option value="ruben-lesniczack">Ruben Lesniczack</option><option value="sabine-hofbauer">Sabine Hofbauer</option><option value="samu-schneider">Samu Schneider</option><option value="samuel-stoeckel">Samuel Stöckel</option><option value="sandra-netter">Sandra Netter</option><option value="sebastian-bader">Sebastian Bader</option><option value="sebastian-burkhardt">Sebastian Burkhardt</option><option value="sebastian-sluik">Sebastian Sluik</option><option value="sebastian-wagner">Sebastian Wagner</option><option value="silas-toth">Silas Toth</option><option value="silvio-mueller">Silvio Müller</option><option value="simon-heinz">Simon Heinz</option><option value="simon-thanner">Simon Thanner</option><option value="stefan-albert">Stefan Albert</option><option value="stefan-ell">Stefan Ell</option><option value="stefan-kittsteiner">Stefan Kittsteiner</option><option value="steffen-schreiber">Steffen Schreiber</option><option value="steffen-winterhager">Steffen Winterhager</option><option value="stephan-fuchs">Stephan Fuchs</option><option value="susanne-albert">Susanne Albert</option><option value="tatjana-krause">Tatjana Krause</option><option value="theo-martin">Theo Martin</option><option value="thomas-bierlein">Thomas Bierlein</option><option value="thomas-gerngross">Thomas Gerngroß</option><option value="thomas-nessler">Thomas Neßler</option><option value="thomas-pfister">Thomas Pfister</option><option value="thorsten-kraemer">Thorsten Krämer</option><option value="tim-vaupel">Tim Vaupel</option><option value="tim-waitz">Tim Waitz</option><option value="tim-weber">Tim Weber</option><option value="timm-wagner">Timm Wagner</option><option value="timo-keltz">Timo Keltz</option><option value="timo-kroczek">Timo Kroczek</option><option value="tizian-nauck">Tizian Nauck</option><option value="tizian-roeper">Tizian Roeper</option><option value="tjorben-medenwaldt">Tjorben Medenwaldt</option><option value="tobi-grimm">Tobi Grimm</option><option value="tobias-holzhauser">Tobias Holzhauser</option><option value="tobias-hutzler">Tobias Hutzler</option><option value="tobias-laumer">Tobias Laumer</option><option value="tobias-leidl">Tobias Leidl</option><option value="tobias-pfister">Tobias Pfister</option><option value="tobias-ruckriegel">Tobias Ruckriegel</option><option value="tom-brodtke">Tom Brodtke</option><option value="toni-sperber">Toni Sperber</option><option value="viktor-domme">Viktor Domme</option><option value="werner-hager">Werner Hager</option><option value="werner-janke">Werner Janke</option><option value="wolfgang-rammig">Wolfgang Rammig</option><option value="yannick-jasorka">Yannick Jasorka</option></select>
+          <span class="muted">gegen</span>
+          <select id="vglB" onchange="pubVergleich()"><option value="">– Spieler B –</option><option value="aaron-albrecht">Aaron Albrecht</option><option value="achim-stoof">Achim Stoof</option><option value="alex-rammig">Alex Rammig</option><option value="alex-walter">Alex Walter</option><option value="alexander-boos">Alexander Boos</option><option value="alexander-domme">Alexander Domme</option><option value="alexander-gall">Alexander Gall</option><option value="alexander-pruy">Alexander Pruy</option><option value="alexander-schwendner">Alexander Schwendner</option><option value="alpay-koekyar">Alpay Kökyar</option><option value="andi-netter">Andi Netter</option><option value="andr-nelle">André Nelle</option><option value="andr-opitsch">André Opitsch</option><option value="andreas-hager">Andreas Hager</option><option value="andy-rachinger">Andy Rachinger</option><option value="andy-weitz">Andy Weitz</option><option value="h-lawatscheck-angelo">Angelo H&#39;Lawatscheck</option><option value="anthony-franke">Anthony Franke</option><option value="armend-krasniqi">Armend Krasniqi</option><option value="armin-braun">Armin Braun</option><option value="bastian-boehm">Bastian Böhm</option><option value="benedikt-billmaier">Benedikt Billmaier</option><option value="benedikt-hoenisch">Benedikt Hönisch</option><option value="benedikt-schwegler">Benedikt Schwegler</option><option value="benjamin-martin">Benjamin Martin</option><option value="benjamin-winter">Benjamin Winter</option><option value="benni-ibrahimaj">Benni Ibrahimaj</option><option value="bernd-miederer">Bernd Miederer</option><option value="bianca-friedrich">Bianca Friedrich</option><option value="bjoern-reitz">Björn Reitz</option><option value="candy-heigwer">Candy Heigwer</option><option value="carsten-sprenger">Carsten Sprenger</option><option value="cathrin-friedrich">Cathrin Friedrich</option><option value="chalkidis-dimitrios">Chalkidis Dimitrios</option><option value="chris-diroff">Chris Diroff</option><option value="chris-rachinger">Chris Rachinger</option><option value="christian-aue">Christian Aue</option><option value="christina-nessler">Christina Neßler</option><option value="christine-kopp">Christine Kopp</option><option value="christoph-netter">Christoph Netter</option><option value="christoph-reim">Christoph Reim</option><option value="christoph-schwendner">Christoph Schwendner</option><option value="christoph-tzabazis">Christoph Tzabazis</option><option value="christoph-zwingel">Christoph Zwingel</option><option value="christopher-deetz">Christopher Deetz</option><option value="christopher-scholz">Christopher Scholz</option><option value="connor-musick">Connor Musick</option><option value="daniel-caputo">Daniel Caputo</option><option value="daniel-eulitz">Daniel Eulitz</option><option value="daniel-gassmann">Daniel Gaßmann</option><option value="daniel-kaeser">Daniel Käser</option><option value="daniel-kugler">Daniel Kugler</option><option value="daniel-stanko">Daniel Stanko</option><option value="daniel-walthier">Daniel Walthier</option><option value="daniel-wolff">Daniel Wolff</option><option value="danny-jones">Danny Jones</option><option value="david-frysztacki">David Frysztacki</option><option value="david-schoeniger">David Schöniger</option><option value="dennis-bologna">Dennis Bologna</option><option value="devin-vogel">Devin Vogel</option><option value="domenic-koeppel">Domenic Köppel</option><option value="dominic-oetter">Dominic Ötter</option><option value="dominic-winkler">Dominic Winkler</option><option value="dominik-doetschel">Dominik Dötschel</option><option value="dominik-huettinger">Dominik Hüttinger</option><option value="dominik-kugler">Dominik Kugler</option><option value="dustin-bonia">Dustin Bonia</option><option value="elias-aidoudi">Elias Aidoudi</option><option value="elias-gerner">Elias Gerner</option><option value="elias-krause">Elias Krause</option><option value="emre-oezel">Emre Özel</option><option value="enno-feuerherm">Enno Feuerherm</option><option value="erhard-setz">Erhard Setz</option><option value="eva-huebner">Eva Hübner</option><option value="fabian-schuessler">Fabian Schüssler</option><option value="fabian-wagner">Fabian Wagner</option><option value="fabian-wiedbrauck">Fabian Wiedbrauck</option><option value="fahri-savas">Fahri Savas</option><option value="felix-binder">Felix Binder</option><option value="ferdinand-schneck">Ferdinand Schneck</option><option value="florian-blochberger">Florian Blochberger</option><option value="florian-doetsch">Florian Dötsch</option><option value="florian-feuerlein">Florian Feuerlein</option><option value="florian-raddatz">Florian Raddatz</option><option value="florian-will">Florian Will</option><option value="frank-enzenhoefer">Frank Enzenhöfer</option><option value="frank-friedrich">Frank Friedrich</option><option value="frank-illing">Frank Illing</option><option value="gerhard-gerner">Gerhard Gerner</option><option value="giuseppe-giurdanella">Giuseppe Giurdanella</option><option value="giuseppe-ruggeri">Giuseppe Ruggeri</option><option value="hans-peter-koch">Hans-Peter Koch</option><option value="harald-buckl">Harald Buckl</option><option value="heiner-hahn">Heiner Hahn</option><option value="helmut-gampper">Helmut Gampper</option><option value="holger-schoen">Holger Schön</option><option value="jan-albert">Jan Albert</option><option value="jan-eibl">Jan Eibl</option><option value="jan-nitsche">Jan Nitsche</option><option value="jan-vaethjunker">Jan Väthjunker</option><option value="jan-wagner">Jan Wagner</option><option value="jannik-mueller">Jannik Müller</option><option value="jannik-timov">Jannik Timov</option><option value="jano-heim">Jano Heim</option><option value="joe-guethlein">Joe Güthlein</option><option value="johannes-knautz">Johannes Knautz</option><option value="johannes-roth">Johannes Roth</option><option value="johannes-willner">Johannes Willner</option><option value="johannes-zwingel">Johannes Zwingel</option><option value="jonas-laumer">Jonas Laumer</option><option value="jonas-mayer">Jonas Mayer</option><option value="jonas-proebsting">Jonas Pröbsting</option><option value="jonathan-hoelzl">Jonathan Hölzl</option><option value="jonathan-schoen">Jonathan Schön</option><option value="joerg-peine">Jörg Peine</option><option value="joerg-siemantel">Jörg Siemantel</option><option value="jozsef-gyoergy">Jozsef György</option><option value="julian-friess">Julian Frieß</option><option value="julian-hoefler">Julian Höfler</option><option value="julian-rammler">Julian Rammler</option><option value="juergen-prichta">Jürgen Prichta</option><option value="juergen-schuetz">Jürgen Schütz</option><option value="justin-junker">Justin Junker</option><option value="kai-bayer">Kai Bayer</option><option value="kai-volgardt">Kai Volgardt</option><option value="karin-drechsel">Karin Drechsel</option><option value="karl-heinz-beck">Karl-Heinz Beck</option><option value="katrin-preuss">Katrin Preuß</option><option value="kevin-hupfer">Kevin Hupfer</option><option value="kevin-wagner">Kevin Wagner</option><option value="kira-mertens">Kira Mertens</option><option value="klaus-bayer">Klaus Bayer</option><option value="lennard-peine">Lennard Peine</option><option value="leo-hafenbraedl">Leo Hafenbrädl</option><option value="leon-lehmeyer">Leon Lehmeyer</option><option value="leon-schweiger">Leon Schweiger</option><option value="lissi-link">Lissi Link</option><option value="louis-hager">Louis Hager</option><option value="lucas-gerner">Lucas Gerner</option><option value="lukas-burkhartsmaier">Lukas Burkhartsmaier</option><option value="lukas-gussner">Lukas Gußner</option><option value="lukas-keim">Lukas Keim</option><option value="lukas-kuenzel">Lukas Künzel</option><option value="lukas-lehmeier">Lukas Lehmeier</option><option value="lukas-rauh">Lukas Rauh</option><option value="maccioni-raffaella">Maccioni Raffaella</option><option value="manuel-bresler">Manuel Bresler</option><option value="manuel-richter">Manuel Richter</option><option value="manuel-speil">Manuel Speil</option><option value="marcel-wanka">Marcel Wanka</option><option value="marco-fichtner">Marco Fichtner</option><option value="marco-hein">Marco Hein</option><option value="marco-jauch">Marco Jauch</option><option value="marco-kagel">Marco Kagel</option><option value="marco-morgalla">Marco Morgalla</option><option value="marcus-grafe">Marcus Grafe</option><option value="mario-zeller">Mario Zeller</option><option value="mark-bayer">Mark Bayer</option><option value="markus-braun">Markus Braun</option><option value="markus-kelber">Markus Kelber</option><option value="markus-summerer">Markus Summerer</option><option value="marlin-strobel">Marlin Strobel</option><option value="martin-freisleben">Martin Freisleben</option><option value="martin-friedrich">Martin Friedrich</option><option value="martin-sowa">Martin Sowa</option><option value="matthias-aechtner">Matthias Aechtner</option><option value="matthias-bischoff">Matthias Bischoff</option><option value="matthias-herzog">Matthias Herzog</option><option value="matthias-rau">Matthias Rau</option><option value="matthias-waelzlein">Matthias Wälzlein</option><option value="max-hammer">Max Hammer</option><option value="max-hempel">Max Hempel</option><option value="max-laub">Max Laub</option><option value="max-roenz">Max Rönz</option><option value="max-wunder">Max Wunder</option><option value="max-zimmermann">Max Zimmermann</option><option value="maximilian-bartenschlager">Maximilian Bartenschlager</option><option value="maximilian-biller">Maximilian Biller</option><option value="maximilian-eberlein">Maximilian Eberlein</option><option value="maximilian-gwizdala">Maximilian Gwizdala</option><option value="maximilian-riesner">Maximilian Riesner</option><option value="maximilian-valta">Maximilian Valta</option><option value="melanie-daffner">Melanie Daffner</option><option value="michael-boehme">Michael Böhme</option><option value="michael-kraut">Michael Kraut</option><option value="michael-merstorf">Michael Merstorf</option><option value="michael-noeth">Michael Nöth</option><option value="michael-sengenleitner">Michael Sengenleitner</option><option value="michael-werzinger">Michael Werzinger</option><option value="michelle-riedl">Michelle Riedl</option><option value="nick-lemke">Nick Lemke</option><option value="nico-fichtner">Nico Fichtner</option><option value="nico-reinsch">Nico Reinsch</option><option value="niklas-rau">Niklas Rau</option><option value="nikolai-beckstein">Nikolai Beckstein</option><option value="nils-fischer">Nils Fischer</option><option value="noah-huebner">Noah Hübner</option><option value="noah-nikolic">Noah Nikolic</option><option value="norik-kroczek">Norik Kroczek</option><option value="norman-goetz">Norman Götz</option><option value="oliver-blechschmidt">Oliver Blechschmidt</option><option value="oliver-gesell">Oliver Gesell</option><option value="paddy-mccarthy">Paddy McCarthy</option><option value="pascal-bierlein">Pascal Bierlein</option><option value="pascal-linder">Pascal Linder</option><option value="patrick-kagel">Patrick Kagel</option><option value="patrick-lang">Patrick Lang</option><option value="patrick-wanka">Patrick Wanka</option><option value="paul-hegendoerfer">Paul Hegendörfer</option><option value="paul-iwanski">Paul Iwanski</option><option value="philipp-langhans">Philipp Langhans</option><option value="philipp-merlein">Philipp Merlein</option><option value="philipp-reisenhauer">Philipp Reisenhauer</option><option value="philipp-seitz">Philipp Seitz</option><option value="phillip-loetsch">Phillip Lötsch</option><option value="ren-pusch">René Pusch</option><option value="ren-wolf">René Wolf</option><option value="robert-kaski">Robert Kaski</option><option value="rolf-kluzik">Rolf Kluzik</option><option value="ronan-cummins">Ronan Cummins</option><option value="ruben-lesniczack">Ruben Lesniczack</option><option value="sabine-hofbauer">Sabine Hofbauer</option><option value="samu-schneider">Samu Schneider</option><option value="samuel-stoeckel">Samuel Stöckel</option><option value="sandra-netter">Sandra Netter</option><option value="sebastian-bader">Sebastian Bader</option><option value="sebastian-burkhardt">Sebastian Burkhardt</option><option value="sebastian-sluik">Sebastian Sluik</option><option value="sebastian-wagner">Sebastian Wagner</option><option value="silas-toth">Silas Toth</option><option value="silvio-mueller">Silvio Müller</option><option value="simon-heinz">Simon Heinz</option><option value="simon-thanner">Simon Thanner</option><option value="stefan-albert">Stefan Albert</option><option value="stefan-ell">Stefan Ell</option><option value="stefan-kittsteiner">Stefan Kittsteiner</option><option value="steffen-schreiber">Steffen Schreiber</option><option value="steffen-winterhager">Steffen Winterhager</option><option value="stephan-fuchs">Stephan Fuchs</option><option value="susanne-albert">Susanne Albert</option><option value="tatjana-krause">Tatjana Krause</option><option value="theo-martin">Theo Martin</option><option value="thomas-bierlein">Thomas Bierlein</option><option value="thomas-gerngross">Thomas Gerngroß</option><option value="thomas-nessler">Thomas Neßler</option><option value="thomas-pfister">Thomas Pfister</option><option value="thorsten-kraemer">Thorsten Krämer</option><option value="tim-vaupel">Tim Vaupel</option><option value="tim-waitz">Tim Waitz</option><option value="tim-weber">Tim Weber</option><option value="timm-wagner">Timm Wagner</option><option value="timo-keltz">Timo Keltz</option><option value="timo-kroczek">Timo Kroczek</option><option value="tizian-nauck">Tizian Nauck</option><option value="tizian-roeper">Tizian Roeper</option><option value="tjorben-medenwaldt">Tjorben Medenwaldt</option><option value="tobi-grimm">Tobi Grimm</option><option value="tobias-holzhauser">Tobias Holzhauser</option><option value="tobias-hutzler">Tobias Hutzler</option><option value="tobias-laumer">Tobias Laumer</option><option value="tobias-leidl">Tobias Leidl</option><option value="tobias-pfister">Tobias Pfister</option><option value="tobias-ruckriegel">Tobias Ruckriegel</option><option value="tom-brodtke">Tom Brodtke</option><option value="toni-sperber">Toni Sperber</option><option value="viktor-domme">Viktor Domme</option><option value="werner-hager">Werner Hager</option><option value="werner-janke">Werner Janke</option><option value="wolfgang-rammig">Wolfgang Rammig</option><option value="yannick-jasorka">Yannick Jasorka</option></select>
+          <select id="vglScope" onchange="pubVergleich()"><option value="alle">alle Saisons</option><option value="saison">nur gewählte Saison</option></select>
+        </div>
+        <div id="vglErg" style="margin-top:10px"><span class="muted">Bitte zwei Spieler wählen.</span></div>
+      </div>
+    </details>
     <details class="pub-install">
       <summary>📱 Als App aufs Handy installieren</summary>
       <div class="pub-install-body">
@@ -1097,6 +1123,15 @@ function sortTh(label, typ, cls, title) {
   return `<th class="${klassen}" data-typ="${typ}"${title ? ` title="${esc(title)}"` : ''} onclick="statSort(this)">${label}</th>`;
 }
 
+function pubFormTiles(pid, sn) {
+  const tage = (sn.days || []).filter(t => t.status === 'abgeschlossen').slice().sort((a, b) => a.nr - b.nr);
+  const pts = [];
+  tage.forEach(function (t) { const r = (t.results || {})[pid]; if (r && r.points != null) pts.push({ nr: t.nr, p: r.points }); });
+  const letzte = pts.slice(-5);
+  if (!letzte.length) return '<span class="muted">–</span>';
+  return `<span class="form5">${letzte.map(x => `<span class="p5" style="${punktFarbe(x.p)}" title="Spieltag ${x.nr}: ${x.p} Punkte">${x.p}</span>`).join('')}</span>`;
+}
+
 function pubRanglisteHtml() {
   const sn = pubSaisonBisTag(pubTagNr());   // Stand nach gewähltem Spieltag (Standard: neuester)
   const zeilen = ranglisteZeilen(sn);
@@ -1118,11 +1153,13 @@ function pubRanglisteHtml() {
     ${(() => { const tg = pubTage(), eff = pubTagNr(); return tg.length ? `<div class="pub-rl-stand">Stand nach Spieltag <select onchange="pubSpieltag(this.value)">${tg.map((t, i) => `<option value="${t.nr}" ${t.nr === eff ? 'selected' : ''}>Spieltag ${t.nr}${i === 0 ? ' (neuester)' : ''}${datumKurz(t.date) ? ' · ' + esc(datumKurz(t.date)) : ''}</option>`).join('')}</select></div>` : ''; })()}
     <div class="pub-finde"><input type="search" placeholder="🔎 Deinen Namen finden…" autocomplete="off" oninput="pubFindeMich(this.value)"></div>
     ${auszLegende(ausz)}
+    <div class="form-legende">📈 <b>Form</b> = Punkte der letzten 5 Spieltage dieser Saison (älteste → neueste, Kachel-Farbe = Punkthöhe – so sieht man, wer gerade gut drauf ist; Tooltip zeigt den Spieltag)</div>
     ${!zeilen.length ? '<p class="muted">Noch keine abgeschlossenen Spieltage in dieser Saison.</p>' : `
     <div style="overflow-x:auto"><table class="daten award-tabelle raster kompakt">
       <thead><tr>
         ${sortTh('Platz', 'num')}${zeigeAlt ? '<th class="num">Alt</th>' : ''}${sortTh('Name', 'text', 'sticky-n')}${sortTh('Verein', 'text')}${zeigeDK ? sortTh('DK', 'text', 'mitte') : ''}
         ${sortTh('Punkte', 'num')}${sortTh('Neu', 'num')}${sortTh('Teiln.', 'num')}${sortTh('Schnitt', 'num')}
+        <th class="mitte" title="Punkte der letzten 5 Spieltage dieser Saison (älteste → neueste)">📈 Form</th>
         ${cols.map(c => sortTh(c.kopf, 'num', null, c.titel)).join('')}${sortTh('SL', 'num')}
       </tr></thead><tbody>
       ${zeilen.map(z => {
@@ -1134,6 +1171,7 @@ function pubRanglisteHtml() {
           <td class="sticky-n" style="background:${stickBg}"><span class="pub-name-link" onclick="pubProfilOeffnen('${z.pid}')">${esc(p?.name)}</span>${frauenMarker(z.pid, ausz)}</td><td class="muted">${esc(p?.verein || '')}</td>${zeigeDK ? `<td class="mitte">${p?.dk ? '✓' : ''}</td>` : ''}
           <td class="num"><b>${z.punkte}</b></td><td class="num">${z.letztePkt ?? ''}</td>
           <td class="num">${z.teiln}</td><td class="num">${fmt2(z.schnitt)}</td>
+          <td class="mitte form-td">${pubFormTiles(z.pid, sn)}</td>
           ${cols.map(c => `<td class="num ${istBestwert(c, z.pid, ausz) ? 'award' : ''}">${c.wert(z)}</td>`).join('')}
           <td class="num">${fmt1(setzwert(z.pid))}</td>
         </tr>`;
@@ -1404,27 +1442,30 @@ function pubRegelnHtml() {
 
 function pubRekordeHtml() {
   if (PUB.rekordKey) return pubRekordDetailHtml(PUB.rekordKey);
-  const sn = aktSaison();
-  const tage = (sn.days || []).filter(t => t.status === 'abgeschlossen');
-  if (!tage.length) return '<p class="muted" style="text-align:center;padding:22px 0">Noch keine abgeschlossenen Spieltage in dieser Saison.</p>';
+  const alle = !!PUB.rekordAlle;
+  const tageDa = alle
+    ? data.seasons.some(s => !s.carryOnly && (s.days || []).some(t => t.status === 'abgeschlossen'))
+    : (aktSaison().days || []).some(t => t.status === 'abgeschlossen');
+  if (!tageDa) return '<p class="muted" style="text-align:center;padding:22px 0">Noch keine abgeschlossenen Spieltage.</p>';
   const nm = function (pid) { return esc((spieler(pid) || {}).name || '?'); };
   const cards = pubRekordDefs().map(function (cfg) {
-    const eintr = pubRekordEintraege(cfg);
+    const eintr = pubRekordEintraege(cfg, alle);
     if (!eintr.length) return '';
     const best = eintr[0].val;
     const halter = eintr.filter(function (e) { return e.val === best; });
     const seen = {}, namen = [];
     halter.forEach(function (h) { if (!seen[h.pid]) { seen[h.pid] = 1; namen.push(nm(h.pid)); } });
     const nameStr = namen.slice(0, 3).join(', ') + (namen.length > 3 ? ' +' + (namen.length - 3) : '');
-    const tagStr = (namen.length === 1 && halter.length === 1 && halter[0].tag) ? ` <span class="muted">· Spieltag ${halter[0].tag}</span>`
+    const tagStr = (namen.length === 1 && halter.length === 1 && halter[0].tag) ? ` <span class="muted">· ${halter[0].sn ? esc(halter[0].sn) + ' · ' : ''}Spieltag ${halter[0].tag}</span>`
       : (namen.length > 1 ? ` <span class="muted">· ${namen.length}× geteilt</span>` : '');
     return `<button class="rek-karte" onclick="pubRekordOeffnen('${cfg.key}')">
       <div class="rek-ic">${cfg.icon}</div><div class="rek-wert">${cfg.fmt(best)}</div>
       <div class="rek-tit">${cfg.titel}</div><div class="rek-name">${nameStr}${tagStr}</div>
       <div class="rek-mehr">ganze Liste ›</div></button>`;
   }).filter(Boolean).join('');
-  return `<div class="card"><h2 style="margin:0 0 4px;text-align:center">🏅 Rekorde · Saison ${esc(sn.name)}</h2>
-    <p class="muted" style="text-align:center;margin:0 0 16px">Die Bestleistungen dieser Saison – tippe eine Karte für die komplette Rangliste</p>
+  return `<div class="card"><h2 style="margin:0 0 4px;text-align:center">🏅 Rekorde · ${alle ? 'alle Saisons (ewige Bestenliste)' : 'Saison ' + esc(aktSaison().name)}</h2>
+    <p class="muted" style="text-align:center;margin:0 0 10px">${alle ? 'Die Bestleistungen aller Saisons' : 'Die Bestleistungen dieser Saison'} – tippe eine Karte für die komplette Rangliste</p>
+    <div class="stat-wahl" style="margin:0 0 16px"><button class="${!alle ? 'active' : ''}" onclick="pubRekordScope(false)">Diese Saison</button><button class="${alle ? 'active' : ''}" onclick="pubRekordScope(true)">Alle Saisons</button></div>
     <div class="rek-grid">${cards || '<p class="muted" style="text-align:center">Noch keine Highlights erfasst.</p>'}</div></div>`;
 }
 
@@ -1450,33 +1491,43 @@ function pubRekordDefs() {
   ];
 }
 
-function pubRekordEintraege(cfg) {
-  const sn = aktSaison();
-  const tage = (sn.days || []).filter(t => t.status === 'abgeschlossen');
+function pubRekordEintraege(cfg, alle) {
+  // alle=true -> über ALLE Saisons (Summen-Kategorien = Gesamtsumme; Einzel-Einträge tragen den Saisonnamen)
+  const saisons = alle ? data.seasons.filter(s => !s.carryOnly) : [aktSaison()];
   const eintr = [];
-  if (cfg.typ === 'saison') {
+  if (cfg.typ === 'saison' || cfg.typ === 'siege') {
     const summe = {};
-    tage.forEach(t => Object.keys(t.results || {}).forEach(function (pid) {
-      const r = t.results[pid] || {}; const s = summe[pid] || (summe[pid] = { d180: 0, d171: 0, hf: 0 });
-      s.d180 += r.d180 || 0; s.d171 += r.d171 || 0; s.hf += (r.hf ? r.hf.length : 0);
-    }));
-    Object.keys(summe).forEach(function (pid) { const v = summe[pid][cfg.sumKey]; if (v > 0) eintr.push({ pid: pid, val: v }); });
-  } else if (cfg.typ === 'siege') {
-    const cnt = {};
-    tage.forEach(function (t) { const w = pubSiegerVon(t); if (w) cnt[w] = (cnt[w] || 0) + 1; });
-    Object.keys(cnt).forEach(function (pid) { eintr.push({ pid: pid, val: cnt[pid] }); });
-  } else if (cfg.typ === 'spiel') {
-    const gn = function (pid, fb) { return (spieler(pid) || {}).name || fb || '?'; };
-    pubAlleSpiele(sn).forEach(function (sp) {
-      if (sp.p1 && sp.a1 != null) eintr.push({ pid: sp.p1, tag: sp.tag, val: sp.a1, gegner: sp.p2, gegnerName: gn(sp.p2, sp.name2), meinL: +sp.l1 || 0, oppL: +sp.l2 || 0 });
-      if (sp.p2 && sp.a2 != null) eintr.push({ pid: sp.p2, tag: sp.tag, val: sp.a2, gegner: sp.p1, gegnerName: gn(sp.p1, sp.name1), meinL: +sp.l2 || 0, oppL: +sp.l1 || 0 });
-    });
+    for (const sn of saisons) {
+      const tage = (sn.days || []).filter(t => t.status === 'abgeschlossen');
+      if (cfg.typ === 'siege') {
+        tage.forEach(function (t) { const w = pubSiegerVon(t); if (w) summe[w] = (summe[w] || 0) + 1; });
+      } else {
+        tage.forEach(t => Object.keys(t.results || {}).forEach(function (pid) {
+          const r = t.results[pid] || {};
+          const v = cfg.sumKey === 'hf' ? (r.hf ? r.hf.length : 0) : (r[cfg.sumKey] || 0);
+          if (v) summe[pid] = (summe[pid] || 0) + v;
+        }));
+      }
+    }
+    Object.keys(summe).forEach(function (pid) { if (summe[pid] > 0) eintr.push({ pid: pid, val: summe[pid] }); });
   } else {
-    tage.forEach(t => Object.keys(t.results || {}).forEach(function (pid) {
-      const r = t.results[pid] || {};
-      if (cfg.typ === 'tag') { const v = cfg.get(r); if (v != null && v > 0) eintr.push({ pid: pid, tag: t.nr, val: v }); }
-      else { (cfg.arr(r) || []).forEach(function (v) { eintr.push({ pid: pid, tag: t.nr, val: v }); }); }
-    }));
+    for (const sn of saisons) {
+      const tage = (sn.days || []).filter(t => t.status === 'abgeschlossen');
+      const snName = alle ? sn.name : null;
+      if (cfg.typ === 'spiel') {
+        const gn = function (pid, fb) { return (spieler(pid) || {}).name || fb || '?'; };
+        pubAlleSpiele(sn).forEach(function (sp) {
+          if (sp.p1 && sp.a1 != null) eintr.push({ pid: sp.p1, tag: sp.tag, sn: snName, val: sp.a1, gegner: sp.p2, gegnerName: gn(sp.p2, sp.name2), meinL: +sp.l1 || 0, oppL: +sp.l2 || 0 });
+          if (sp.p2 && sp.a2 != null) eintr.push({ pid: sp.p2, tag: sp.tag, sn: snName, val: sp.a2, gegner: sp.p1, gegnerName: gn(sp.p1, sp.name1), meinL: +sp.l2 || 0, oppL: +sp.l1 || 0 });
+        });
+      } else {
+        tage.forEach(t => Object.keys(t.results || {}).forEach(function (pid) {
+          const r = t.results[pid] || {};
+          if (cfg.typ === 'tag') { const v = cfg.get(r); if (v != null && v > 0) eintr.push({ pid: pid, tag: t.nr, sn: snName, val: v }); }
+          else { (cfg.arr(r) || []).forEach(function (v) { eintr.push({ pid: pid, tag: t.nr, sn: snName, val: v }); }); }
+        }));
+      }
+    }
   }
   eintr.sort(function (a, b) { return cfg.richtung === 'min' ? a.val - b.val : b.val - a.val; });
   return eintr;
@@ -1485,7 +1536,8 @@ function pubRekordEintraege(cfg) {
 function pubRekordDetailHtml(key) {
   const cfg = pubRekordDefs().find(function (c) { return c.key === key; });
   if (!cfg) { PUB.rekordKey = null; return pubRekordeHtml(); }
-  const alle = pubRekordEintraege(cfg);
+  const scopeAlle = !!PUB.rekordAlle;
+  const alle = pubRekordEintraege(cfg, scopeAlle);
   // Best-Leg: nach Leg-Länge (Darts) filterbar – alle 9–20 mit wer/wann
   const legFilterAktiv = (cfg.key === 'leg' && PUB.legFilter != null);
   const eintr = legFilterAktiv ? alle.filter(function (e) { return e.val === PUB.legFilter; }) : alle;
@@ -1502,16 +1554,16 @@ function pubRekordDetailHtml(key) {
     if (legFilterAktiv) { rang = i + 1; } else if (e.val !== letzter) { rang = i + 1; letzter = e.val; }
     const nameZ = `<td class="name"><span class="pub-name-link" onclick="pubProfilOeffnen('${e.pid}')">${esc((spieler(e.pid) || {}).name || '?')}</span></td>`;
     if (istSpiel) {
-      return `<tr><td class="num muted">${rang}</td>${nameZ}<td class="num"><b>${cfg.fmt(e.val)}</b></td><td class="mitte">${e.tag}</td><td class="name">${e.gegner ? `<span class="pub-name-link" onclick="pubProfilOeffnen('${e.gegner}')">${esc(e.gegnerName)}</span>` : esc(e.gegnerName)}</td><td class="mitte"><b class="${e.meinL > e.oppL ? 'bil-plus' : e.oppL > e.meinL ? 'bil-minus' : ''}">${e.meinL}:${e.oppL}</b></td></tr>`;
+      return `<tr><td class="num muted">${rang}</td>${nameZ}<td class="num"><b>${cfg.fmt(e.val)}</b></td><td class="mitte">${e.sn ? esc(e.sn) + ' · ' : ''}${e.tag}</td><td class="name">${e.gegner ? `<span class="pub-name-link" onclick="pubProfilOeffnen('${e.gegner}')">${esc(e.gegnerName)}</span>` : esc(e.gegnerName)}</td><td class="mitte"><b class="${e.meinL > e.oppL ? 'bil-plus' : e.oppL > e.meinL ? 'bil-minus' : ''}">${e.meinL}:${e.oppL}</b></td></tr>`;
     }
-    return `<tr><td class="num muted">${rang}</td>${nameZ}<td class="num"><b>${cfg.fmt(e.val)}</b></td><td>${e.tag ? ('Spieltag ' + e.tag) : '<span class="muted">Saison gesamt</span>'}</td></tr>`;
+    return `<tr><td class="num muted">${rang}</td>${nameZ}<td class="num"><b>${cfg.fmt(e.val)}</b></td><td>${e.tag ? ((e.sn ? esc(e.sn) + ' · ' : '') + 'Spieltag ' + e.tag) : `<span class="muted">${scopeAlle ? 'insgesamt (alle Saisons)' : 'Saison gesamt'}</span>`}</td></tr>`;
   }).join('');
   return `<div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-      <h2 style="margin:0">${cfg.icon} ${cfg.titel}</h2>
+      <h2 style="margin:0">${cfg.icon} ${cfg.titel}${scopeAlle ? ' <span class="muted" style="font-size:13px;font-weight:400">· alle Saisons</span>' : ''}</h2>
       <button class="btn klein" onclick="pubRekordSchliessen()">← Zurück zu den Rekorden</button>
     </div>
-    ${(cfg.typ === 'saison' || cfg.typ === 'siege') ? '<p class="muted" style="margin:8px 0 0;font-size:13px">Summe über alle Spieltage der Saison – deshalb „Saison gesamt" statt einem einzelnen Spieltag.</p>' : ''}
+    ${(cfg.typ === 'saison' || cfg.typ === 'siege') ? `<p class="muted" style="margin:8px 0 0;font-size:13px">Summe über alle Spieltage ${scopeAlle ? 'ALLER Saisons – deshalb „insgesamt"' : 'der Saison – deshalb „Saison gesamt"'} statt einem einzelnen Spieltag.</p>` : ''}
     <div class="pub-filter" style="justify-content:flex-start;margin:10px 0 0">Anzeigen:
       <select onchange="pubRekordLimit(this.value)">${[15, 25, 50, 9999].map(function (n) { return `<option value="${n}" ${limit === n ? 'selected' : ''}>${n >= 9999 ? 'alle' : 'Top ' + n}</option>`; }).join('')}</select>${legFilterUI}
       <span class="muted">(${eintr.length} Einträge${legFilterAktiv ? '' : ' gesamt'})</span>
@@ -1528,6 +1580,8 @@ function pubRekordSchliessen() { PUB.rekordKey = null; PUB.legFilter = null; pub
 function pubRekordLimit(v) { PUB.rekordLimit = (+v) || 15; pubRender(); }
 
 function pubRekordLegFilter(v) { PUB.legFilter = (v === '' || v == null) ? null : +v; PUB.rekordLimit = 15; pubRender(); }
+
+function pubRekordScope(v) { PUB.rekordAlle = !!v; PUB.rekordKey = null; PUB.legFilter = null; pubRender(); }
 
 function pubAlleSpiele(sn) {
   const out = [];
@@ -1566,6 +1620,30 @@ function pubDuellFilter(q) {
     const name = ((r.cells[0] && r.cells[0].textContent) || '').toLowerCase();
     r.style.display = nq ? (name.indexOf(nq) >= 0 ? '' : 'none') : (i < lim ? '' : 'none');
   });
+}
+
+function pubVergleich() {
+  const a = document.getElementById('vglA').value, b = document.getElementById('vglB').value;
+  const scope = document.getElementById('vglScope').value;
+  const box = document.getElementById('vglErg'); if (!box) return;
+  if (!a || !b || a === b) { box.innerHTML = '<span class="muted">Bitte zwei verschiedene Spieler wählen.</span>'; return; }
+  const saisons = scope === 'saison' ? [aktSaison()] : data.seasons.filter(s => !s.carryOnly);
+  const spiele = [];
+  saisons.forEach(function (sn) { pubAlleSpiele(sn).forEach(function (sp) {
+    if ((sp.p1 === a && sp.p2 === b) || (sp.p1 === b && sp.p2 === a)) spiele.push({ sn: sn.name, tag: sp.tag, aErst: sp.p1 === a, l1: +sp.l1 || 0, l2: +sp.l2 || 0, a1: sp.a1, a2: sp.a2 });
+  }); });
+  const nA = esc(spieler(a)?.name || '?'), nB = esc(spieler(b)?.name || '?');
+  if (!spiele.length) { box.innerHTML = `<span class="muted">Keine erfassten Einzelspiele zwischen ${nA} und ${nB}${scope === 'saison' ? ' in der gewählten Saison' : ''}.</span>`; return; }
+  let wA = 0, wB = 0, lA = 0, lB = 0;
+  spiele.forEach(function (s) { const la = s.aErst ? s.l1 : s.l2, lb = s.aErst ? s.l2 : s.l1; lA += la; lB += lb; if (la > lb) wA++; else if (lb > la) wB++; });
+  const zeilen = spiele.map(function (s) {
+    const la = s.aErst ? s.l1 : s.l2, lb = s.aErst ? s.l2 : s.l1;
+    const avgA = s.aErst ? s.a1 : s.a2, avgB = s.aErst ? s.a2 : s.a1;
+    return `<tr><td>${esc(s.sn)} · Spieltag ${s.tag}</td><td class="num">${avgA != null ? 'Ø' + fmt1(avgA) : ''}</td><td class="mitte"><b class="${la > lb ? 'bil-plus' : lb > la ? 'bil-minus' : ''}">${la}:${lb}</b></td><td class="num">${avgB != null ? 'Ø' + fmt1(avgB) : ''}</td></tr>`;
+  }).join('');
+  box.innerHTML = `<div class="vgl-kopf"><span class="pub-name-link" onclick="pubProfilOeffnen('${a}')">${nA}</span><span class="vgl-bilanz ${wA > wB ? 'bil-plus' : wB > wA ? 'bil-minus' : ''}">${wA}&nbsp;:&nbsp;${wB}</span><span class="pub-name-link" onclick="pubProfilOeffnen('${b}')">${nB}</span></div>
+    <p class="muted" style="text-align:center;margin:2px 0 8px">${spiele.length} direkte${spiele.length === 1 ? 's' : ''} Spiel${spiele.length === 1 ? '' : 'e'} · Legs ${lA}:${lB}</p>
+    <div style="overflow-x:auto"><table class="daten"><thead><tr><th>Wann</th><th class="num">Ø ${nA}</th><th class="mitte">Ergebnis</th><th class="num">Ø ${nB}</th></tr></thead><tbody>${zeilen}</tbody></table></div>`;
 }
 
 function pubStatMetric(v) { PUB.statMetric = v; pubRender(); }
@@ -1966,7 +2044,7 @@ const PUB = { tab: "rangliste", saisonIdx: 2, filterTage: 5, alleSetz: false,
   farbe: lsGet("tsgPubFarbe") || null,
   spalten: (function(){ var d = {"hl":true,"d180":true,"d171":false,"hf":false,"topHf":false,"bull":false,"avg":true,"s140":false,"s100":false,"s80":false,"a9":false,"a12":false,"a15":false,"a18":false,"leg9":false,"leg10":false,"leg11":false,"leg12":false,"leg13":false,"leg14":false,"leg15":false,"leg16":false,"leg17":false,"leg18":false,"leg19":false,"leg20":false}; try { return Object.assign({}, d, JSON.parse(lsGet("tsgPubSpalten")) || {}); } catch(e){ return d; } })(),
   hlFarben: (function(){ try { return JSON.parse(lsGet("tsgPubHlFarben")) || null; } catch(e){ return null; } })(),
-  suche: "", tagNr: null, szTag: null, spieltagAnsicht: null, suchTag: {}, profilPid: null, profilTag: null, profilRekordKey: null, rekordKey: null, rekordLimit: 15, legFilter: null, duellAlle: false, duellLimit: 10, profilChart: "platz", statMetric: "teiln" };
+  suche: "", tagNr: null, szTag: null, spieltagAnsicht: null, suchTag: {}, profilPid: null, profilTag: null, profilRekordKey: null, rekordKey: null, rekordLimit: 15, rekordAlle: false, legFilter: null, duellAlle: false, duellLimit: 10, profilChart: "platz", statMetric: "teiln" };
 function aktSaison(){ return data.seasons[PUB.saisonIdx] || data.seasons[0]; }
 PUB.hlFarbenDefault = (function(){ var cs = getComputedStyle(document.documentElement); var o = {}; ["180","171","hf","leg","bull","avg"].forEach(function(k){ o[k] = cs.getPropertyValue("--hlc-"+k).trim(); }); return o; })();
 pubApplyTheme();
