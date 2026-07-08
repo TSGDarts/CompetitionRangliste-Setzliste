@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="TSG Competition">
 <style>
   :root {
@@ -231,7 +231,8 @@
 </style>
 <style>
   body { margin:0; background: var(--grau-bg); color: var(--text); }
-  .web-wrap { max-width: 1300px; margin: 0 auto; padding: 12px 14px 30px; }
+  .web-wrap { max-width: 1300px; margin: 0 auto; padding: calc(12px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(30px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left)); }
+  .pub-nav { top: env(safe-area-inset-top); }
   .web-kopf { display:flex; align-items:center; justify-content:center; gap:12px; margin: 4px 0 14px; }
   .web-kopf img { height: 38px; width:auto; background: var(--rot); padding: 6px 9px; border-radius: 10px; }
   .web-kopf h1 { margin:0; font-size: 20px; color: var(--rot); }
@@ -256,6 +257,10 @@
   .pub-nav .sais { display:flex; align-items:center; gap:6px; font-size:14px; color:var(--text-blass); }
   .pub-icon-btn { display:inline-flex; align-items:center; gap:5px; border:1px solid var(--grau-rand); background:var(--card); color:var(--text); border-radius:20px; padding:7px 12px; cursor:pointer; font-size:15px; line-height:1; }
   .pub-icon-btn input[type=color] { width:22px; height:22px; border:none; padding:0; background:none; cursor:pointer; }
+  .pub-neu-banner { max-width:820px; margin:0 auto 14px; background:var(--rot); color:#fff; border-radius:10px; padding:10px 14px; display:flex; align-items:center; gap:10px; }
+  .pub-neu-banner .pnb-text { flex:1; text-align:center; font-size:14.5px; }
+  .pub-neu-banner .pnb-link { color:#fff; text-decoration:underline; font-weight:600; white-space:nowrap; }
+  .pub-neu-banner .pnb-close { background:none; border:none; color:#fff; font-size:22px; line-height:1; cursor:pointer; padding:0 4px; opacity:.85; }
   .pub-spalten { max-width:820px; margin:0 auto 14px; border:1px solid var(--grau-rand); border-radius:10px; background:var(--card); }
   .pub-spalten summary { cursor:pointer; padding:9px 14px; font-weight:600; font-size:14px; list-style:none; text-align:center; color:var(--text-blass); }
   .pub-spalten summary::-webkit-details-marker { display:none; }
@@ -299,6 +304,10 @@
       <span class="sais" id="pubTagWrap">Spieltag <select id="pubTagSelect" onchange="pubSpieltag(this.value)"></select></span>
       <button id="pubDarkBtn" class="pub-icon-btn" onclick="pubToggleDark()" title="Hell/Dunkel umschalten">🌙</button>
       <label class="pub-icon-btn" title="Farbe wählen">🎨<input type="color" id="pubFarbeInput" value="#231f20" oninput="pubSetFarbe(this.value)"></label>
+    </div>
+    <div id="pubNeuBanner" class="pub-neu-banner" style="display:none">
+      <span class="pnb-text"></span>
+      <button class="pnb-close" onclick="pubBannerSchliessen()" title="Schließen">×</button>
     </div>
     <details id="pubSpaltenBox" class="pub-spalten">
       <summary>⚙ Weitere Spalten anzeigen (Highlights &amp; Statistik)</summary>
