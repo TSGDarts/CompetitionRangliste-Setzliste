@@ -12,6 +12,19 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="TSG Competition">
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+OneSignalDeferred.push(async function(OneSignal){
+  try {
+    await OneSignal.init({
+      appId: "ae7e40d9-eaa7-45e6-847e-28d0e0462f1b",
+      serviceWorkerParam: { scope: "/CompetitionRangliste-Setzliste/" },
+      serviceWorkerPath: "CompetitionRangliste-Setzliste/OneSignalSDKWorker.js"
+    });
+  } catch (e) {}
+});
+</script>
 <style>
   :root {
     --rot: #a51232; --rot-dunkel: #7d0d25; --rot-hell: #fdeef1;
@@ -107,16 +120,20 @@
   .schritt { border-left: 4px solid var(--grau-rand); padding-left: 14px; margin-bottom: 22px; }
   .schritt.fertig { border-left-color: var(--gruen); }
   .schritt .titel { font-size: 16px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .gruppen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
+  .gruppen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 14px; }
   .gruppe-card { border: 1px solid var(--grau-rand); border-radius: 10px; overflow: hidden; background: var(--card); }
   .gruppe-card .kopf { background: var(--rot); color: #fff; padding: 8px 12px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
   .gruppe-card .kopf .icon-btn { color: rgba(255,255,255,.85); }
   .gruppe-card .kopf .icon-btn:hover { background: rgba(255,255,255,.15); color: #fff; }
+  .gruppe-card .gk-scroll { overflow-x: auto; }
   .gruppe-card table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   .gruppe-card td, .gruppe-card th { padding: 4px 6px; border-bottom: 1px solid var(--linie); text-align: left; }
   .gruppe-card th { font-size: 11px; color: var(--text-blass); text-transform: uppercase; }
-  .gruppe-card .platz { width: 22px; color: var(--text-blass); font-weight: 600; }
-  .gruppe-card .pkt { font-weight: 700; color: var(--rot); text-align: right; }
+  .gruppe-card th.num, .gruppe-card td.num, .gruppe-card td.hlz { text-align: center; }
+  .gruppe-card td.hlz, .gruppe-card th.num { padding: 4px 4px; }
+  .gruppe-card .hlz .hlb-chip { font-size: 11px; }
+  .gruppe-card .platz { width: 22px; color: var(--text-blass); font-weight: 600; text-align: center; }
+  .gruppe-card .pkt { font-weight: 700; color: var(--rot); text-align: center; }
   /* Highlight-Badges – kategorisierte, farbige Pillen, je Kategorie eine feste Zeile. hlb-Präfix (kollidiert nicht mit den Editor-Chips .hl-chip). Farbe je Kategorie über CSS-Variablen (in Einstellungen anpassbar); Tint/Rand/Schrift werden per color-mix aus der Basisfarbe abgeleitet. */
   :root { --hlc-180: #d6a616; --hlc-171: #e67e14; --hlc-hf: #1e9e4a; --hlc-leg: #2d6ed7; --hlc-bull: #c92d2d; --hlc-avg: #8a9099; }
   .hlb-box { display: inline-flex; flex-wrap: wrap; gap: 3px 4px; vertical-align: middle; text-align: left; }
@@ -135,6 +152,9 @@
     html.dark .hlb-bull{ background: color-mix(in srgb, var(--hlc-bull) 22%, transparent);color: color-mix(in srgb, var(--hlc-bull) 74%, #fff); }
     html.dark .hlb-avg { background: color-mix(in srgb, var(--hlc-avg) 20%, transparent); color: color-mix(in srgb, var(--hlc-avg) 80%, #fff); }
   }
+  .stat-th { cursor: pointer; user-select: none; white-space: nowrap; }
+  .stat-th:hover { color: var(--rot); }
+  .stat-th .si { font-size: .85em; }
   .such-liste { max-height: 350px; overflow-y: auto; border: 1px solid var(--grau-rand); border-radius: 8px; }
   .such-liste .eintrag { padding: 7px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; border-bottom: 1px solid var(--linie); }
   .such-liste .eintrag:hover { background: var(--rot-hell); }
@@ -750,6 +770,22 @@ function hlBadges(r) {
   return c.length ? '<span class="hlb-box">' + c.join('') + '</span>' : '';
 }
 
+function hlKopfZellen() {
+  return '<th class="num">180</th><th class="num">171+</th><th class="num">HF</th><th class="num">Legs</th><th class="num">Bull</th><th class="num">Ø</th>';
+}
+
+function hlWertZellen(r) {
+  r = r || {};
+  const grp = arr => hlGruppiert(arr).map(x => x.wert + (x.anzahl > 1 ? '×' + x.anzahl : '')).join(' ');
+  const z = (inhalt, cls) => inhalt !== '' && inhalt != null ? `<td class="num hlz"><span class="hlb-chip ${cls}">${inhalt}</span></td>` : '<td class="num hlz"></td>';
+  return z(r.d180 || '', 'hlb-180')
+    + z(r.d171 || '', 'hlb-171')
+    + z((r.hf && r.hf.length) ? r.hf.join(' ') : '', 'hlb-hf')
+    + z((r.legs && r.legs.length) ? grp(r.legs) : '', 'hlb-leg')
+    + z((r.bull && r.bull.length) ? r.bull.join(' ') : '', 'hlb-bull')
+    + z((r.avg != null) ? 'Ø' + fmt1(r.avg) : '', 'hlb-avg');
+}
+
 function hatStatistik(tag) {
   return Object.values(tag.results || {}).some(r => r.stats || r.avg != null);
 }
@@ -760,12 +796,13 @@ function statistikTabelleHtml(tag) {
     .sort((a, b) => (b.r.avg ?? -1) - (a.r.avg ?? -1));
   if (!zeilen.length) return '';
   const a = v => v == null ? '' : 'Ø' + fmt1(v);
+  const sth = (label, typ = 'num') => `<th class="${typ === 'text' ? '' : 'num '}stat-th" data-typ="${typ}" onclick="statSort(this)" title="Zum Sortieren klicken">${label}</th>`;
   return `
     <div style="overflow-x:auto;margin-top:8px">
-    <table class="daten" style="font-size:13.5px">
-      <thead><tr><th class="num">#</th><th>Spieler</th><th class="num">Schnitt</th><th class="num">Spiele</th><th class="num">Gew.</th>
-        <th class="num">180</th><th class="num">140+</th><th class="num">100+</th><th class="num">80+</th>
-        <th class="num">Ø9D</th><th class="num">Ø12D</th><th class="num">Ø15D</th><th class="num">Ø18D</th></tr></thead>
+    <table class="daten" data-rank="1" style="font-size:13.5px">
+      <thead><tr><th class="num">#</th>${sth('Spieler', 'text')}${sth('Schnitt')}${sth('Spiele')}${sth('Gew.')}
+        ${sth('180')}${sth('140+')}${sth('100+')}${sth('80+')}
+        ${sth('Ø9D')}${sth('Ø12D')}${sth('Ø15D')}${sth('Ø18D')}</tr></thead>
       <tbody>
       ${zeilen.map((x, i) => { const r = x.r, s = r.stats || {};
         return `<tr><td class="num muted">${i + 1}</td><td>${esc(spieler(x.pid)?.name)}</td>
@@ -775,6 +812,25 @@ function statistikTabelleHtml(tag) {
       }).join('')}
       </tbody></table>
     </div>`;
+}
+
+function statSort(th) {
+  const table = th.closest('table'); if (!table) return;
+  const ths = Array.prototype.slice.call(th.parentNode.children);
+  const idx = ths.indexOf(th);
+  const typ = th.getAttribute('data-typ') || 'num';
+  const tbody = table.tBodies[0]; if (!tbody) return;
+  const rows = Array.prototype.slice.call(tbody.rows);
+  const dir = (table.getAttribute('data-sc') == idx && table.getAttribute('data-sd') === 'desc') ? 'asc' : 'desc';
+  const zahl = row => { const t = (row.cells[idx].textContent || '').replace('Ø', '').replace(',', '.').trim(); const n = parseFloat(t); return isNaN(n) ? -Infinity : n; };
+  rows.sort((a, b) => {
+    if (typ === 'text') { const x = a.cells[idx].textContent.trim(), y = b.cells[idx].textContent.trim(); return dir === 'asc' ? x.localeCompare(y, 'de') : y.localeCompare(x, 'de'); }
+    return dir === 'asc' ? zahl(a) - zahl(b) : zahl(b) - zahl(a);
+  });
+  rows.forEach((r, i) => { tbody.appendChild(r); if (table.getAttribute('data-rank')) r.cells[0].textContent = i + 1; });
+  table.setAttribute('data-sc', idx); table.setAttribute('data-sd', dir);
+  ths.forEach(h => { const s = h.querySelector('.si'); if (s) s.remove(); });
+  const sp = document.createElement('span'); sp.className = 'si'; sp.textContent = dir === 'asc' ? ' ▲' : ' ▼'; th.appendChild(sp);
 }
 
 function pubRanglisteHtml() {
@@ -974,9 +1030,9 @@ function pubSpieltagDetail(t) {
   }
   const grid = `<div class="gruppen-grid">${t.groups.map((g, gi) => `
     <div class="gruppe-card"><div class="kopf"><span>Gruppe ${gi + 1}</span><span style="flex:1"></span><span style="font-weight:400;font-size:12px">First to ${g.firstTo}</span></div>
-    <table><thead><tr><th></th><th>Name</th><th class="num">Punkte</th><th>Highlights</th></tr></thead><tbody>
-    ${g.playerIds.map((pid, pi) => { const r = t.results?.[pid] || {}; return `<tr><td class="platz">${pi + 1}.</td><td>${esc(spieler(pid)?.name)}</td><td class="pkt">${r.points ?? punkteFuer(pi + 1, gi + 1)}</td><td style="font-size:12px">${hlKurztext(r)}</td></tr>`; }).join('')}
-    </tbody></table></div>`).join('')}</div>`;
+    <div class="gk-scroll"><table><thead><tr><th></th><th>Name</th><th class="num">Punkte</th>${hlKopfZellen()}</tr></thead><tbody>
+    ${g.playerIds.map((pid, pi) => { const r = t.results?.[pid] || {}; return `<tr><td class="platz">${pi + 1}.</td><td>${esc(spieler(pid)?.name)}</td><td class="pkt">${r.points ?? punkteFuer(pi + 1, gi + 1)}</td>${hlWertZellen(r)}</tr>`; }).join('')}
+    </tbody></table></div></div>`).join('')}</div>`;
   const stats = hatStatistik(t) ? `<div class="card"><h3 style="margin:0 0 4px">Ø &amp; Statistik</h3>${statistikTabelleHtml(t)}</div>` : '';
   return kopf + grid + stats;
 }
@@ -1086,7 +1142,6 @@ PUB.hlFarbenDefault = (function(){ var cs = getComputedStyle(document.documentEl
 pubApplyTheme();
 pubRender();
 pubNeuCheck();
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(function(){}); }
 </script>
 </body>
 </html>
