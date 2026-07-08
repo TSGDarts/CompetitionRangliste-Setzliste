@@ -305,6 +305,9 @@ OneSignalDeferred.push(async function(OneSignal){
   .pub-nav .sais { display:flex; align-items:center; gap:6px; font-size:14px; color:var(--text-blass); }
   .pub-icon-btn { display:inline-flex; align-items:center; gap:5px; border:1px solid var(--grau-rand); background:var(--card); color:var(--text); border-radius:20px; padding:7px 12px; cursor:pointer; font-size:15px; line-height:1; }
   .pub-icon-btn input[type=color] { width:22px; height:22px; border:none; padding:0; background:none; cursor:pointer; }
+  .pub-icon-btn.push-an { background:#e7f6ec; border-color:#1c7a3c; color:#1c7a3c; }
+  @media (prefers-color-scheme: dark) { .pub-icon-btn.push-an { background:rgba(30,158,74,.22); } }
+  html.dark .pub-icon-btn.push-an { background:rgba(30,158,74,.22); border-color:#3fb96a; color:#7ee0a0; }
   .pub-neu-banner { max-width:820px; margin:0 auto 14px; background:var(--rot); color:#fff; border-radius:10px; padding:10px 14px; display:flex; align-items:center; gap:10px; }
   .pub-neu-banner .pnb-text { flex:1; text-align:center; font-size:14.5px; }
   .pub-neu-banner .pnb-link { color:#fff; text-decoration:underline; font-weight:600; white-space:nowrap; }
@@ -379,6 +382,7 @@ OneSignalDeferred.push(async function(OneSignal){
       <button class="pub-tab" data-tab="suchen" onclick="pubTab('suchen')">🔍 Suchen</button>
       <span class="sais">Saison <select onchange="pubSaison(this.value)"><option value="1" >2025/26</option><option value="2" selected>2026/27</option></select></span>
       <span class="sais" id="pubTagWrap">Spieltag <select id="pubTagSelect" onchange="pubSpieltag(this.value)"></select></span>
+      <button id="pubPushBtn" class="pub-icon-btn" onclick="pubPushAktivieren()" title="Benachrichtigung bei neuem Spieltag aktivieren">🔔</button>
       <button id="pubDarkBtn" class="pub-icon-btn" onclick="pubToggleDark()" title="Hell/Dunkel umschalten">🌙</button>
       <button class="pub-icon-btn" onclick="pubToggleFarbPanel()" title="Farben anpassen">🎨</button>
     </div>
@@ -1132,6 +1136,40 @@ function pubHlFarbenReset() {
 
 function pubToggleFarbPanel() { const p = document.getElementById('pubFarbPanel'); if (p) p.style.display = (p.style.display === 'none') ? '' : 'none'; }
 
+function pubPushAktivieren() {
+  if (typeof window.OneSignalDeferred === 'undefined') { alert('Der Benachrichtigungs-Dienst lädt noch – bitte ein paar Sekunden warten und erneut tippen.'); return; }
+  window.OneSignalDeferred.push(async function (OneSignal) {
+    try {
+      var N = OneSignal.Notifications;
+      if (N && typeof N.isPushSupported === 'function' && !N.isPushSupported()) {
+        alert('Push wird auf diesem Gerät/Browser nicht unterstützt.\n\nAm iPhone: die Seite zuerst über das Teilen-Symbol ▸ „Zum Home-Bildschirm" als App installieren, dann die App öffnen und dort aktivieren (iOS 16.4 oder neuer nötig).');
+        return;
+      }
+      if (N && N.permission === true) { try { await OneSignal.User.PushSubscription.optIn(); } catch (e) {} alert('Benachrichtigungen sind bereits aktiv ✅'); pubPushStatus(); return; }
+      await N.requestPermission();
+      try { await OneSignal.User.PushSubscription.optIn(); } catch (e) {}
+      setTimeout(function () {
+        window.OneSignalDeferred.push(function (OS) {
+          if (OS.Notifications && OS.Notifications.permission === true) alert('Super! Benachrichtigungen sind jetzt aktiv ✅\nBei jedem neuen Spieltag bekommst du eine Meldung.');
+          else alert('Benachrichtigungen wurden nicht erlaubt.\nDu kannst sie im Browser über das Schloss-Symbol in der Adresszeile ▸ „Benachrichtigungen" noch zulassen.');
+          pubPushStatus();
+        });
+      }, 700);
+    } catch (e) { alert('Konnte nicht aktivieren: ' + e); }
+  });
+}
+
+function pubPushStatus() {
+  var b = document.getElementById('pubPushBtn'); if (!b || typeof window.OneSignalDeferred === 'undefined') return;
+  window.OneSignalDeferred.push(function (OneSignal) {
+    try {
+      var on = OneSignal.Notifications && OneSignal.Notifications.permission === true;
+      b.classList.toggle('push-an', !!on);
+      b.title = on ? 'Benachrichtigungen sind aktiv' : 'Benachrichtigung bei neuem Spieltag aktivieren';
+    } catch (e) {}
+  });
+}
+
 function pubSpalte(k, an) {
   PUB.spalten[k] = !!an;
   try { localStorage.setItem('tsgPubSpalten', JSON.stringify(PUB.spalten)); } catch (e) {}
@@ -1173,6 +1211,7 @@ PUB.hlFarbenDefault = (function(){ var cs = getComputedStyle(document.documentEl
 pubApplyTheme();
 pubRender();
 pubNeuCheck();
+setTimeout(pubPushStatus, 1500);
 </script>
 </body>
 </html>
