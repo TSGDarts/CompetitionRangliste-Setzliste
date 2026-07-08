@@ -117,6 +117,19 @@
   .gruppe-card th { font-size: 11px; color: var(--text-blass); text-transform: uppercase; }
   .gruppe-card .platz { width: 22px; color: var(--text-blass); font-weight: 600; }
   .gruppe-card .pkt { font-weight: 700; color: var(--rot); text-align: right; }
+  /* Highlight-Badges – kategorisierte, farbige Pillen (statt gequetschter Textzeile). Eigenes hlb-Präfix, um nicht mit den Editor-Chips (.hl-chip) zu kollidieren. */
+  .hlb-chips { display: inline-flex; flex-wrap: wrap; gap: 4px; vertical-align: middle; }
+  .hlb-chip { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; line-height: 1; padding: 3px 7px; border-radius: 999px; white-space: nowrap; border: 1px solid transparent; letter-spacing: .01em; }
+  .hlb-180  { background: rgba(214,166,22,.18); color: #8a6a00; border-color: rgba(214,166,22,.38); }
+  .hlb-171  { background: rgba(230,126,20,.16); color: #9c530c; border-color: rgba(230,126,20,.34); }
+  .hlb-hf   { background: rgba(30,158,74,.15);  color: #1c7a3c; border-color: rgba(30,158,74,.32); }
+  .hlb-leg  { background: rgba(45,110,215,.13); color: #2359ad; border-color: rgba(45,110,215,.3); }
+  .hlb-bull { background: rgba(201,45,45,.14);  color: #b02a2a; border-color: rgba(201,45,45,.32); }
+  .hlb-avg  { background: var(--grau-bg); color: var(--text-blass); border-color: var(--linie); font-weight: 500; }
+  @media screen {
+    html.dark .hlb-180 { color: #ecc65a; } html.dark .hlb-171 { color: #f0a35a; }
+    html.dark .hlb-hf  { color: #5fce85; } html.dark .hlb-leg { color: #7fabf2; } html.dark .hlb-bull { color: #f28080; }
+  }
   .such-liste { max-height: 350px; overflow-y: auto; border: 1px solid var(--grau-rand); border-radius: 8px; }
   .such-liste .eintrag { padding: 7px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; border-bottom: 1px solid var(--linie); }
   .such-liste .eintrag:hover { background: var(--rot-hell); }
@@ -287,6 +300,10 @@
   .pt-name { font-weight:700; font-size:16px; margin-bottom:5px; }
   .pt-zeile { font-size:14px; margin:3px 0; }
   .pt-label { display:inline-block; min-width:72px; color:var(--text-blass); font-size:11px; text-transform:uppercase; letter-spacing:.04em; vertical-align:middle; }
+  .pt-select { font-size:13.5px; padding:3px 6px; max-width:100%; }
+  .pt-tagbox { margin-top:8px; padding:9px 12px; border-radius:9px; background:var(--grau-bg); border:1px solid var(--grau-rand); font-size:13.5px; }
+  .pt-taghl { margin-top:4px; }
+  .pt-tagstat { margin-top:4px; color:var(--text-blass); font-size:12.5px; }
   .pub-filter { display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin:2px 0 12px; font-size:14px; color:var(--text-blass); }
   .pub-filter input[type=number] { width:56px; }
   .web-fuss { text-align:center; color: var(--text-blass); font-size: 12px; margin-top: 22px; }
@@ -706,6 +723,20 @@ function hlKurztext(r) {
   return teile.join(' · ');
 }
 
+function hlBadges(r) {
+  if (!r) return '';
+  const c = [];
+  const chip = (txt, cls) => '<span class="hlb-chip ' + cls + '">' + txt + '</span>';
+  const mal = k => k > 1 ? k + '× ' : '';
+  if (r.d180) c.push(chip(mal(r.d180) + '180', 'hlb-180'));
+  if (r.d171) c.push(chip(mal(r.d171) + '171+', 'hlb-171'));
+  if (r.hf && r.hf.length) hlGruppiert(r.hf).forEach(x => c.push(chip('HF ' + x.wert + (x.anzahl > 1 ? ' ×' + x.anzahl : ''), 'hlb-hf')));
+  if (r.legs && r.legs.length) hlGruppiert(r.legs).forEach(x => c.push(chip(x.wert + 'D' + (x.anzahl > 1 ? ' ×' + x.anzahl : ''), 'hlb-leg')));
+  if (r.bull && r.bull.length) hlGruppiert(r.bull).forEach(x => c.push(chip('Bull ' + x.wert + (x.anzahl > 1 ? ' ×' + x.anzahl : ''), 'hlb-bull')));
+  if (r.avg) c.push(chip('Ø ' + fmt2(r.avg), 'hlb-avg'));
+  return c.length ? '<span class="hlb-chips">' + c.join('') + '</span>' : '';
+}
+
 function hatStatistik(tag) {
   return Object.values(tag.results || {}).some(r => r.stats || r.avg != null);
 }
@@ -837,12 +868,39 @@ function pubSuchErgebnisHtml() {
       : '<span class="muted">keine Teilnahme in dieser Saison</span>';
     const slInfo = s ? `<b>Platz ${s.platz}</b> · Setzwert ${fmt1(s.wert)}`
       : (sw != null ? `Setzwert ${fmt1(sw)} <span class="muted">(zuletzt nicht aktiv)</span>` : '<span class="muted">—</span>');
+    const tage = ((aktSaison().days) || []).filter(t => t.status === 'abgeschlossen' && t.results && t.results[p.id] && t.results[p.id].points != null).slice().sort((a, b) => b.nr - a.nr);
+    const gewTag = PUB.suchTag ? PUB.suchTag[p.id] : null;
+    const tagWahl = tage.length ? `<div class="pt-zeile"><span class="pt-label">Spieltag</span> <select class="pt-select" onchange="pubSuchTag('${p.id}',this.value)"><option value="">– Spieltag ansehen –</option>${tage.map(t => `<option value="${t.nr}" ${t.nr === gewTag ? 'selected' : ''}>Spieltag ${t.nr} · ${esc(datumDE(t.date) || '')}</option>`).join('')}</select></div>` : '';
+    const tagDetail = gewTag ? pubSpielerTagDetailHtml(p.id, tage.find(t => t.nr === gewTag)) : '';
     return `<div class="pub-treffer">
       <div class="pt-name">${esc(p.name)}${p.verein ? ` <span class="muted">· ${esc(p.verein)}</span>` : ''}${p.dk ? ' <span class="badge dk">DK</span>' : ''}</div>
       <div class="pt-zeile"><span class="pt-label">Rangliste</span> ${rlInfo}</div>
       <div class="pt-zeile"><span class="pt-label">Setzliste</span> ${slInfo}</div>
+      ${tagWahl}${tagDetail}
     </div>`;
   }).join('') + '</div>';
+}
+
+function pubSuchTag(pid, v) { if (!PUB.suchTag) PUB.suchTag = {}; PUB.suchTag[pid] = (v === '' || v == null) ? null : +v; pubRender(); }
+
+function pubSpielerTagDetailHtml(pid, t) {
+  if (!t) return '';
+  const r = (t.results && t.results[pid]) || {};
+  let gi = -1, pi = -1;
+  (t.groups || []).forEach((g, i) => { const j = g.playerIds.indexOf(pid); if (j >= 0) { gi = i; pi = j; } });
+  const st = r.stats || {};
+  const stat = [];
+  if (r.avg != null && !hlKurztext(r)) stat.push('Ø ' + fmt1(r.avg));
+  if (st.spiele != null) stat.push(st.spiele + ' Spiele');
+  if (st.gewonnen != null) stat.push(st.gewonnen + ' gew.');
+  if (st.s140 != null) stat.push('140+: ' + st.s140);
+  if (st.s100 != null) stat.push('100+: ' + st.s100);
+  if (st.s80 != null) stat.push('80+: ' + st.s80);
+  if (st.a9 != null) stat.push('First9 Ø' + fmt1(st.a9));
+  if (st.a12 != null) stat.push('First12 Ø' + fmt1(st.a12));
+  const kopf = `<b>Spieltag ${t.nr}</b>${gi >= 0 ? ` · Gruppe ${gi + 1}, Platz ${pi + 1}` : ''} · ${r.points != null ? r.points + ' Punkte' : '–'}`;
+  const hl = hlBadges(r);
+  return `<div class="pt-tagbox">${kopf}${hl ? `<div class="pt-taghl">${hl}</div>` : ''}${stat.length ? `<div class="pt-tagstat">${stat.join(' · ')}</div>` : ''}</div>`;
 }
 
 function pubTage() { return ((aktSaison().days) || []).filter(t => t.status === 'abgeschlossen').slice().sort((a, b) => b.nr - a.nr); }
@@ -876,8 +934,25 @@ function pubSetzlisteZeilen(bisIdx, sn) {
 function pubSpieltagHtml() {
   const tg = pubTage();
   if (!tg.length) return '<p class="muted" style="text-align:center;padding:22px 0">Keine abgeschlossenen Spieltage in dieser Saison.</p>';
-  const t = tg.find(x => x.nr === PUB.tagNr) || tg[0];
-  const kopf = `<div class="card"><h2 style="margin:0">Spieltag ${t.nr} · ${esc(datumDE(t.date) || '')} <span class="badge gruen">abgeschlossen</span></h2></div>`;
+  const t = PUB.spieltagAnsicht != null ? tg.find(x => x.nr === PUB.spieltagAnsicht) : null;
+  if (t) return pubSpieltagDetail(t);
+  // Liste aller Spieltage – erst auswählen, dann „Ansehen"
+  return `<div class="card"><h2 style="margin:0 0 10px">Spieltage · Saison ${esc(aktSaison().name)}</h2>
+    <div style="overflow-x:auto"><table class="daten"><thead><tr><th class="num">#</th><th>Datum</th><th class="num">Teilnehmer</th><th class="num">Gruppen</th><th>Sieger Gruppe 1</th><th></th></tr></thead><tbody>
+    ${tg.map(x => {
+      const teiln = x.groups && x.groups.length ? x.groups.reduce((a, g) => a + g.playerIds.length, 0) : Object.keys(x.results || {}).length;
+      const grp = x.groups && x.groups.length ? x.groups.length : '–';
+      const sieger = (x.groups && x.groups[0] && x.groups[0].playerIds[0]) ? (spieler(x.groups[0].playerIds[0])?.name || '–') : '–';
+      return `<tr><td class="num"><b>${x.nr}</b></td><td>${esc(datumDE(x.date) || '')}</td><td class="num">${teiln}</td><td class="num">${grp}</td><td>${esc(sieger)}</td>
+        <td class="mitte"><button class="btn klein" onclick="pubSpieltagOeffnen(${x.nr})">Ansehen</button></td></tr>`;
+    }).join('')}
+    </tbody></table></div></div>`;
+}
+
+function pubSpieltagDetail(t) {
+  const kopf = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+    <h2 style="margin:0">Spieltag ${t.nr} · ${esc(datumDE(t.date) || '')} <span class="badge gruen">abgeschlossen</span></h2>
+    <button class="btn klein" onclick="pubSpieltagListe()">← Zurück zur Liste</button></div></div>`;
   if (!(t.groups && t.groups.length)) {
     return kopf + `<div class="card"><p class="muted">Für diesen Spieltag sind nur Punkte importiert (keine Gruppen/Highlights).</p>
       <table class="daten" style="max-width:480px"><thead><tr><th>Name</th><th class="num">Punkte</th></tr></thead><tbody>
@@ -893,6 +968,10 @@ function pubSpieltagHtml() {
   return kopf + grid + stats;
 }
 
+function pubSpieltagOeffnen(nr) { PUB.spieltagAnsicht = nr; pubRender(); window.scrollTo(0, 0); }
+
+function pubSpieltagListe() { PUB.spieltagAnsicht = null; pubRender(); }
+
 function pubSpieltag(v) { PUB.tagNr = (v === '' || v == null) ? null : +v; pubRender(); }
 
 function pubRender() {
@@ -904,7 +983,7 @@ function pubRender() {
   if (tsel) {
     const tg = pubTage(), eff = pubTagNr();
     tsel.innerHTML = tg.length ? tg.map((t, i) => `<option value="${t.nr}" ${t.nr === eff ? 'selected' : ''}>Spieltag ${t.nr}${i === 0 ? ' (neuester)' : ''}</option>`).join('') : '<option value="">–</option>';
-    if (twrap) twrap.style.display = ((PUB.tab === 'rangliste' || PUB.tab === 'spieltage') && tg.length) ? '' : 'none';
+    if (twrap) twrap.style.display = (PUB.tab === 'rangliste' && tg.length) ? '' : 'none';
   }
   document.querySelectorAll('#pubSpaltenBox input[data-sp]').forEach(cb => { cb.checked = !!PUB.spalten[cb.dataset.sp]; });
   const inh = PUB.tab === 'suchen' ? pubSuchErgebnisHtml()
@@ -915,7 +994,7 @@ function pubRender() {
 
 function pubTab(t) { PUB.tab = t; pubRender(); window.scrollTo(0, 0); if (t === 'suchen') { const f = document.getElementById('pubSuchFeld'); if (f) f.focus(); } }
 
-function pubSaison(v) { PUB.saisonIdx = +v; PUB.tagNr = null; pubRender(); }
+function pubSaison(v) { PUB.saisonIdx = +v; PUB.tagNr = null; PUB.spieltagAnsicht = null; PUB.suchTag = {}; pubRender(); }
 
 function pubFilter(v) { const n = parseInt(v, 10); PUB.filterTage = isNaN(n) ? 10 : Math.max(1, n); PUB.alleSetz = false; pubRender(); }
 
@@ -972,7 +1051,7 @@ const PUB = { tab: "rangliste", saisonIdx: 2, filterTage: 5, alleSetz: false,
   dark: (lsGet("tsgPubDark")===null ? false : lsGet("tsgPubDark")==="1"),
   farbe: lsGet("tsgPubFarbe") || null,
   spalten: (function(){ var d = {"hl":true,"d180":true,"d171":false,"hf":false,"topHf":false,"bull":false,"avg":true,"s140":false,"s100":false,"s80":false,"a9":false,"a12":false,"a15":false,"a18":false,"leg9":false,"leg10":false,"leg11":false,"leg12":false,"leg13":false,"leg14":false,"leg15":false,"leg16":false,"leg17":false,"leg18":false,"leg19":false,"leg20":false}; try { return Object.assign({}, d, JSON.parse(lsGet("tsgPubSpalten")) || {}); } catch(e){ return d; } })(),
-  suche: "", tagNr: null };
+  suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {} };
 function aktSaison(){ return data.seasons[PUB.saisonIdx] || data.seasons[0]; }
 pubApplyTheme();
 pubRender();
