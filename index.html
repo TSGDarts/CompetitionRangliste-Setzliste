@@ -155,7 +155,9 @@
   .sp-legs { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .sp-tr { color: var(--text-blass); padding: 0 1px; }
   .spieltab td, .spieltab th { white-space: nowrap; }
-  .q-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 6px; color: #fff; font-size: 10.5px; font-weight: 800; vertical-align: 1px; cursor: help; box-sizing: border-box; }
+  .q-badge { width: 14px; height: 16.8px; vertical-align: -3.5px; cursor: help; }
+  .aus-badge { font-size: 11px; cursor: help; }
+  td s { opacity: .7; }
   .tb-mark { color: #d23b3b; font-weight: 700; font-size: 11.5px; margin-right: 4px; cursor: help; }
   .tb-mark.gleich { color: var(--text-blass); }
   .tb-legende { font-size: 12px; color: var(--text-blass); margin: 6px 0 0; }
@@ -282,7 +284,7 @@
     /* Auszeichnungen: Zonen-Hintergrund kommt per Inline-Style pro Zeile */
     #printArea td.award { background: #d6f0d6 !important; font-weight: 800; box-shadow: inset 0 0 0 .8pt #57b56b; }
     #printArea .frau { color: #b03082; font-weight: 700; font-size: 7pt; white-space: nowrap; }
-    #printArea .q-badge { display: inline-block; min-width: auto; height: auto; background: none !important; color: #5b21b6; border: .8pt solid #5b21b6; border-radius: 2pt; padding: 0 2pt; font-size: 6.5pt; font-weight: 800; vertical-align: .5pt; }
+    #printArea .q-badge { width: 8pt; height: 9.6pt; vertical-align: -2pt; }
     #printArea .award-legende { display: flex; flex-wrap: wrap; gap: 9pt; margin: 4pt 0 7pt; font-size: 7.5pt; color: #444; }
     #printArea .award-legende span { display: inline-flex; align-items: center; gap: 3pt; }
     #printArea .award-legende i { width: 9pt; height: 9pt; border-radius: 2pt; display: inline-block; border: .4pt solid #999; }
@@ -778,9 +780,13 @@ function frauenMarker(pid, ausz) {
   return r ? ` <span class="frau">♀${r}</span>` : '';
 }
 
+function qualiBadgeSvg(farbe, tip) {
+  return `<svg class="q-badge" viewBox="0 0 20 24" aria-hidden="true">${tip ? `<title>${tip}</title>` : ''}<path d="M6.4 11.2 4 21.8 7.8 19.4 10 22.8 12.2 19.4 16 21.8 13.6 11.2Z" style="fill:color-mix(in srgb, ${farbe} 60%, #000)"/><circle cx="10" cy="8" r="7.4" style="fill:${farbe}"/><circle cx="10" cy="8" r="5.6" style="fill:color-mix(in srgb, ${farbe} 78%, #fff);opacity:.35"/><text x="10" y="11.2" text-anchor="middle" font-size="9.5" font-weight="800" fill="#fff">Q</text></svg>`;
+}
+
 function qualiMarker(platz, ausz) {
   const aw = ausz.aw;
-  return (aw.qualiAktiv && platz != null && platz <= aw.qualiN) ? ` <span class="q-badge" style="background:${aw.qualiFarbe}" title="Für das Finalturnier qualifiziert (Top ${aw.qualiN})">Q</span>` : '';
+  return (aw.qualiAktiv && platz != null && platz <= aw.qualiN) ? qualiBadgeSvg(aw.qualiFarbe, `Für das Finalturnier qualifiziert (Top ${aw.qualiN})`) + ' ' : '';
 }
 
 function auszLegende(ausz) {
@@ -795,18 +801,18 @@ function auszLegende(ausz) {
   if (aw.bestHL) best.push('meiste Highlights');
   if (best.length) teile.push(`<span><i class="award-i"></i> Bestwert (${best.join(', ')})</span>`);
   if (aw.frauenAktiv) teile.push(`<span><span class="frau">♀</span> beste ${aw.frauenN} Frauen</span>`);
-  if (aw.qualiAktiv) teile.push(`<span><span class="q-badge" style="background:${aw.qualiFarbe}">Q</span> Finalturnier (Top ${aw.qualiN})</span>`);
+  if (aw.qualiAktiv) teile.push(`<span>${qualiBadgeSvg(aw.qualiFarbe)} Finalturnier (Top ${aw.qualiN})</span>`);
   if (!teile.length) return '';
   return `<div class="award-legende">${teile.join('')}</div>`;
 }
 
-function platzZelle(platz, platzAlt, cls = '') {
+function platzZelle(platz, platzAlt, cls = '', vor = '') {
   const d = (platzAlt == null || platz == null) ? null : platzAlt - platz;   // >0 = nach oben (besser)
   let bg = '', marker = '', titel = platzAlt == null ? 'neu' : 'vorher Platz ' + platzAlt;
   if (d > 0)        { bg = 'background:rgba(46,160,67,.20)';   marker = `<span class="pd-auf">▲${d}</span>`; }
   else if (d < 0)   { bg = 'background:rgba(224,49,49,.18)';   marker = `<span class="pd-ab">▼${-d}</span>`; }
   else if (d === 0) { bg = 'background:rgba(140,143,148,.13)'; marker = `<span class="pd-gleich">–</span>`; titel = 'unverändert'; }
-  return `<td class="num ${cls}" style="${bg}" title="${titel}"><b>${platz}</b>${marker ? ' ' + marker : ''}</td>`;
+  return `<td class="num ${cls}" style="${bg}" title="${titel}">${vor}<b>${platz}</b>${marker ? ' ' + marker : ''}</td>`;
 }
 
 function datumKurz(iso) {
@@ -861,6 +867,11 @@ function hlGruppiert(arr) {
   const m = {};
   for (const w of arr || []) m[w] = (m[w] || 0) + 1;
   return Object.entries(m).map(([wert, anzahl]) => ({ wert: +wert, anzahl })).sort((a, b) => b.wert - a.wert);
+}
+
+function spielerNameAus(pid, r) {
+  const n = esc(spieler(pid)?.name);
+  return (r && r.ausgeschieden) ? `<s>${n}</s> <span class="aus-badge" title="ausgeschieden/gestrichen – restliche Spiele wurden für die Gegner gewertet; Punkte-Regel siehe Einstellungen">⛔</span>` : n;
 }
 
 function hlKurztext(r) {
@@ -1112,8 +1123,8 @@ function pubRanglisteHtml() {
         const bg = zonenFarbe(z.platz, ausz.aw);
         const stickBg = bg || 'var(--card)';
         return `<tr ${bg ? `style="background:${bg}"` : ''}>
-          ${platzZelle(z.platz, z.platzAlt)}${zeigeAlt ? `<td class="num muted">${z.platzAlt ?? ''}</td>` : ''}
-          <td class="sticky-n" style="background:${stickBg}"><span class="pub-name-link" onclick="pubProfilOeffnen('${z.pid}')">${esc(p?.name)}</span>${qualiMarker(z.platz, ausz)}${frauenMarker(z.pid, ausz)}</td><td class="muted">${esc(p?.verein || '')}</td>${zeigeDK ? `<td class="mitte">${p?.dk ? '✓' : ''}</td>` : ''}
+          ${platzZelle(z.platz, z.platzAlt, '', qualiMarker(z.platz, ausz))}${zeigeAlt ? `<td class="num muted">${z.platzAlt ?? ''}</td>` : ''}
+          <td class="sticky-n" style="background:${stickBg}"><span class="pub-name-link" onclick="pubProfilOeffnen('${z.pid}')">${esc(p?.name)}</span>${frauenMarker(z.pid, ausz)}</td><td class="muted">${esc(p?.verein || '')}</td>${zeigeDK ? `<td class="mitte">${p?.dk ? '✓' : ''}</td>` : ''}
           <td class="num"><b>${z.punkte}</b></td><td class="num">${z.letztePkt ?? ''}</td>
           <td class="num">${z.teiln}</td><td class="num">${fmt2(z.schnitt)}</td>
           ${cols.map(c => `<td class="num ${istBestwert(c, z.pid, ausz) ? 'award' : ''}">${c.wert(z)}</td>`).join('')}
@@ -1300,7 +1311,7 @@ function pubSpieltagDetail(t) {
   const grid = `<div class="gruppen-grid">${t.groups.map((g, gi) => `
     <div class="gruppe-card"><div class="kopf"><span>Gruppe ${gi + 1}</span><span style="flex:1"></span><span style="font-weight:400;font-size:12px">First to ${g.firstTo}</span></div>
     <div class="gk-scroll"><table><thead><tr><th></th><th>Name</th><th class="num">Punkte</th>${hlKopfZellen()}</tr></thead><tbody>
-    ${g.playerIds.map((pid, pi) => { const r = t.results?.[pid] || {}; return `<tr><td class="platz">${pi + 1}.</td><td>${esc(spieler(pid)?.name)}</td><td class="pkt">${r.points ?? punkteFuer(pi + 1, gi + 1)}</td>${hlWertZellen(r)}</tr>`; }).join('')}
+    ${g.playerIds.map((pid, pi) => { const r = t.results?.[pid] || {}; return `<tr><td class="platz">${pi + 1}.</td><td>${spielerNameAus(pid, r)}</td><td class="pkt">${r.points ?? punkteFuer(pi + 1, gi + 1)}</td>${hlWertZellen(r)}</tr>`; }).join('')}
     </tbody></table></div>${g.games && g.games.length ? `<details class="es-wrap pub" open><summary>🎲 Einzelspiele (${g.games.length})</summary><div class="es-body">${spielGamesHtml(g.games)}<div class="es-standings"><h4>Tabelle</h4>${spielTabelleHtml(g.games)}</div></div></details>` : ''}</div>`).join('')}</div>`;
   const stats = hatStatistik(t) ? `<div class="card"><h3 style="margin:0 0 4px">Ø &amp; Statistik</h3>${statistikTabelleHtml(t)}</div>` : '';
   return kopf + grid + stats;
