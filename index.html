@@ -19,8 +19,8 @@ OneSignalDeferred.push(async function(OneSignal){
   try {
     await OneSignal.init({
       appId: "ae7e40d9-eaa7-45e6-847e-28d0e0462f1b",
-      serviceWorkerParam: { scope: "/CompetitionRangliste-Setzliste/" },
-      serviceWorkerPath: "CompetitionRangliste-Setzliste/OneSignalSDKWorker.js"
+      serviceWorkerParam: { scope: "./" },
+      serviceWorkerPath: "OneSignalSDKWorker.js"
     });
   } catch (e) {}
 });
