@@ -327,6 +327,8 @@
   .pub-filter { display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin:2px 0 12px; font-size:14px; color:var(--text-blass); }
   .pub-filter input[type=number] { width:56px; }
   .web-fuss { text-align:center; color: var(--text-blass); font-size: 12px; margin-top: 22px; }
+  .pub-name-link { cursor:pointer; border-bottom:1px dotted var(--text-blass); }
+  .pub-name-link:hover { color:var(--rot); border-bottom-color:var(--rot); }
   .rek-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:12px; }
   .rek-karte { border:1px solid var(--grau-rand); border-radius:12px; background:var(--grau-bg); padding:16px 14px; text-align:center; }
   .rek-ic { font-size:26px; line-height:1; }
@@ -884,7 +886,7 @@ function pubRanglisteHtml() {
         const stickBg = bg || 'var(--card)';
         return `<tr ${bg ? `style="background:${bg}"` : ''}>
           ${platzZelle(z.platz, z.platzAlt)}${zeigeAlt ? `<td class="num muted">${z.platzAlt ?? ''}</td>` : ''}
-          <td class="sticky-n" style="background:${stickBg}">${esc(p?.name)}${frauenMarker(z.pid, ausz)}</td><td class="muted">${esc(p?.verein || '')}</td>${zeigeDK ? `<td class="mitte">${p?.dk ? '✓' : ''}</td>` : ''}
+          <td class="sticky-n" style="background:${stickBg}"><span class="pub-name-link" onclick="pubProfilOeffnen('${z.pid}')">${esc(p?.name)}</span>${frauenMarker(z.pid, ausz)}</td><td class="muted">${esc(p?.verein || '')}</td>${zeigeDK ? `<td class="mitte">${p?.dk ? '✓' : ''}</td>` : ''}
           <td class="num"><b>${z.punkte}</b></td><td class="num">${z.letztePkt ?? ''}</td>
           <td class="num">${z.teiln}</td><td class="num">${fmt2(z.schnitt)}</td>
           ${cols.map(c => `<td class="num ${istBestwert(c, z.pid, ausz) ? 'award' : ''}">${c.wert(z)}</td>`).join('')}
@@ -917,7 +919,7 @@ function pubSetzlisteHtml() {
       ${gefiltert.map(z => {
         const p = spieler(z.pid);
         return `<tr>
-          ${platzZelle(z.platz, z.platzAlt)}<td>${esc(p?.name)} ${p?.dk ? '<span class="badge dk">DK</span>' : ''}</td>
+          ${platzZelle(z.platz, z.platzAlt)}<td><span class="pub-name-link" onclick="pubProfilOeffnen('${z.pid}')">${esc(p?.name)}</span> ${p?.dk ? '<span class="badge dk">DK</span>' : ''}</td>
           <td class="muted">${esc(p?.verein || '')}</td><td class="num">${teilnAnzeige(z)}</td>
           <td class="num"><b>${fmt1(z.wert)}</b></td><td class="num muted">${z.wertAlt != null ? fmt1(z.wertAlt) : '–'}</td>
           <td class="letzte-sp">${letztePunkteZellen(z)}</td>
@@ -961,7 +963,7 @@ function pubSuchErgebnisHtml() {
     const tagWahl = tage.length ? `<div class="pt-zeile"><span class="pt-label">Spieltag</span> <select class="pt-select" onchange="pubSuchTag('${p.id}',this.value)"><option value="">– Spieltag ansehen –</option>${tage.map(t => `<option value="${t.nr}" ${t.nr === gewTag ? 'selected' : ''}>Spieltag ${t.nr} · ${esc(datumDE(t.date) || '')}</option>`).join('')}</select></div>` : '';
     const tagDetail = gewTag ? pubSpielerTagDetailHtml(p.id, tage.find(t => t.nr === gewTag)) : '';
     return `<div class="pub-treffer">
-      <div class="pt-name">${esc(p.name)}${p.verein ? ` <span class="muted">· ${esc(p.verein)}</span>` : ''}${p.dk ? ' <span class="badge dk">DK</span>' : ''}</div>
+      <div class="pt-name"><span class="pub-name-link" onclick="pubProfilOeffnen('${p.id}')">${esc(p.name)}</span>${p.verein ? ` <span class="muted">· ${esc(p.verein)}</span>` : ''}${p.dk ? ' <span class="badge dk">DK</span>' : ''} <button class="btn klein" style="margin-left:6px" onclick="pubProfilOeffnen('${p.id}')">Profil ansehen ›</button></div>
       <div class="pt-zeile"><span class="pt-label">Rangliste</span> ${rlInfo}</div>
       <div class="pt-zeile"><span class="pt-label">Setzliste</span> ${slInfo}</div>
       ${tagWahl}${tagDetail}
@@ -1107,28 +1109,79 @@ function pubRekordeHtml() {
     <div class="rek-grid">${cards || '<p class="muted" style="text-align:center">Noch keine Highlights erfasst.</p>'}</div></div>`;
 }
 
+function pubProfilOeffnen(pid) { PUB.profilPid = pid; pubRender(); window.scrollTo(0, 0); }
+
+function pubProfilSchliessen() { PUB.profilPid = null; pubRender(); }
+
+function pubProfilVerlaufSvg(pid) {
+  const sn = aktSaison();
+  const tage = (sn.days || []).filter(t => t.status === 'abgeschlossen').slice().sort((a, b) => a.nr - b.nr);
+  const pts = [];
+  tage.forEach(t => { const z = ranglisteZeilen(pubSaisonBisTag(t.nr)).find(x => x.pid === pid); if (z) pts.push({ tag: t.nr, platz: z.platz }); });
+  if (!pts.length) return '';
+  const W = 560, H = 180, pad = 30;
+  const maxP = Math.max(5, ...pts.map(p => p.platz));
+  const xs = i => pts.length === 1 ? W / 2 : pad + i * (W - 2 * pad) / (pts.length - 1);
+  const ys = pl => pad + (pl - 1) * (H - 2 * pad - 12) / Math.max(1, maxP - 1);
+  const linie = pts.map((p, i) => (i ? 'L' : 'M') + xs(i).toFixed(1) + ',' + ys(p.platz).toFixed(1)).join(' ');
+  const dots = pts.map((p, i) => `<circle cx="${xs(i).toFixed(1)}" cy="${ys(p.platz).toFixed(1)}" r="4" fill="var(--rot)"><title>Spieltag ${p.tag}: Platz ${p.platz}</title></circle>`).join('');
+  const labels = pts.map((p, i) => `<text x="${xs(i).toFixed(1)}" y="${H - 6}" font-size="10" text-anchor="middle" fill="var(--text-blass)">${p.tag}</text>`).join('');
+  return `<div style="overflow-x:auto"><svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;height:auto" role="img" aria-label="Platzierungs-Verlauf">
+    <text x="4" y="${(ys(1) + 3).toFixed(1)}" font-size="10" fill="var(--text-blass)">1.</text>
+    <text x="4" y="${(ys(maxP) + 3).toFixed(1)}" font-size="10" fill="var(--text-blass)">${maxP}.</text>
+    <path d="${linie}" fill="none" stroke="var(--rot)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}${labels}
+  </svg></div>`;
+}
+
+function pubProfilHtml(pid) {
+  const p = spieler(pid);
+  if (!p) return '<div class="card"><p class="muted">Spieler nicht gefunden.</p><button class="btn klein" onclick="pubProfilSchliessen()">← Zurück</button></div>';
+  const sn = aktSaison();
+  const z = ranglisteZeilen(sn).find(x => x.pid === pid);
+  const slFilt = setzlisteZeilen().filter(x => PUB.alleSetz || x.tageSeitTeilnahme < (PUB.filterTage != null ? PUB.filterTage : 10));
+  setzlistePlatz(slFilt);
+  const s = slFilt.find(x => x.pid === pid);
+  const sw = setzwert(pid);
+  const tage = (sn.days || []).filter(t => t.status === 'abgeschlossen' && t.results && t.results[pid] && t.results[pid].points != null).slice().sort((a, b) => b.nr - a.nr);
+  const rlInfo = z ? `<b>Platz ${z.platz}</b> · ${z.punkte} Punkte · ${z.teiln} Teiln. · Schnitt ${fmt2(z.schnitt)}${z.avg ? ` · Ø ${fmt1(z.avg)}` : ''}` : '<span class="muted">keine Teilnahme in dieser Saison</span>';
+  const slInfo = s ? `<b>Platz ${s.platz}</b> · Setzwert ${fmt1(s.wert)}` : (sw != null ? `Setzwert ${fmt1(sw)} <span class="muted">(zuletzt nicht aktiv)</span>` : '<span class="muted">—</span>');
+  const graph = pubProfilVerlaufSvg(pid);
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <h2 style="margin:0">${esc(p.name)}${p.verein ? ` <span class="muted" style="font-size:15px">· ${esc(p.verein)}</span>` : ''}${p.dk ? ' <span class="badge dk">DK</span>' : ''}</h2>
+      <button class="btn klein" onclick="pubProfilSchliessen()">← Zurück</button>
+    </div>
+    <div class="pt-zeile" style="margin-top:8px"><span class="pt-label">Rangliste</span> ${rlInfo}</div>
+    <div class="pt-zeile"><span class="pt-label">Setzliste</span> ${slInfo}</div>
+    ${graph ? `<h3 style="margin:18px 0 6px">📈 Platzierungs-Verlauf (Saison ${esc(sn.name)})</h3>${graph}` : ''}
+    ${tage.length ? `<h3 style="margin:18px 0 8px">📅 Spieltage (${tage.length})</h3>${tage.map(t => pubSpielerTagDetailHtml(pid, t)).join('')}` : '<p class="muted" style="margin-top:14px">In dieser Saison noch keine Teilnahme.</p>'}
+  </div>`;
+}
+
 function pubRender() {
+  const imProfil = !!PUB.profilPid;
   document.querySelectorAll('.pub-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === PUB.tab));
-  const box = document.getElementById('pubSpaltenBox'); if (box) box.style.display = (PUB.tab === 'rangliste') ? '' : 'none';
-  const sb = document.getElementById('pubSuchBar'); if (sb) sb.style.display = (PUB.tab === 'suchen') ? '' : 'none';
+  const box = document.getElementById('pubSpaltenBox'); if (box) box.style.display = (PUB.tab === 'rangliste' && !imProfil) ? '' : 'none';
+  const sb = document.getElementById('pubSuchBar'); if (sb) sb.style.display = (PUB.tab === 'suchen' && !imProfil) ? '' : 'none';
   // Spieltag-Dropdown (abhängig von Saison) füllen; bei Suchen ausblenden
   const tsel = document.getElementById('pubTagSelect'), twrap = document.getElementById('pubTagWrap');
   if (tsel) {
     const tg = pubTage(), eff = pubTagNr();
     tsel.innerHTML = tg.length ? tg.map((t, i) => `<option value="${t.nr}" ${t.nr === eff ? 'selected' : ''}>Spieltag ${t.nr}${i === 0 ? ' (neuester)' : ''}</option>`).join('') : '<option value="">–</option>';
-    if (twrap) twrap.style.display = (PUB.tab === 'rangliste' && tg.length) ? '' : 'none';
+    if (twrap) twrap.style.display = (PUB.tab === 'rangliste' && tg.length && !imProfil) ? '' : 'none';
   }
   document.querySelectorAll('#pubSpaltenBox input[data-sp]').forEach(cb => { cb.checked = !!PUB.spalten[cb.dataset.sp]; });
-  const inh = PUB.tab === 'suchen' ? pubSuchErgebnisHtml()
+  const inh = imProfil ? pubProfilHtml(PUB.profilPid)
+    : PUB.tab === 'suchen' ? pubSuchErgebnisHtml()
     : PUB.tab === 'spieltage' ? pubSpieltagHtml()
     : PUB.tab === 'rekorde' ? pubRekordeHtml()
     : PUB.tab === 'setzliste' ? pubSetzlisteHtml() : pubRanglisteHtml();
   document.getElementById('pubInhalt').innerHTML = inh;
 }
 
-function pubTab(t) { PUB.tab = t; pubRender(); window.scrollTo(0, 0); if (t === 'suchen') { const f = document.getElementById('pubSuchFeld'); if (f) f.focus(); } }
+function pubTab(t) { PUB.profilPid = null; PUB.tab = t; pubRender(); window.scrollTo(0, 0); if (t === 'suchen') { const f = document.getElementById('pubSuchFeld'); if (f) f.focus(); } }
 
-function pubSaison(v) { PUB.saisonIdx = +v; PUB.tagNr = null; PUB.spieltagAnsicht = null; PUB.suchTag = {}; pubRender(); }
+function pubSaison(v) { PUB.saisonIdx = +v; PUB.tagNr = null; PUB.spieltagAnsicht = null; PUB.suchTag = {}; PUB.profilPid = null; pubRender(); }
 
 function pubFilter(v) { const n = parseInt(v, 10); PUB.filterTage = isNaN(n) ? 10 : Math.max(1, n); PUB.alleSetz = false; pubRender(); }
 
@@ -1203,7 +1256,7 @@ const PUB = { tab: "rangliste", saisonIdx: 2, filterTage: 5, alleSetz: false,
   farbe: lsGet("tsgPubFarbe") || null,
   spalten: (function(){ var d = {"hl":true,"d180":true,"d171":false,"hf":false,"topHf":false,"bull":false,"avg":true,"s140":false,"s100":false,"s80":false,"a9":false,"a12":false,"a15":false,"a18":false,"leg9":false,"leg10":false,"leg11":false,"leg12":false,"leg13":false,"leg14":false,"leg15":false,"leg16":false,"leg17":false,"leg18":false,"leg19":false,"leg20":false}; try { return Object.assign({}, d, JSON.parse(lsGet("tsgPubSpalten")) || {}); } catch(e){ return d; } })(),
   hlFarben: (function(){ try { return JSON.parse(lsGet("tsgPubHlFarben")) || null; } catch(e){ return null; } })(),
-  suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {} };
+  suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {}, profilPid: null };
 function aktSaison(){ return data.seasons[PUB.saisonIdx] || data.seasons[0]; }
 PUB.hlFarbenDefault = (function(){ var cs = getComputedStyle(document.documentElement); var o = {}; ["180","171","hf","leg","bull","avg"].forEach(function(k){ o[k] = cs.getPropertyValue("--hlc-"+k).trim(); }); return o; })();
 pubApplyTheme();
