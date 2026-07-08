@@ -317,8 +317,12 @@ OneSignalDeferred.push(async function(OneSignal){
   .pub-spalten-legs { display:flex; flex-wrap:wrap; gap:6px 12px; justify-content:center; align-items:center; padding:10px 14px 12px; margin-top:2px; border-top:1px solid var(--linie); font-size:13.5px; }
   .pub-spalten-legs .pub-legs-label { color:var(--text-blass); font-weight:600; }
   .pub-spalten-legs label { display:inline-flex; align-items:center; gap:4px; cursor:pointer; }
-  .pub-farb-body { display:flex; flex-wrap:wrap; gap:10px 18px; justify-content:center; align-items:center; padding:6px 14px 14px; font-size:13.5px; }
-  .pub-farb { display:inline-flex; align-items:center; gap:6px; }
+  .pub-farbpanel { max-width:330px; margin:0 auto 16px; background:var(--card); border:1px solid var(--grau-rand); border-radius:12px; padding:12px 16px; box-shadow:0 8px 24px rgba(0,0,0,.14); }
+  .pfp-row { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:14px; }
+  .pfp-titel { font-weight:600; font-size:12.5px; color:var(--text-blass); margin:12px 0 8px; padding-top:10px; border-top:1px solid var(--linie); }
+  .pfp-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px 16px; }
+  .pfp-grid .pub-farb { justify-content:space-between; }
+  .pub-farb { display:inline-flex; align-items:center; gap:6px; font-size:13.5px; }
   .pub-farb input[type=color] { width:34px; height:26px; border:1px solid var(--grau-rand); border-radius:6px; padding:0; cursor:pointer; background:none; }
   .pub-farb-reset { border:1px solid var(--grau-rand); background:var(--grau-bg); color:var(--text); border-radius:8px; padding:5px 12px; font-size:13px; cursor:pointer; }
   .pub-suchbar { max-width:520px; margin:0 auto 16px; }
@@ -376,7 +380,13 @@ OneSignalDeferred.push(async function(OneSignal){
       <span class="sais">Saison <select onchange="pubSaison(this.value)"><option value="1" >2025/26</option><option value="2" selected>2026/27</option></select></span>
       <span class="sais" id="pubTagWrap">Spieltag <select id="pubTagSelect" onchange="pubSpieltag(this.value)"></select></span>
       <button id="pubDarkBtn" class="pub-icon-btn" onclick="pubToggleDark()" title="Hell/Dunkel umschalten">🌙</button>
-      <label class="pub-icon-btn" title="Farbe wählen">🎨<input type="color" id="pubFarbeInput" value="#231f20" oninput="pubSetFarbe(this.value)"></label>
+      <button class="pub-icon-btn" onclick="pubToggleFarbPanel()" title="Farben anpassen">🎨</button>
+    </div>
+    <div id="pubFarbPanel" class="pub-farbpanel" style="display:none">
+      <div class="pfp-row"><span>Akzentfarbe</span><input type="color" id="pubFarbeInput" value="#231f20" oninput="pubSetFarbe(this.value)"></div>
+      <div class="pfp-titel">Highlight-Farben (Spieltag)</div>
+      <div class="pfp-grid"><label class="pub-farb"><span>180</span><input type="color" data-hlk="180" value="#d6a616" oninput="pubSetHlFarbe('180',this.value)"></label><label class="pub-farb"><span>171+</span><input type="color" data-hlk="171" value="#e67e14" oninput="pubSetHlFarbe('171',this.value)"></label><label class="pub-farb"><span>Highfinish</span><input type="color" data-hlk="hf" value="#1e9e4a" oninput="pubSetHlFarbe('hf',this.value)"></label><label class="pub-farb"><span>Low Legs</span><input type="color" data-hlk="leg" value="#2d6ed7" oninput="pubSetHlFarbe('leg',this.value)"></label><label class="pub-farb"><span>Bull</span><input type="color" data-hlk="bull" value="#c92d2d" oninput="pubSetHlFarbe('bull',this.value)"></label><label class="pub-farb"><span>Ø</span><input type="color" data-hlk="avg" value="#8a9099" oninput="pubSetHlFarbe('avg',this.value)"></label></div>
+      <div style="text-align:right;margin-top:8px"><button class="pub-farb-reset" onclick="pubHlFarbenReset()">↺ Standard</button></div>
     </div>
     <div id="pubNeuBanner" class="pub-neu-banner" style="display:none">
       <span class="pnb-text"></span>
@@ -386,10 +396,6 @@ OneSignalDeferred.push(async function(OneSignal){
       <summary>⚙ Weitere Spalten anzeigen (Highlights &amp; Statistik)</summary>
       <div class="pub-spalten-body"><label><input type="checkbox" data-sp="hl" checked onchange="pubSpalte('hl',this.checked)"> Highlights</label><label><input type="checkbox" data-sp="d180" checked onchange="pubSpalte('d180',this.checked)"> 180</label><label><input type="checkbox" data-sp="d171"  onchange="pubSpalte('d171',this.checked)"> 171+</label><label><input type="checkbox" data-sp="hf"  onchange="pubSpalte('hf',this.checked)"> Highfinishes</label><label><input type="checkbox" data-sp="topHf"  onchange="pubSpalte('topHf',this.checked)"> höchstes HF</label><label><input type="checkbox" data-sp="bull"  onchange="pubSpalte('bull',this.checked)"> Bullfinishes</label><label><input type="checkbox" data-sp="avg" checked onchange="pubSpalte('avg',this.checked)"> Ø Average</label><label><input type="checkbox" data-sp="s140"  onchange="pubSpalte('s140',this.checked)"> 140+</label><label><input type="checkbox" data-sp="s100"  onchange="pubSpalte('s100',this.checked)"> 100+</label><label><input type="checkbox" data-sp="s80"  onchange="pubSpalte('s80',this.checked)"> 80+</label><label><input type="checkbox" data-sp="a9"  onchange="pubSpalte('a9',this.checked)"> First 9</label><label><input type="checkbox" data-sp="a12"  onchange="pubSpalte('a12',this.checked)"> First 12</label><label><input type="checkbox" data-sp="a15"  onchange="pubSpalte('a15',this.checked)"> First 15</label><label><input type="checkbox" data-sp="a18"  onchange="pubSpalte('a18',this.checked)"> First 18</label></div>
       <div class="pub-spalten-legs"><span class="pub-legs-label">Best legs (in Darts):</span> <label><input type="checkbox" data-sp="leg9" onchange="pubSpalte('leg9',this.checked)"> 9</label><label><input type="checkbox" data-sp="leg10" onchange="pubSpalte('leg10',this.checked)"> 10</label><label><input type="checkbox" data-sp="leg11" onchange="pubSpalte('leg11',this.checked)"> 11</label><label><input type="checkbox" data-sp="leg12" onchange="pubSpalte('leg12',this.checked)"> 12</label><label><input type="checkbox" data-sp="leg13" onchange="pubSpalte('leg13',this.checked)"> 13</label><label><input type="checkbox" data-sp="leg14" onchange="pubSpalte('leg14',this.checked)"> 14</label><label><input type="checkbox" data-sp="leg15" onchange="pubSpalte('leg15',this.checked)"> 15</label><label><input type="checkbox" data-sp="leg16" onchange="pubSpalte('leg16',this.checked)"> 16</label><label><input type="checkbox" data-sp="leg17" onchange="pubSpalte('leg17',this.checked)"> 17</label><label><input type="checkbox" data-sp="leg18" onchange="pubSpalte('leg18',this.checked)"> 18</label><label><input type="checkbox" data-sp="leg19" onchange="pubSpalte('leg19',this.checked)"> 19</label><label><input type="checkbox" data-sp="leg20" onchange="pubSpalte('leg20',this.checked)"> 20</label></div>
-    </details>
-    <details id="pubFarbBox" class="pub-spalten">
-      <summary>🎨 Highlight-Farben anpassen</summary>
-      <div class="pub-farb-body"><label class="pub-farb"><span>180</span><input type="color" data-hlk="180" value="#d6a616" oninput="pubSetHlFarbe('180',this.value)"></label><label class="pub-farb"><span>171+</span><input type="color" data-hlk="171" value="#e67e14" oninput="pubSetHlFarbe('171',this.value)"></label><label class="pub-farb"><span>Highfinish</span><input type="color" data-hlk="hf" value="#1e9e4a" oninput="pubSetHlFarbe('hf',this.value)"></label><label class="pub-farb"><span>Low Legs</span><input type="color" data-hlk="leg" value="#2d6ed7" oninput="pubSetHlFarbe('leg',this.value)"></label><label class="pub-farb"><span>Bull</span><input type="color" data-hlk="bull" value="#c92d2d" oninput="pubSetHlFarbe('bull',this.value)"></label><label class="pub-farb"><span>Ø</span><input type="color" data-hlk="avg" value="#8a9099" oninput="pubSetHlFarbe('avg',this.value)"></label><button class="pub-farb-reset" onclick="pubHlFarbenReset()">↺ Standard</button></div>
     </details>
     <div id="pubSuchBar" class="pub-suchbar" style="display:none">
       <input type="search" id="pubSuchFeld" placeholder="🔍 Name oder Nachname suchen…" autocomplete="off" oninput="pubSuche(this.value)">
@@ -847,6 +853,11 @@ function statSort(th) {
   const sp = document.createElement('span'); sp.className = 'si'; sp.textContent = dir === 'asc' ? ' ▲' : ' ▼'; th.appendChild(sp);
 }
 
+function sortTh(label, typ, cls, title) {
+  const klassen = ((cls || (typ === 'num' ? 'num' : '')) + ' stat-th').trim();
+  return `<th class="${klassen}" data-typ="${typ}"${title ? ` title="${esc(title)}"` : ''} onclick="statSort(this)">${label}</th>`;
+}
+
 function pubRanglisteHtml() {
   const sn = pubSaisonBisTag(pubTagNr());   // Stand nach gewähltem Spieltag (Standard: neuester)
   const zeilen = ranglisteZeilen(sn);
@@ -869,9 +880,9 @@ function pubRanglisteHtml() {
     ${!zeilen.length ? '<p class="muted">Noch keine abgeschlossenen Spieltage in dieser Saison.</p>' : `
     <div style="overflow-x:auto"><table class="daten award-tabelle raster kompakt">
       <thead><tr>
-        <th class="num">Platz</th>${zeigeAlt ? '<th class="num">Alt</th>' : ''}<th class="sticky-n">Name</th><th>Verein</th>${zeigeDK ? '<th class="mitte">DK</th>' : ''}
-        <th class="num">Punkte</th><th class="num">Neu</th><th class="num">Teiln.</th><th class="num">Schnitt</th>
-        ${cols.map(c => `<th class="num" title="${esc(c.titel)}">${c.kopf}</th>`).join('')}<th class="num">SL</th>
+        ${sortTh('Platz', 'num')}${zeigeAlt ? '<th class="num">Alt</th>' : ''}${sortTh('Name', 'text', 'sticky-n')}${sortTh('Verein', 'text')}${zeigeDK ? sortTh('DK', 'text', 'mitte') : ''}
+        ${sortTh('Punkte', 'num')}${sortTh('Neu', 'num')}${sortTh('Teiln.', 'num')}${sortTh('Schnitt', 'num')}
+        ${cols.map(c => sortTh(c.kopf, 'num', null, c.titel)).join('')}${sortTh('SL', 'num')}
       </tr></thead><tbody>
       ${zeilen.map(z => {
         const p = spieler(z.pid);
@@ -1116,8 +1127,10 @@ function pubSetHlFarbe(k, hex) { if (!PUB.hlFarben) PUB.hlFarben = {}; PUB.hlFar
 
 function pubHlFarbenReset() {
   PUB.hlFarben = null; pubApplyHlFarben();
-  document.querySelectorAll('#pubFarbBox input[data-hlk]').forEach(function (inp) { inp.value = (PUB.hlFarbenDefault || {})[inp.dataset.hlk] || inp.value; });
+  document.querySelectorAll('#pubFarbPanel input[data-hlk]').forEach(function (inp) { inp.value = (PUB.hlFarbenDefault || {})[inp.dataset.hlk] || inp.value; });
 }
+
+function pubToggleFarbPanel() { const p = document.getElementById('pubFarbPanel'); if (p) p.style.display = (p.style.display === 'none') ? '' : 'none'; }
 
 function pubSpalte(k, an) {
   PUB.spalten[k] = !!an;
