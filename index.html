@@ -382,6 +382,10 @@
   .duell-scope button { border:none; background:var(--card); color:var(--text); font:inherit; font-size:12.5px; padding:5px 13px; cursor:pointer; }
   .duell-scope button + button { border-left:1px solid var(--grau-rand); }
   .duell-scope button.active { background:var(--rot); color:#fff; }
+  .duell-steuer { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin:0 0 8px; }
+  .duell-ctrl { font-size:12.5px; color:var(--text-blass); }
+  .duell-ctrl select { font-size:12.5px; padding:3px 6px; margin-left:3px; }
+  .duell-suche { font-size:13px; padding:5px 11px; border:1px solid var(--grau-rand); border-radius:18px; background:var(--card); color:var(--text); max-width:190px; }
   .edit-banner { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; background:#fff4e5; border:1px solid #f0b366; color:#8a4b00; border-radius:10px; padding:9px 14px; margin-bottom:14px; font-size:13.5px; }
   html.dark .edit-banner { background:#3a2a12; border-color:#7a531f; color:#f0c079; }
   .sl-basis { font-size:12.5px; color:var(--text-blass); display:inline-flex; align-items:center; gap:5px; font-weight:400; }
@@ -471,7 +475,7 @@
       <div class="pub-spalten-legs"><span class="pub-legs-label">Best legs (in Darts):</span> <label><input type="checkbox" data-sp="leg9" onchange="pubSpalte('leg9',this.checked)"> 9</label><label><input type="checkbox" data-sp="leg10" onchange="pubSpalte('leg10',this.checked)"> 10</label><label><input type="checkbox" data-sp="leg11" onchange="pubSpalte('leg11',this.checked)"> 11</label><label><input type="checkbox" data-sp="leg12" onchange="pubSpalte('leg12',this.checked)"> 12</label><label><input type="checkbox" data-sp="leg13" onchange="pubSpalte('leg13',this.checked)"> 13</label><label><input type="checkbox" data-sp="leg14" onchange="pubSpalte('leg14',this.checked)"> 14</label><label><input type="checkbox" data-sp="leg15" onchange="pubSpalte('leg15',this.checked)"> 15</label><label><input type="checkbox" data-sp="leg16" onchange="pubSpalte('leg16',this.checked)"> 16</label><label><input type="checkbox" data-sp="leg17" onchange="pubSpalte('leg17',this.checked)"> 17</label><label><input type="checkbox" data-sp="leg18" onchange="pubSpalte('leg18',this.checked)"> 18</label><label><input type="checkbox" data-sp="leg19" onchange="pubSpalte('leg19',this.checked)"> 19</label><label><input type="checkbox" data-sp="leg20" onchange="pubSpalte('leg20',this.checked)"> 20</label></div>
     </details>
     <div id="pubSuchBar" class="pub-suchbar" style="display:none">
-      <input type="search" id="pubSuchFeld" placeholder="🔍 Name oder Nachname suchen…" autocomplete="off" oninput="pubSuche(this.value)">
+      <input type="search" id="pubSuchFeld" placeholder="🔍 Spieler suchen → Profil öffnen (Name/Nachname)…" autocomplete="off" oninput="pubSuche(this.value)">
     </div>
     <div id="pubInhalt"></div>
     <details class="pub-install">
@@ -937,9 +941,9 @@ function spielGamesHtml(games) {
   return `<div class="spiel-liste">${games.map((g, i) => {
     const l1 = +g.l1 || 0, l2 = +g.l2 || 0;
     return `<div class="spiel-row"><span class="sp-nr">${i + 1}</span>
-      <span class="sp-seite li ${l1 > l2 ? 'sp-win' : ''}"><span class="sp-name">${nm(g, 1)}</span>${g.a1 != null ? `<span class="sp-avg">${fmt1(g.a1)}</span>` : ''}</span>
+      <span class="sp-seite li ${l1 > l2 ? 'sp-win' : ''}"><span class="sp-name">${nm(g, 1)}</span>${g.a1 != null ? `<span class="sp-avg">Ø${fmt1(g.a1)}</span>` : ''}</span>
       <span class="sp-legs">${l1}<span class="sp-tr">:</span>${l2}</span>
-      <span class="sp-seite re ${l2 > l1 ? 'sp-win' : ''}">${g.a2 != null ? `<span class="sp-avg">${fmt1(g.a2)}</span>` : ''}<span class="sp-name">${nm(g, 2)}</span></span>
+      <span class="sp-seite re ${l2 > l1 ? 'sp-win' : ''}"><span class="sp-name">${nm(g, 2)}</span>${g.a2 != null ? `<span class="sp-avg">Ø${fmt1(g.a2)}</span>` : ''}</span>
     </div>`;
   }).join('')}</div>`;
 }
@@ -1046,7 +1050,7 @@ function pubSetzlisteHtml() {
 
 function pubSuchErgebnisHtml() {
   const roh = (PUB.suche || '').trim();
-  if (!roh) return '<p class="muted" style="text-align:center;padding:22px 0">Namen oder Nachnamen eingeben, um eine Person zu finden.</p>';
+  if (!roh) return '<p class="muted" style="text-align:center;padding:22px 0">Spieler über Name oder Nachname suchen und antippen – öffnet das <b>Spielerprofil</b> mit Rangliste, Setzliste, Platzierungs-Verlauf, Spieltagen &amp; direkten Duellen.</p>';
   const nq = normName(roh); const toks = nq.split(' ').filter(Boolean);
   const rl = ranglisteZeilen(aktSaison()); const rlMap = {}; rl.forEach(z => rlMap[z.pid] = z);
   const slFilt = setzlisteZeilen().filter(z => PUB.alleSetz || z.tageSeitTeilnahme < (PUB.filterTage ?? 10));
@@ -1355,6 +1359,18 @@ function pubDuelle(pid, alle) {
 
 function pubDuellScope(v) { PUB.duellAlle = !!v; pubRender(); }
 
+function pubDuellLimit(v) { PUB.duellLimit = (v === '' || +v >= 9999) ? 9999 : (+v || 10); pubRender(); }
+
+function pubDuellFilter(q) {
+  const nq = (q || '').trim().toLowerCase();
+  const tab = document.getElementById('duellTab'); if (!tab || !tab.tBodies[0]) return;
+  const lim = +tab.getAttribute('data-limit') || 9999;
+  Array.prototype.slice.call(tab.tBodies[0].rows).forEach(function (r, i) {
+    const name = ((r.cells[0] && r.cells[0].textContent) || '').toLowerCase();
+    r.style.display = nq ? (name.indexOf(nq) >= 0 ? '' : 'none') : (i < lim ? '' : 'none');
+  });
+}
+
 function pubStatMetric(v) { PUB.statMetric = v; pubRender(); }
 
 function pubStatChart(daten, m) {
@@ -1480,13 +1496,17 @@ function pubProfilHtml(pid) {
     ${graph ? `<h3 style="margin:18px 0 6px">📈 Platzierungs-Verlauf (Saison ${esc(sn.name)})</h3>${graph}` : ''}
     ${(() => {
       const alle = !!PUB.duellAlle;
-      const duelle = pubDuelle(pid, alle);
-      if (!duelle.length && !pubDuelle(pid, !alle).length) return '';
+      const duelleAll = pubDuelle(pid, alle);
+      if (!duelleAll.length && !pubDuelle(pid, !alle).length) return '';
+      const limit = PUB.duellLimit || 10;
+      const limAktiv = limit < 9999 ? limit : duelleAll.length;
       const scope = `<span class="duell-scope"><button class="${!alle ? 'active' : ''}" onclick="pubDuellScope(false)">Diese Saison</button><button class="${alle ? 'active' : ''}" onclick="pubDuellScope(true)">Alle Saisons</button></span>`;
-      return `<h3 style="margin:18px 0 6px">⚔️ Direkte Duelle <span class="muted" style="font-size:13px;font-weight:400">· Bilanz aus den Einzelspielen</span></h3>
-      ${scope}
-      ${duelle.length ? `<div style="overflow-x:auto"><table class="daten"><thead><tr><th>Gegner</th><th class="num">Spiele</th><th class="num" title="Siege : Niederlagen">Bilanz</th><th class="num">Legs</th></tr></thead><tbody>
-      ${duelle.map(d => `<tr><td><span class="pub-name-link" onclick="pubProfilOeffnen('${d.opp}')">${esc((spieler(d.opp) || {}).name || '?')}</span></td><td class="num">${d.sp}</td><td class="num"><b class="${d.w > d.l ? 'bil-plus' : d.l > d.w ? 'bil-minus' : ''}">${d.w}:${d.l}</b></td><td class="num">${d.lw}:${d.ll}</td></tr>`).join('')}
+      const limitSel = `<label class="duell-ctrl">meiste <select onchange="pubDuellLimit(this.value)">${[5, 10, 15, 25, 9999].map(n => `<option value="${n}" ${limit === n ? 'selected' : ''}>${n >= 9999 ? 'alle' : n}</option>`).join('')}</select></label>`;
+      const suche = `<input type="search" class="duell-suche" placeholder="🔍 Gegner suchen…" autocomplete="off" oninput="pubDuellFilter(this.value)">`;
+      return `<h3 style="margin:18px 0 6px">⚔️ Direkte Duelle <span class="muted" style="font-size:13px;font-weight:400">· Bilanz aus den Einzelspielen · nach Häufigkeit</span></h3>
+      <div class="duell-steuer">${scope}${limitSel}${suche}</div>
+      ${duelleAll.length ? `<div style="overflow-x:auto"><table class="daten" id="duellTab" data-limit="${limAktiv}"><thead><tr><th>Gegner</th><th class="num">Spiele</th><th class="num" title="Siege : Niederlagen">Bilanz</th><th class="num">Legs</th></tr></thead><tbody>
+      ${duelleAll.map((d, i) => `<tr${(i >= limit && limit < 9999) ? ' style="display:none"' : ''}><td><span class="pub-name-link" onclick="pubProfilOeffnen('${d.opp}')">${esc((spieler(d.opp) || {}).name || '?')}</span></td><td class="num">${d.sp}</td><td class="num"><b class="${d.w > d.l ? 'bil-plus' : d.l > d.w ? 'bil-minus' : ''}">${d.w}:${d.l}</b></td><td class="num">${d.lw}:${d.ll}</td></tr>`).join('')}
       </tbody></table></div>` : `<p class="muted" style="margin:2px 0 0">In dieser Saison noch keine Einzelspiele.</p>`}` })()}
     ${tage.length ? `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:18px 0 8px">
         <h3 style="margin:0">📅 Spieltage (${tage.length})</h3>
@@ -1632,7 +1652,7 @@ const PUB = { tab: "rangliste", saisonIdx: 2, filterTage: 5, alleSetz: false,
   farbe: lsGet("tsgPubFarbe") || null,
   spalten: (function(){ var d = {"hl":true,"d180":true,"d171":false,"hf":false,"topHf":false,"bull":false,"avg":true,"s140":false,"s100":false,"s80":false,"a9":false,"a12":false,"a15":false,"a18":false,"leg9":false,"leg10":false,"leg11":false,"leg12":false,"leg13":false,"leg14":false,"leg15":false,"leg16":false,"leg17":false,"leg18":false,"leg19":false,"leg20":false}; try { return Object.assign({}, d, JSON.parse(lsGet("tsgPubSpalten")) || {}); } catch(e){ return d; } })(),
   hlFarben: (function(){ try { return JSON.parse(lsGet("tsgPubHlFarben")) || null; } catch(e){ return null; } })(),
-  suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {}, profilPid: null, profilTag: null, rekordKey: null, rekordLimit: 15, legFilter: null, duellAlle: false, statMetric: "teiln" };
+  suche: "", tagNr: null, spieltagAnsicht: null, suchTag: {}, profilPid: null, profilTag: null, rekordKey: null, rekordLimit: 15, legFilter: null, duellAlle: false, duellLimit: 10, statMetric: "teiln" };
 function aktSaison(){ return data.seasons[PUB.saisonIdx] || data.seasons[0]; }
 PUB.hlFarbenDefault = (function(){ var cs = getComputedStyle(document.documentElement); var o = {}; ["180","171","hf","leg","bull","avg"].forEach(function(k){ o[k] = cs.getPropertyValue("--hlc-"+k).trim(); }); return o; })();
 pubApplyTheme();
