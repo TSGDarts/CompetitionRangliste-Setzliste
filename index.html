@@ -337,8 +337,7 @@
   .pub-tab { padding:9px 20px; border:1px solid var(--grau-rand); border-radius:22px; background:var(--card); color:var(--text); font-weight:600; cursor:pointer; font-size:15px; }
   .pub-tab.active { background:var(--rot); color:#fff; border-color:var(--rot); }
   a.pub-tab { text-decoration:none; display:inline-flex; align-items:center; }
-  .pub-tab-anmelden { background:var(--rot); color:#fff !important; border-color:var(--rot); }
-  .pub-tab-anmelden:hover { filter:brightness(1.08); }
+  .pub-tab-anmelden:hover { border-color:var(--rot); }
   .pub-nav .sais { display:flex; align-items:center; gap:6px; font-size:14px; color:var(--text-blass); }
   .pub-icon-btn { display:inline-flex; align-items:center; gap:5px; border:1px solid var(--grau-rand); background:var(--card); color:var(--text); border-radius:20px; padding:7px 12px; cursor:pointer; font-size:15px; line-height:1; }
   .pub-icon-btn input[type=color] { width:22px; height:22px; border:none; padding:0; background:none; cursor:pointer; }
@@ -380,6 +379,8 @@
   .pt-tagbox { margin-top:8px; padding:9px 12px; border-radius:9px; background:var(--grau-bg); border:1px solid var(--grau-rand); font-size:13.5px; }
   .pt-taghl { margin-top:4px; }
   .pt-tagstat { margin-top:4px; color:var(--text-blass); font-size:12.5px; }
+  .pt-saison { font-size:13px; font-weight:400; color:var(--text-blass); margin-left:10px; white-space:nowrap; }
+  .pt-saison select { font-size:13px; padding:3px 6px; border:1px solid var(--grau-rand); border-radius:8px; background:var(--card); color:var(--text); }
   .pt-tagspiele { margin-top:7px; display:flex; flex-wrap:wrap; gap:5px 8px; }
   .pt-spiel { font-size:12.5px; padding:2px 8px; border-radius:20px; background:var(--card); border:1px solid var(--grau-rand); white-space:nowrap; }
   .pt-spiel .pt-erg { font-weight:700; font-variant-numeric:tabular-nums; }
@@ -1649,6 +1650,13 @@ function pubProfilSchliessen() { PUB.profilPid = null; PUB.profilTag = null; PUB
 
 function pubProfilTag(v) { PUB.profilTag = (v === '' || v == null) ? null : +v; pubRender(); }
 
+function pubProfilSaison(v) {
+  PUB.saisonIdx = +v;
+  PUB.profilTag = null; PUB.profilRekordKey = null; PUB.tagNr = null; PUB.szTag = null;
+  const nav = document.querySelector('.pub-nav .sais select'); if (nav) nav.value = String(PUB.saisonIdx);   // Nav-Auswahl synchron halten
+  pubRender();
+}
+
 function pubProfilChartDefs() {
   return [
     { key: 'platz', label: 'Ranglisten-Platz', invert: true, fmt: function (v) { return 'Platz ' + v; } },
@@ -1784,7 +1792,8 @@ function pubProfilHtml(pid) {
   const graph = pubProfilVerlaufSvg(pid);
   return `<div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-      <h2 style="margin:0">${esc(p.name)}${p.verein ? ` <span class="muted" style="font-size:15px">· ${esc(p.verein)}</span>` : ''}${p.dk ? ' <span class="badge dk">DK</span>' : ''}</h2>
+      <h2 style="margin:0">${esc(p.name)}${p.verein ? ` <span class="muted" style="font-size:15px">· ${esc(p.verein)}</span>` : ''}${p.dk ? ' <span class="badge dk">DK</span>' : ''}
+        <label class="pt-saison">Saison <select onchange="pubProfilSaison(this.value)">${data.seasons.map((s, i) => (s.carryOnly || !(s.days || []).some(t => t.status === 'abgeschlossen')) ? '' : `<option value="${i}" ${i === PUB.saisonIdx ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select></label></h2>
       <button class="btn klein" onclick="pubProfilSchliessen()">← Zurück</button>
     </div>
     <div class="pt-zeile" style="margin-top:8px"><span class="pt-label">Rangliste</span> ${rlInfo}</div>
