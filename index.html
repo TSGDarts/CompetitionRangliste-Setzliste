@@ -305,6 +305,7 @@ OneSignalDeferred.push(async function(OneSignal){
   .pub-nav .sais { display:flex; align-items:center; gap:6px; font-size:14px; color:var(--text-blass); }
   .pub-icon-btn { display:inline-flex; align-items:center; gap:5px; border:1px solid var(--grau-rand); background:var(--card); color:var(--text); border-radius:20px; padding:7px 12px; cursor:pointer; font-size:15px; line-height:1; }
   .pub-icon-btn input[type=color] { width:22px; height:22px; border:none; padding:0; background:none; cursor:pointer; }
+  #pubPushBtn { font-size:22px; padding:8px 16px; }
   .pub-icon-btn.push-an { background:#e7f6ec; border-color:#1c7a3c; color:#1c7a3c; }
   @media (prefers-color-scheme: dark) { .pub-icon-btn.push-an { background:rgba(30,158,74,.22); } }
   html.dark .pub-icon-btn.push-an { background:rgba(30,158,74,.22); border-color:#3fb96a; color:#7ee0a0; }
@@ -1144,31 +1145,40 @@ function pubPushAktivieren() {
   window.OneSignalDeferred.push(async function (OneSignal) {
     try {
       var N = OneSignal.Notifications;
+      var an = false; try { an = await OneSignal.User.PushSubscription.optedIn; } catch (e) {}
+      // schon an -> ausschalten
+      if (an) {
+        try { await OneSignal.User.PushSubscription.optOut(); } catch (e) {}
+        alert('🔕 Benachrichtigungen ausgeschaltet. Du bekommst keine Meldungen mehr.\n(Zum Wieder-Einschalten einfach nochmal auf die Glocke tippen.)');
+        pubPushStatus(); return;
+      }
+      // aus -> einschalten
       if (N && typeof N.isPushSupported === 'function' && !N.isPushSupported()) {
         alert('Push wird auf diesem Gerät/Browser nicht unterstützt.\n\nAm iPhone: die Seite zuerst über das Teilen-Symbol ▸ „Zum Home-Bildschirm" als App installieren, dann die App öffnen und dort aktivieren (iOS 16.4 oder neuer nötig).');
         return;
       }
-      if (N && N.permission === true) { try { await OneSignal.User.PushSubscription.optIn(); } catch (e) {} alert('Benachrichtigungen sind bereits aktiv ✅'); pubPushStatus(); return; }
-      await N.requestPermission();
+      if (N && N.permission !== true) { await N.requestPermission(); }
       try { await OneSignal.User.PushSubscription.optIn(); } catch (e) {}
       setTimeout(function () {
-        window.OneSignalDeferred.push(function (OS) {
-          if (OS.Notifications && OS.Notifications.permission === true) alert('Super! Benachrichtigungen sind jetzt aktiv ✅\nBei jedem neuen Spieltag bekommst du eine Meldung.');
-          else alert('Benachrichtigungen wurden nicht erlaubt.\nDu kannst sie im Browser über das Schloss-Symbol in der Adresszeile ▸ „Benachrichtigungen" noch zulassen.');
+        window.OneSignalDeferred.push(async function (OS) {
+          var on = false; try { on = await OS.User.PushSubscription.optedIn; } catch (e) {}
+          if (on) alert('🔔 Benachrichtigungen sind AN ✅\nBei jedem neuen Spieltag bekommst du eine Meldung. (Nochmal auf die Glocke tippen schaltet sie wieder aus.)');
+          else alert('Benachrichtigungen wurden nicht aktiviert.\nBitte im Browser über das Schloss-Symbol in der Adresszeile ▸ „Benachrichtigungen" zulassen.');
           pubPushStatus();
         });
-      }, 700);
-    } catch (e) { alert('Konnte nicht aktivieren: ' + e); }
+      }, 900);
+    } catch (e) { alert('Konnte nicht umschalten: ' + e); }
   });
 }
 
 function pubPushStatus() {
   var b = document.getElementById('pubPushBtn'); if (!b || typeof window.OneSignalDeferred === 'undefined') return;
-  window.OneSignalDeferred.push(function (OneSignal) {
+  window.OneSignalDeferred.push(async function (OneSignal) {
     try {
-      var on = OneSignal.Notifications && OneSignal.Notifications.permission === true;
+      var on = false; try { on = await OneSignal.User.PushSubscription.optedIn; } catch (e) {}
       b.classList.toggle('push-an', !!on);
-      b.title = on ? 'Benachrichtigungen sind aktiv' : 'Benachrichtigung bei neuem Spieltag aktivieren';
+      b.textContent = on ? '🔔' : '🔕';
+      b.title = on ? 'Benachrichtigungen sind AN – tippen zum Ausschalten' : 'Benachrichtigung bei neuem Spieltag aktivieren';
     } catch (e) {}
   });
 }
