@@ -955,6 +955,7 @@ function spielTabelle(games) {
   // Iterative Verfeinerung: Kriterium für Kriterium anwenden; trennt ein Kriterium eine Teilgruppe ab,
   // werden die folgenden Kriterien (v. a. der DIREKTE VERGLEICH) nur noch innerhalb der verbliebenen Teilgruppe NEU berechnet.
   // (Sonst gilt z. B. ein 3er-Kreis als „gleichauf", obwohl nach Legs-Trennung das direkte Duell der übrigen zwei entscheidet.)
+  let gleichNr = 0;   // laufende Cluster-ID für „komplett gleichauf"-Gruppen (Punkte-Regel beim Abschließen)
   const aufloesen = function (cluster) {
     let gruppen = [cluster];
     for (const k of kette) {
@@ -997,7 +998,7 @@ function spielTabelle(games) {
     }
     const res = [];
     for (const gr of gruppen) {
-      if (gr.length > 1) gr.forEach(function (r) { r.tbGleich = true; });   // alles gleich -> gleichauf (wie 3K), KEIN Ø-/Namens-Fallback
+      if (gr.length > 1) { gleichNr++; gr.forEach(function (r) { r.tbGleich = true; r.tbGruppe = gleichNr; }); }   // alles gleich -> gleichauf (wie 3K); tbGruppe = Cluster-ID für die Punkte-Regel
       for (const r of gr) res.push(r);
     }
     return res;
@@ -1352,6 +1353,7 @@ function pubRekordeHtml() {
 
 function pubRekordDefs() {
   return [
+    { key: 'siege', icon: '👑', titel: 'Meiste Competition-Siege', typ: 'siege', fmt: function (v) { return v + '×'; }, richtung: 'max' },
     { key: 'avgTag', icon: '🎯', titel: 'Höchster Tages-Schnitt', typ: 'tag', get: function (r) { return r.avg; }, fmt: function (v) { return 'Ø' + fmt1(v); }, richtung: 'max' },
     { key: 'spielAvg', icon: '🥇', titel: 'Bestes Einzelspiel (Ø)', typ: 'spiel', fmt: function (v) { return 'Ø' + fmt1(v); }, richtung: 'max' },
     { key: 'd180Tag', icon: '💯', titel: 'Meiste 180 an einem Tag', typ: 'tag', get: function (r) { return r.d180; }, fmt: function (v) { return v + '×'; }, richtung: 'max' },
@@ -1375,6 +1377,10 @@ function pubRekordEintraege(cfg) {
       s.d180 += r.d180 || 0; s.d171 += r.d171 || 0; s.hf += (r.hf ? r.hf.length : 0);
     }));
     Object.keys(summe).forEach(function (pid) { const v = summe[pid][cfg.sumKey]; if (v > 0) eintr.push({ pid: pid, val: v }); });
+  } else if (cfg.typ === 'siege') {
+    const cnt = {};
+    tage.forEach(function (t) { const w = pubSiegerVon(t); if (w) cnt[w] = (cnt[w] || 0) + 1; });
+    Object.keys(cnt).forEach(function (pid) { eintr.push({ pid: pid, val: cnt[pid] }); });
   } else if (cfg.typ === 'spiel') {
     const gn = function (pid, fb) { return (spieler(pid) || {}).name || fb || '?'; };
     pubAlleSpiele(sn).forEach(function (sp) {
@@ -1421,7 +1427,7 @@ function pubRekordDetailHtml(key) {
       <h2 style="margin:0">${cfg.icon} ${cfg.titel}</h2>
       <button class="btn klein" onclick="pubRekordSchliessen()">← Zurück zu den Rekorden</button>
     </div>
-    ${cfg.typ === 'saison' ? '<p class="muted" style="margin:8px 0 0;font-size:13px">Summe über alle Spieltage der Saison – deshalb „Saison gesamt" statt einem einzelnen Spieltag.</p>' : ''}
+    ${(cfg.typ === 'saison' || cfg.typ === 'siege') ? '<p class="muted" style="margin:8px 0 0;font-size:13px">Summe über alle Spieltage der Saison – deshalb „Saison gesamt" statt einem einzelnen Spieltag.</p>' : ''}
     <div class="pub-filter" style="justify-content:flex-start;margin:10px 0 0">Anzeigen:
       <select onchange="pubRekordLimit(this.value)">${[15, 25, 50, 9999].map(function (n) { return `<option value="${n}" ${limit === n ? 'selected' : ''}>${n >= 9999 ? 'alle' : 'Top ' + n}</option>`; }).join('')}</select>${legFilterUI}
       <span class="muted">(${eintr.length} Einträge${legFilterAktiv ? '' : ' gesamt'})</span>
@@ -1621,6 +1627,15 @@ function pubProfilVerlaufSvg(pid) {
 }
 
 function pubProfilRekordEintraege(cfg, pid) {
+  if (cfg.typ === 'siege') {
+    // Liste = die gewonnenen Competitions (Spieltage)
+    const sn = aktSaison(); const eintr = [];
+    (sn.days || []).filter(t => t.status === 'abgeschlossen').forEach(function (t) {
+      if (pubSiegerVon(t) === pid) eintr.push({ pid: pid, tag: t.nr, val: 1 });
+    });
+    eintr.sort(function (a, b) { return a.tag - b.tag; });
+    return eintr;
+  }
   if (cfg.typ === 'saison') {
     // Summen-Kategorie: als Liste die Beiträge je Spieltag (z. B. 180er pro Spieltag)
     const sn = aktSaison(); const eintr = [];
@@ -1659,8 +1674,8 @@ function pubProfilRekordeHtml(pid) {
   const cards = defs.map(function (cfg) {
     const eintr = pubProfilRekordEintraege(cfg, pid);
     if (!eintr.length) return '';
-    const best = cfg.typ === 'saison' ? eintr.reduce(function (a, e) { return a + e.val; }, 0) : eintr[0].val;
-    const sub = cfg.typ === 'saison' ? 'Saison gesamt' : (eintr[0].tag ? 'Spieltag ' + eintr[0].tag : '');
+    const best = (cfg.typ === 'saison' || cfg.typ === 'siege') ? eintr.reduce(function (a, e) { return a + e.val; }, 0) : eintr[0].val;
+    const sub = (cfg.typ === 'saison' || cfg.typ === 'siege') ? 'Saison gesamt' : (eintr[0].tag ? 'Spieltag ' + eintr[0].tag : '');
     return `<button class="rek-karte" onclick="pubProfilRekord('${cfg.key}')">
       <div class="rek-ic">${cfg.icon}</div><div class="rek-wert">${cfg.fmt(best)}</div>
       <div class="rek-tit">${cfg.titel}</div><div class="rek-name">${sub}</div>
