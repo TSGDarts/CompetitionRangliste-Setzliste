@@ -416,6 +416,11 @@
   .form-legende { text-align:center; font-size:12px; color:var(--text-blass); margin:0 0 8px; }
   .pub-termine .pub-news-text > div { padding:1px 0; }
   .termin-vorbei { opacity:.5; }
+  /* Vereinsmeister: jedes Jahr einzeln auf-/zuklappbar */
+  .vm-jahr { margin:8px 0; border:1px solid var(--linie); border-radius:10px; padding:2px 12px 6px; background:var(--card); }
+  .vm-jahr > summary { cursor:pointer; font-weight:700; padding:8px 0; }
+  .vm-jahr > summary:hover { color:var(--rot); }
+  .vm-jahr-body { padding-bottom:6px; }
   .vgl-zeile { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .vgl-zeile select { font-size:14px; padding:6px 8px; border:1px solid var(--grau-rand); border-radius:8px; background:var(--card); color:var(--text); max-width:220px; }
   .vgl-kopf { display:flex; align-items:center; justify-content:center; gap:14px; font-size:17px; font-weight:700; margin-top:4px; }
@@ -516,10 +521,17 @@
     <p class="muted" style="margin-top:0">Das Podium aller abgeschlossenen Saisons (in Klammern: Punkte) und die Saison-Bestleistungen. Name antippen öffnet das Profil in der jeweiligen Saison.</p>
     <div style="overflow-x:auto"><table class="daten"><thead><tr><th>Saison</th><th>🥇 Meister</th><th>🥈 Zweiter</th><th>🥉 Dritter</th><th>👑 Meiste Siege</th><th>💯 Meiste 180er</th><th>✨ Meiste 171+</th><th>🎖️ Meiste Highfinishes</th><th>🎪 Höchstes Highfinish</th><th>🎯 Höchster Tages-Ø</th><th>⚡ Bestes Leg</th></tr></thead><tbody><tr><td><b>2025/26</b></td><td>🥇 <span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('ferdinand-schneck')">Ferdinand Schneck</span> <span class="muted">(609)</span></td><td>🥈 <span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('simon-thanner')">Simon Thanner</span> <span class="muted">(572)</span></td><td>🥉 <span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('matthias-rau')">Matthias Rau</span> <span class="muted">(542)</span></td><td><span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('ferdinand-schneck')">Ferdinand Schneck</span> <span class="muted">(19×)</span></td><td><span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('matthias-rau')">Matthias Rau</span> <span class="muted">(35×)</span></td><td><span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('juergen-prichta')">Jürgen Prichta</span> <span class="muted">(10×)</span></td><td><span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('armend-krasniqi')">Armend Krasniqi</span> <span class="muted">(18×)</span></td><td><span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('julian-rammler')">Julian Rammler</span> <span class="muted">(170)</span></td><td><span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('benjamin-martin')">Benjamin Martin</span> <span class="muted">(Ø71,3)</span></td><td><span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('matthias-rau')">Matthias Rau</span>, <span class="pub-name-link" onclick="PUB.saisonIdx=1;pubProfilOeffnen('michael-boehme')">Michael Böhme</span> <span class="muted">(12 Darts)</span></td></tr></tbody></table></div>
   </div></details>
-    <details class="pub-install"><summary>🏆 Vereinsmeister TSG 08 Roth</summary><div class="pub-install-body"><h3 style="margin:14px 0 6px">2026 · 12.07.2026 <span class="muted">– Termin steht, gespielt wird noch</span></h3>
+    <details class="pub-install"><summary>🏆 Vereinsmeister TSG 08 Roth</summary><div class="pub-install-body"><p class="muted" style="margin-top:0">Jahr antippen zum Auf-/Zuklappen.</p><details class="vm-jahr" open><summary>2026 · 12.07.2026 <span class="muted">– Termin steht, gespielt wird noch</span></summary><div class="vm-jahr-body">
       
-      <hr style="border:none;border-top:1px solid var(--linie);margin:16px 0"><h3 style="margin:14px 0 6px">2025 · 12.07.2025 · 🏆 Vereinsmeister: <span class="pub-name-link" onclick="pubProfilOeffnen('simon-thanner')">Simon Thanner</span></h3>
-      <h4 style="margin:8px 0 3px" class="muted">Gruppenphase</h4><h4 style="margin:8px 0 3px">Gruppe 1</h4><div class="spiel-liste"><div class="spiel-row"><span class="sp-nr">1</span>
+      
+      
+      
+      
+      
+    </div></details><details class="vm-jahr" ><summary>2025 · 12.07.2025 · 🏆 Vereinsmeister: <b>Simon Thanner</b></summary><div class="vm-jahr-body">
+      <p style="margin:6px 0 0">🏆 Vereinsmeister 2025: <span class="pub-name-link" onclick="pubProfilOeffnen('simon-thanner')">Simon Thanner</span></p>
+      <p style="margin:6px 0 0"><a href="https://www.2k-dart-software.com/frontend/events/4/event/33288/participants" target="_blank" rel="noopener">🎯 Zum 3K-Event ↗</a></p>
+      <h4 style="margin:10px 0 3px" class="muted">Gruppenphase</h4><h4 style="margin:8px 0 3px">Gruppe 1</h4><div class="spiel-liste"><div class="spiel-row"><span class="sp-nr">1</span>
       <span class="sp-avg li">Ø47,3</span>
       <span class="sp-seite li "><span class="sp-name"><span class="pub-name-link" onclick="pubProfilOeffnen('susanne-albert')">Susanne Albert</span></span></span>
       <span class="sp-legs">2<span class="sp-tr">:</span>3</span>
@@ -834,9 +846,88 @@
       <span class="sp-legs">5<span class="sp-tr">:</span>3</span>
       <span class="sp-seite re "><span class="sp-name"><span class="pub-name-link" onclick="pubProfilOeffnen('markus-kelber')">Markus Kelber</span></span></span>
       <span class="sp-avg re">Ø62,8</span>
-    </div></div><hr style="border:none;border-top:1px solid var(--linie);margin:16px 0"><h3 style="margin:14px 0 6px">2024 · 27.12.2024 <span class="muted">– Termin steht, gespielt wird noch</span></h3>
+    </div></div>
+      <h4 style="margin:12px 0 0">🏅 Bestleistungen</h4><div style="overflow-x:auto;margin-top:8px"><table class="daten" style="font-size:13.5px">
+    <thead><tr><th class="num">Anz.</th><th>Spieler</th><th class="num">180</th><th class="num">171+</th><th class="num">HF</th><th class="num">Legs</th><th class="num">Bull</th><th class="num">Ø</th></tr></thead>
+    <tbody><tr><td class="num muted">7</td><td>Markus Kelber</td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-171">1</span></td><td class="num hlz"><span class="hlb-chip hlb-hf">140 164</span></td><td class="num hlz"><span class="hlb-chip hlb-leg">20 18×2 17</span></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-avg">Ø59,7</span></td></tr><tr><td class="num muted">6</td><td>Simon Thanner</td><td class="num hlz"><span class="hlb-chip hlb-180">1</span></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-hf">109 137</span></td><td class="num hlz"><span class="hlb-chip hlb-leg">19 17×2</span></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-avg">Ø58,8</span></td></tr><tr><td class="num muted">4</td><td>Armend Krasniqi</td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-leg">20×3 18</span></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-avg">Ø58,0</span></td></tr><tr><td class="num muted">4</td><td>Matthias Herzog</td><td class="num hlz"><span class="hlb-chip hlb-180">2</span></td><td class="num hlz"><span class="hlb-chip hlb-171">1</span></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-leg">18</span></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-avg">Ø54,3</span></td></tr><tr><td class="num muted">3</td><td>Tom Brodtke</td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-hf">114 150</span></td><td class="num hlz"><span class="hlb-chip hlb-leg">20</span></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-avg">Ø48,2</span></td></tr><tr><td class="num muted">2</td><td>Michael Böhme</td><td class="num hlz"><span class="hlb-chip hlb-180">1</span></td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-leg">17</span></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-avg">Ø47,1</span></td></tr><tr><td class="num muted">1</td><td>Alex Walter</td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-hf">113</span></td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-avg">Ø47,4</span></td></tr><tr><td class="num muted">1</td><td>Frank Friedrich</td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-leg">20</span></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-avg">Ø54,0</span></td></tr><tr><td class="num muted">1</td><td>Jan Albert</td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-leg">20</span></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-avg">Ø45,8</span></td></tr><tr><td class="num muted">1</td><td>Marco Jauch</td><td class="num hlz"><span class="hlb-chip hlb-180">1</span></td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-avg">Ø51,7</span></td></tr><tr><td class="num muted">1</td><td>Susanne Albert</td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-171">1</span></td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"></td><td class="num hlz"><span class="hlb-chip hlb-avg">Ø42,7</span></td></tr></tbody>
+  </table></div>
+      <h4 style="margin:12px 0 0">📊 Statistik</h4>
+    <div style="overflow-x:auto;margin-top:8px">
+    <table class="daten" data-rank="1" style="font-size:13.5px">
+      <thead><tr><th class="num">#</th><th class="stat-th" data-typ="text" onclick="statSort(this)" title="Zum Sortieren klicken">Spieler</th><th class="num stat-th" data-typ="num" onclick="statSort(this)" title="Zum Sortieren klicken">Schnitt</th><th class="num stat-th" data-typ="num" onclick="statSort(this)" title="Zum Sortieren klicken">Spiele</th><th class="num stat-th" data-typ="num" onclick="statSort(this)" title="Zum Sortieren klicken">Gew.</th>
+        <th class="num stat-th" data-typ="num" onclick="statSort(this)" title="Zum Sortieren klicken">180</th><th class="num stat-th" data-typ="num" onclick="statSort(this)" title="Zum Sortieren klicken">140+</th><th class="num stat-th" data-typ="num" onclick="statSort(this)" title="Zum Sortieren klicken">100+</th><th class="num stat-th" data-typ="num" onclick="statSort(this)" title="Zum Sortieren klicken">80+</th>
+        <th class="num stat-th" data-typ="num" onclick="statSort(this)" title="Zum Sortieren klicken">Ø9D</th><th class="num stat-th" data-typ="num" onclick="statSort(this)" title="Zum Sortieren klicken">Ø12D</th><th class="num stat-th" data-typ="num" onclick="statSort(this)" title="Zum Sortieren klicken">Ø15D</th><th class="num stat-th" data-typ="num" onclick="statSort(this)" title="Zum Sortieren klicken">Ø18D</th></tr></thead>
+      <tbody>
+      <tr><td class="num muted">1</td><td>Markus Kelber</td>
+          <td class="num"><b>Ø59,7</b></td><td class="num">8</td><td class="num">6</td>
+          <td class="num"></td><td class="num">11</td><td class="num">15</td><td class="num">69</td>
+          <td class="num">Ø64,2</td><td class="num">Ø64,6</td><td class="num">Ø65,4</td><td class="num">Ø65,3</td></tr><tr><td class="num muted">2</td><td>Simon Thanner</td>
+          <td class="num"><b>Ø58,8</b></td><td class="num">8</td><td class="num">8</td>
+          <td class="num">1</td><td class="num">8</td><td class="num">42</td><td class="num">39</td>
+          <td class="num">Ø66,3</td><td class="num">Ø66,4</td><td class="num">Ø66,6</td><td class="num">Ø65,8</td></tr><tr><td class="num muted">3</td><td>Armend Krasniqi</td>
+          <td class="num"><b>Ø58,0</b></td><td class="num">6</td><td class="num">5</td>
+          <td class="num"></td><td class="num">7</td><td class="num">21</td><td class="num">30</td>
+          <td class="num">Ø58,0</td><td class="num">Ø58,2</td><td class="num">Ø59,4</td><td class="num">Ø59,5</td></tr><tr><td class="num muted">4</td><td>Patrick Lang</td>
+          <td class="num"><b>Ø55,8</b></td><td class="num">5</td><td class="num">2</td>
+          <td class="num"></td><td class="num">4</td><td class="num">21</td><td class="num">36</td>
+          <td class="num">Ø62,3</td><td class="num">Ø62,5</td><td class="num">Ø63,0</td><td class="num">Ø61,7</td></tr><tr><td class="num muted">5</td><td>Matthias Herzog</td>
+          <td class="num"><b>Ø54,3</b></td><td class="num">5</td><td class="num">2</td>
+          <td class="num">2</td><td class="num">2</td><td class="num">8</td><td class="num">31</td>
+          <td class="num">Ø55,1</td><td class="num">Ø56,0</td><td class="num">Ø58,4</td><td class="num">Ø60,7</td></tr><tr><td class="num muted">6</td><td>Frank Friedrich</td>
+          <td class="num"><b>Ø54,0</b></td><td class="num">6</td><td class="num">4</td>
+          <td class="num"></td><td class="num">6</td><td class="num">20</td><td class="num">33</td>
+          <td class="num">Ø53,9</td><td class="num">Ø56,4</td><td class="num">Ø57,7</td><td class="num">Ø58,6</td></tr><tr><td class="num muted">7</td><td>Marco Jauch</td>
+          <td class="num"><b>Ø51,7</b></td><td class="num">5</td><td class="num">1</td>
+          <td class="num">1</td><td class="num">3</td><td class="num">16</td><td class="num">26</td>
+          <td class="num">Ø61,3</td><td class="num">Ø64,2</td><td class="num">Ø63,4</td><td class="num">Ø62,3</td></tr><tr><td class="num muted">8</td><td>Max Hempel</td>
+          <td class="num"><b>Ø49,5</b></td><td class="num">6</td><td class="num">4</td>
+          <td class="num"></td><td class="num">2</td><td class="num">19</td><td class="num">27</td>
+          <td class="num">Ø56,8</td><td class="num">Ø55,4</td><td class="num">Ø56,9</td><td class="num">Ø56,9</td></tr><tr><td class="num muted">9</td><td>Tom Brodtke</td>
+          <td class="num"><b>Ø48,2</b></td><td class="num">5</td><td class="num">3</td>
+          <td class="num"></td><td class="num">1</td><td class="num">8</td><td class="num">20</td>
+          <td class="num">Ø49,8</td><td class="num">Ø52,0</td><td class="num">Ø52,2</td><td class="num">Ø52,6</td></tr><tr><td class="num muted">10</td><td>Alex Walter</td>
+          <td class="num"><b>Ø47,4</b></td><td class="num">6</td><td class="num">4</td>
+          <td class="num"></td><td class="num">4</td><td class="num">10</td><td class="num">29</td>
+          <td class="num">Ø47,4</td><td class="num">Ø48,7</td><td class="num">Ø49,2</td><td class="num">Ø52,1</td></tr><tr><td class="num muted">11</td><td>Michael Böhme</td>
+          <td class="num"><b>Ø47,1</b></td><td class="num">6</td><td class="num">5</td>
+          <td class="num">1</td><td class="num">3</td><td class="num">14</td><td class="num">16</td>
+          <td class="num">Ø56,3</td><td class="num">Ø57,4</td><td class="num">Ø56,2</td><td class="num">Ø54,7</td></tr><tr><td class="num muted">12</td><td>Giuseppe Ruggeri</td>
+          <td class="num"><b>Ø46,6</b></td><td class="num">5</td><td class="num">3</td>
+          <td class="num"></td><td class="num"></td><td class="num">8</td><td class="num">27</td>
+          <td class="num">Ø52,5</td><td class="num">Ø50,6</td><td class="num">Ø52,4</td><td class="num">Ø54,0</td></tr><tr><td class="num muted">13</td><td>Jan Albert</td>
+          <td class="num"><b>Ø45,8</b></td><td class="num">4</td><td class="num">0</td>
+          <td class="num"></td><td class="num"></td><td class="num">4</td><td class="num">14</td>
+          <td class="num">Ø45,1</td><td class="num">Ø46,5</td><td class="num">Ø45,9</td><td class="num">Ø47,9</td></tr><tr><td class="num muted">14</td><td>René Pusch</td>
+          <td class="num"><b>Ø45,5</b></td><td class="num">4</td><td class="num">0</td>
+          <td class="num"></td><td class="num">1</td><td class="num">6</td><td class="num">15</td>
+          <td class="num">Ø58,2</td><td class="num">Ø55,7</td><td class="num">Ø53,7</td><td class="num">Ø54,0</td></tr><tr><td class="num muted">15</td><td>Susanne Albert</td>
+          <td class="num"><b>Ø42,7</b></td><td class="num">5</td><td class="num">1</td>
+          <td class="num"></td><td class="num">1</td><td class="num">7</td><td class="num">17</td>
+          <td class="num">Ø47,9</td><td class="num">Ø50,9</td><td class="num">Ø52,7</td><td class="num">Ø51,5</td></tr><tr><td class="num muted">16</td><td>Stefan Albert</td>
+          <td class="num"><b>Ø41,1</b></td><td class="num">5</td><td class="num">1</td>
+          <td class="num"></td><td class="num"></td><td class="num">3</td><td class="num">21</td>
+          <td class="num">Ø48,5</td><td class="num">Ø48,1</td><td class="num">Ø47,0</td><td class="num">Ø46,0</td></tr><tr><td class="num muted">17</td><td>Holger Schön</td>
+          <td class="num"><b>Ø39,7</b></td><td class="num">4</td><td class="num">0</td>
+          <td class="num"></td><td class="num">1</td><td class="num">8</td><td class="num">22</td>
+          <td class="num">Ø48,5</td><td class="num">Ø49,3</td><td class="num">Ø49,8</td><td class="num">Ø48,8</td></tr><tr><td class="num muted">18</td><td>Benjamin Winter</td>
+          <td class="num"><b>Ø38,3</b></td><td class="num">5</td><td class="num">1</td>
+          <td class="num"></td><td class="num"></td><td class="num">4</td><td class="num">18</td>
+          <td class="num">Ø43,2</td><td class="num">Ø44,4</td><td class="num">Ø44,3</td><td class="num">Ø44,6</td></tr><tr><td class="num muted">19</td><td>Stefan Kittsteiner</td>
+          <td class="num"><b>Ø37,9</b></td><td class="num">4</td><td class="num">1</td>
+          <td class="num"></td><td class="num">1</td><td class="num">4</td><td class="num">13</td>
+          <td class="num">Ø44,9</td><td class="num">Ø41,0</td><td class="num">Ø39,3</td><td class="num">Ø41,4</td></tr>
+      </tbody></table>
+    </div>
+    </div></details><details class="vm-jahr" ><summary>2024 · 27.12.2024 <span class="muted">– Termin steht, gespielt wird noch</span></summary><div class="vm-jahr-body">
       
-      <hr style="border:none;border-top:1px solid var(--linie);margin:16px 0"><h3 style="margin:14px 0 6px">2023 · 16.07.2023 · 🏆 Vereinsmeister: <span class="pub-name-link" onclick="pubProfilOeffnen('ferdinand-schneck')">Ferdinand Schneck</span></h3>
+      
+      
+      
+      
+      
+    </div></details><details class="vm-jahr" ><summary>2023 · 16.07.2023 · 🏆 Vereinsmeister: <b>Ferdinand Schneck</b></summary><div class="vm-jahr-body">
+      <p style="margin:6px 0 0">🏆 Vereinsmeister 2023: <span class="pub-name-link" onclick="pubProfilOeffnen('ferdinand-schneck')">Ferdinand Schneck</span></p>
+      
       
       <h4 style="margin:12px 0 0">KO-Phase <span class="muted" style="font-weight:400">(Single-KO)</span></h4><h4 style="margin:10px 0 3px">Großes Finale</h4><div class="spiel-liste"><div class="spiel-row"><span class="sp-nr">1</span>
       <span class="sp-avg li"></span>
@@ -844,7 +935,10 @@
       <span class="sp-legs">3<span class="sp-tr">:</span>5</span>
       <span class="sp-seite re sp-win"><span class="sp-name"><span class="pub-name-link" onclick="pubProfilOeffnen('ferdinand-schneck')">Ferdinand Schneck</span></span></span>
       <span class="sp-avg re"></span>
-    </div></div></div></details>
+    </div></div>
+      
+      
+    </div></details></div></details>
     <details class="pub-install" id="pubTermine"><summary>📅 Termine – Übersicht</summary><div class="pub-install-body">
     <p class="muted" style="margin-top:0">Alle Termine des Vereins – vergangene sind ausgegraut ✓.</p>
     <label class="flex" style="gap:6px;justify-content:center;margin:0 0 6px">Jahr: <select onchange="pubTermineJahr(this.value)"><option value="alle">alle Jahre</option><option value="2027">2027</option><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option></select></label>
