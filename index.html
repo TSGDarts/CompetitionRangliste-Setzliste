@@ -497,7 +497,7 @@
       <div style="text-align:right;margin-top:8px"><button class="pub-farb-reset" onclick="pubHlFarbenReset()">↺ Standard</button></div>
     </div>
     <div class="pub-news"><div class="pub-news-kopf">📢 News</div><div class="pub-news-text">Absofort geht die Anmeldung über 3k! Über den Button Anmeldung ist die Anmeldeseite erreichbar<br><br>Wer die Competition anfängt und nicht Zuende Spielt bekommt 0 Punkte für den Spieltag!</div></div>
-    <div class="pub-news pub-termine"><div class="pub-news-kopf">📅 Termine</div><div class="pub-news-text"><div class="termin-vorbei"><b>27.12.2024</b> – 🏆 Vereinsmeisterschaft 2024 ✓</div><div class="termin-vorbei"><b>12.07.2025</b> – 🏆 Vereinsmeisterschaft 2025 ✓</div><div class=""><b>12.07.2026</b> – 🏆 Vereinsmeisterschaft 2026</div><div class=""><b>18.07.2026</b> – Sommerfest</div></div></div>
+    <div class="pub-news pub-termine"><div class="pub-news-kopf">📅 Termine</div><div class="pub-news-text"><div><b>12.07.2026</b> – 🏆 Vereinsmeisterschaft 2026</div><div><b>18.07.2026</b> – Sommerfest</div><div style="margin-top:4px"><span class="pub-name-link" style="font-size:12.5px" onclick="const t=document.getElementById('pubTermine'); if(t){t.open=true;t.scrollIntoView({behavior:'smooth'});}">alle Termine (auch vergangene) ›</span></div></div></div>
     <div id="pubNeuBanner" class="pub-neu-banner" style="display:none">
       <span class="pnb-text"></span>
       <button class="pnb-close" onclick="pubBannerSchliessen()" title="Schließen">×</button>
@@ -522,6 +522,20 @@
       <hr style="border:none;border-top:1px solid var(--linie);margin:16px 0"><h3 style="margin:14px 0 6px">2024 · 27.12.2024 <span class="muted">– Termin steht, gespielt wird noch</span></h3>
       
       </div></details>
+    <details class="pub-install" id="pubTermine"><summary>📅 Termine – Übersicht</summary><div class="pub-install-body">
+    <p class="muted" style="margin-top:0">Alle Termine (Finalturniere, Vereinsmeisterschaften &amp; weitere) – vergangene sind ausgegraut ✓.</p>
+    <label class="flex" style="gap:6px;justify-content:center;margin:0 0 6px">Jahr: <select onchange="pubTermineJahr(this.value)"><option value="alle">alle Jahre</option><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option></select></label>
+    <div class="termin-jahr" data-jahr="2026">
+      <h3 style="margin:12px 0 4px">2026</h3>
+      <div class="" style="padding:1px 0"><b>12.07.2026</b> – 🏆 Vereinsmeisterschaft 2026</div><div class="" style="padding:1px 0"><b>18.07.2026</b> – Sommerfest</div>
+    </div><div class="termin-jahr" data-jahr="2025">
+      <h3 style="margin:12px 0 4px">2025</h3>
+      <div class="termin-vorbei" style="padding:1px 0"><b>12.07.2025</b> – 🏆 Vereinsmeisterschaft 2025 ✓</div>
+    </div><div class="termin-jahr" data-jahr="2024">
+      <h3 style="margin:12px 0 4px">2024</h3>
+      <div class="termin-vorbei" style="padding:1px 0"><b>27.12.2024</b> – 🏆 Vereinsmeisterschaft 2024 ✓</div>
+    </div>
+  </div></details>
     
     <details class="pub-install">
       <summary>🤺 Spieler-Vergleich (Head-to-Head)</summary>
@@ -544,7 +558,7 @@
         <p class="muted">Danach liegt die Seite mit dem TSG-Logo als App-Symbol auf dem Startbildschirm – wie eine echte App, öffnet ohne Browser-Leiste.</p>
       </div>
     </details>
-    <div class="web-fuss">Nur-Ansicht · TSG-Competition · Stand 08.07.2026</div>
+    <div class="web-fuss">Nur-Ansicht · TSG-Competition · Stand 09.07.2026</div>
   </div>
   <div id="printArea"></div>
 <script>
@@ -1963,6 +1977,8 @@ function pubHashLesen() {
   if (q.spieltag) { PUB.tab = 'spieltage'; PUB.spieltagAnsicht = +q.spieltag || null; }
   if (q.profil && spieler(q.profil)) PUB.profilPid = q.profil;
 }
+
+function pubTermineJahr(v) { document.querySelectorAll('#pubTermine .termin-jahr').forEach(function (el) { el.style.display = (v === 'alle' || el.dataset.jahr === v) ? '' : 'none'; }); }
 
 function pubFilter(v) { const n = parseInt(v, 10); PUB.filterTage = isNaN(n) ? 10 : Math.max(1, n); PUB.alleSetz = false; pubRender(); }
 
