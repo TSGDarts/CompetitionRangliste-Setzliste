@@ -475,6 +475,8 @@
   #pubInhalt .gruppen-grid { text-align:left; }
   #pubInhalt .award-legende { justify-content:center; }
   .pub-install { max-width:640px; margin: 20px auto 0; border:1px solid var(--grau-rand); border-radius:10px; background:var(--card); overflow:hidden; }
+  .pub-install.pub-insta-bereich[open] { max-width:1120px; }
+  .pub-insta-bereich .pub-insta-lock, .pub-insta-bereich .pub-insta-werkstatt { border:0; box-shadow:none; margin-top:0; margin-bottom:0; }
   .pub-install summary { cursor:pointer; padding:12px 16px; font-weight:600; list-style:none; }
   .pub-install summary::-webkit-details-marker { display:none; }
   .pub-install-body { padding: 2px 16px 14px; font-size:14px; line-height:1.55; }
@@ -489,9 +491,8 @@
   body.nav-min .pub-nav { padding:4px 0; margin-bottom:8px; }
   .pub-tab { padding:9px 20px; border:1px solid var(--grau-rand); border-radius:22px; background:var(--card); color:var(--text); font-weight:600; cursor:pointer; font-size:15px; }
   .pub-tab.active { background:var(--rot); color:#fff; border-color:var(--rot); }
-  .pub-tab-insta:not(.active) { border-style:dashed; }
   a.pub-tab { text-decoration:none; display:inline-flex; align-items:center; }
-  /* Nur der Instagram-Reiter besitzt eine Kennwortschranke; die übrige öffentliche Seite bleibt unverändert offen. */
+  /* Nur der Instagram-Bereich unten besitzt eine Kennwortschranke; die übrige öffentliche Seite bleibt unverändert offen. */
   .pub-insta-lock { max-width:540px; margin:34px auto; text-align:center; padding:28px; }
   .pub-insta-lock-icon { width:68px; height:68px; margin:0 auto 10px; border-radius:50%; display:grid; place-items:center; font-size:31px; background:color-mix(in srgb,var(--rot) 13%,var(--card)); }
   .pub-insta-lock h2 { margin:0 0 6px; }
@@ -936,7 +937,6 @@
       <button class="pub-tab" data-tab="spieltage" title="Competitions" onclick="pubTab('spieltage')">📅<span class="tab-txt"> Competitions</span></button>
       <button class="pub-tab" data-tab="statistik" title="Statistiken" onclick="pubTab('statistik')">📊<span class="tab-txt"> Statistiken</span></button>
       <button class="pub-tab" data-tab="suchen" title="Suchen" onclick="pubTab('suchen')">🔍<span class="tab-txt"> Suchen</span></button>
-      <button class="pub-tab pub-tab-insta" data-tab="instagram" title="Kennwortgeschützte Instagram-Posts" onclick="pubTab('instagram')">🔐<span class="tab-txt"> Instagram</span></button>
       <button class="pub-icon-btn" onclick="pubZoom(-10)" title="Schrift kleiner" style="font-size:12px">A−</button>
       <button class="pub-icon-btn" onclick="pubZoom(10)" title="Schrift größer" style="font-weight:700">A+</button>
       <button class="pub-icon-btn pub-nav-toggle" id="pubNavToggle" onclick="pubNavToggle()" title="Menü minimieren">▴</button>
@@ -2538,6 +2538,10 @@
       </div>
     </details>
     <details class="pub-install" id="pubAnkuendigung" ontoggle="if(this.open)pubAnkFuellen()"><summary>📢 Ankündigung zum Teilen (WhatsApp)</summary><div class="pub-install-body" id="pubAnkBox"></div></details>
+    <details class="pub-install pub-insta-bereich" id="pubInstagram" ontoggle="if(this.open)pubInstaBereichFuellen()">
+      <summary>📸 Instagram-Post erstellen <span class="muted" style="font-size:12px;font-weight:400">🔐 kennwortgeschützt</span></summary>
+      <div class="pub-install-body" id="pubInstaBox"></div>
+    </details>
     <div class="web-fuss">Nur-Ansicht · TSG 08 Roth-Competition<br><b>Stand der Anzeige: 15.08.2026, 10:16 Uhr</b> <span class="muted">· zeigt, wann die Daten zuletzt veröffentlicht wurden</span></div>
   </div>
   <button id="pubTop" class="pub-top" title="Nach oben" aria-label="Nach oben">▲</button>
@@ -6186,7 +6190,6 @@ function pubRender() {
     : PUB.tab === 'suchen' ? pubSuchErgebnisHtml()
     : PUB.tab === 'spieltage' ? pubSpieltagHtml()
     : PUB.tab === 'statistik' ? pubStatistikHtml()
-    : PUB.tab === 'instagram' ? pubInstaHtml()
     : PUB.tab === 'setzliste' ? pubSetzlisteHtml() : pubRanglisteHtml();
   document.getElementById('pubInhalt').innerHTML = inh;
   const slot = document.getElementById('pubSpaltenSlot');   // gibt es nur in der Rangliste-Ansicht
@@ -6195,7 +6198,6 @@ function pubRender() {
     if (!PUB.kalMonat) { const h = new Date(); PUB.kalMonat = h.getFullYear() + '-' + ('0' + (h.getMonth() + 1)).slice(-2); }
     pubKalRender();
   }
-  if (!imProfil && PUB.tab === 'instagram' && pubInstaIstFrei()) requestAnimationFrame(pubInstaVorschau);
   const rb = document.getElementById('pubRekordeBox');   // Rekorde-Bereich unten: wenn offen, mit aktuellem Stand (Saison/Detail) neu füllen; #rek=-Deep-Link klappt ihn auf
   if (rb) { const d = rb.closest('details'); if (d && PUB._openRek && !d.open) d.open = true; if (d && d.open) rb.innerHTML = pubRekordeHtml(); if (d && PUB._openRek) { PUB._openRek = false; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }
   const ab = document.getElementById('pubAnkBox');   // Ankündigungs-Box unten: #ankuendigung-Deep-Link klappt sie auf und füllt sie
@@ -6203,11 +6205,18 @@ function pubRender() {
   const tb = document.getElementById('pubTurniereBox');   // Turniere-Bereich unten: dito; ein gewähltes Turnier (Deep-Link) klappt den Bereich auf
   if (tb) { const d = tb.closest('details'); if (d && PUB.turnierIdx != null && !d.open) d.open = true; if (d && d.open) tb.innerHTML = pubTurniereHtml(); }
   const riv = document.getElementById('pubRivalenBox'); if (riv) { const d = riv.closest('details'); if (d && d.open) riv.innerHTML = pubRivalenHtml(); }
+  const ib = document.getElementById('pubInstaBox');   // Instagram-Werkstatt unten: nur beim Aufklappen laden; alter #tab=instagram-Link öffnet sie weiterhin.
+  if (ib) {
+    const d = ib.closest('details');
+    if (d && PUB._openInsta && !d.open) d.open = true;
+    if (d && d.open) pubInstaBereichFuellen();
+    if (d && PUB._openInsta) { PUB._openInsta = false; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  }
   pubApplyTblZoom(); pubScrollHints();   // Tabellen-Zoom (Handy) beibehalten + Grab-Cursor je nach Überlauf
   pubHashSchreiben();
 }
 
-function pubTab(t) { PUB.profilPid = null; PUB.vereinProfil = null; PUB.profilTag = null; PUB.rekordKey = null; PUB.turnierIdx = null; PUB.tab = t; pubRender(); window.scrollTo(0, 0); if (t === 'suchen') { const f = document.getElementById('pubSuchFeld'); if (f) f.focus(); } if (t === 'instagram') { const f = document.getElementById('pubInstaKennwort'); if (f) f.focus(); } }
+function pubTab(t) { PUB.profilPid = null; PUB.vereinProfil = null; PUB.profilTag = null; PUB.rekordKey = null; PUB.turnierIdx = null; PUB.tab = t; pubRender(); window.scrollTo(0, 0); if (t === 'suchen') { const f = document.getElementById('pubSuchFeld'); if (f) f.focus(); } }
 
 function pubSaison(v) { PUB.saisonIdx = +v; PUB.tagNr = null; PUB.szTag = null; PUB.spieltagAnsicht = null; PUB.suchTag = {}; PUB.profilPid = null; PUB.vereinProfil = null; PUB.profilTag = null; PUB.rekordKey = null; PUB.instaTagNr = null; PUB.instaCanvas = null; pubRender(); }
 
@@ -6243,10 +6252,11 @@ function pubHashLesen() {
   const q = {}; h.split('&').forEach(function (p) { const i = p.indexOf('='); if (i > 0) q[p.slice(0, i)] = dec(p.slice(i + 1)); });
   if (h.split('&').includes('tv')) PUB.tv = true;
   if (h.split('&').includes('ankuendigung') || q.ank != null) PUB._openAnk = true;   // #ankuendigung klappt die Ankündigungs-Box unten auf
+  if (h.split('&').includes('instagram') || q.tab === 'instagram') PUB._openInsta = true;   // alter Reiter-Link öffnet jetzt den geschützten Bereich unten
   if (q.vm) PUB._openVm = hofIdSan(q.vm);
   if (q.playoffs) PUB._openFt = hofIdSan(q.playoffs);
   if (q.saison) { const i = data.seasons.findIndex(function (x) { return x.name === q.saison; }); if (i >= 0) { PUB.saisonIdx = i; PUB.tagNr = null; PUB.szTag = null; } }
-  if (q.tab && /^[\w-]+$/.test(q.tab) && document.querySelector('.pub-tab[data-tab="' + q.tab + '"]')) PUB.tab = q.tab;
+  if (q.tab && q.tab !== 'instagram' && /^[\w-]+$/.test(q.tab) && document.querySelector('.pub-tab[data-tab="' + q.tab + '"]')) PUB.tab = q.tab;
   if (q.spieltag) { PUB.tab = 'spieltage'; PUB.spieltagAnsicht = +q.spieltag || null; }
   // Ansicht im Statistiken-Reiter direkt öffnen: #tab=statistik&stat=ewig | vereine | spieler | matrix
   if (q.stat && ['spieler', 'ewig', 'vereine', 'matrix'].indexOf(q.stat) >= 0 && document.querySelector('.pub-tab[data-tab="statistik"]')) { PUB.tab = 'statistik'; PUB.statAnsicht = q.stat; }
@@ -6674,7 +6684,7 @@ function pubInstaSperreHtml() {
   return `<div class="card pub-insta-lock">
     <div class="pub-insta-lock-icon" aria-hidden="true">🔐</div>
     <h2>Instagram-Werkstatt</h2>
-    <p>Dieser Reiter ist ausschließlich für das Social-Media-Team freigegeben.</p>
+    <p>Dieser Bereich ist ausschließlich für das Social-Media-Team freigegeben.</p>
     <form class="pub-insta-login" onsubmit="pubInstaAnmelden(event)">
       <label for="pubInstaKennwort">Kennwort</label>
       <div class="pub-insta-login-row"><input id="pubInstaKennwort" type="password" autocomplete="current-password" required autofocus placeholder="Kennwort eingeben"><button class="btn primaer" type="submit">Freischalten</button></div>
@@ -6696,7 +6706,7 @@ async function pubInstaAnmelden(ev) {
     if (ok) {
       PUB.instaFrei = true; PUB.instaVersuche = 0;
       try { sessionStorage.setItem(pubInstaAuthKey(), '1'); } catch (e) { }
-      pubRender(); return;
+      pubInstaBereichFuellen(); return;
     }
     PUB.instaVersuche = (PUB.instaVersuche || 0) + 1;
     if (PUB.instaVersuche >= 3) { PUB.instaSperreBis = Date.now() + 5000; setTimeout(() => { PUB.instaSperreBis = 0; const b = document.querySelector('.pub-insta-login button'); if (b) { b.disabled = false; b.textContent = 'Freischalten'; } }, 5000); }
@@ -6709,26 +6719,26 @@ async function pubInstaAnmelden(ev) {
 function pubInstaAbmelden() {
   PUB.instaFrei = false; PUB.instaCanvas = null; PUB.instaEigenesFoto = null; PUB.instaEigenesFotoName = '';
   try { sessionStorage.removeItem(pubInstaAuthKey()); } catch (e) { }
-  pubRender();
+  pubInstaBereichFuellen();
 }
 
 function pubInstaSaison(v) { PUB.instaTagNr = null; PUB.instaCanvas = null; pubSaison(v); }
 
-function pubInstaTag(v) { PUB.instaTagNr = v; PUB.instaCanvas = null; pubRender(); }
+function pubInstaTag(v) { PUB.instaTagNr = v; PUB.instaCanvas = null; pubInstaBereichFuellen(); }
 
-function pubInstaVarianteSet(v) { PUB.instaVariante = v; PUB.instaCanvas = null; pubRender(); }
+function pubInstaVarianteSet(v) { PUB.instaVariante = v; PUB.instaCanvas = null; pubInstaBereichFuellen(); }
 
-function pubInstaFormatSet(h) { PUB.instaVorschauHoehe = +h === 1920 ? 1920 : 1350; PUB.instaCanvas = null; pubRender(); }
+function pubInstaFormatSet(h) { PUB.instaVorschauHoehe = +h === 1920 ? 1920 : 1350; PUB.instaCanvas = null; pubInstaBereichFuellen(); }
 
-function pubInstaFotoSet(i) { PUB.instaFotoIdx = +i; PUB.instaEigenesFoto = null; PUB.instaEigenesFotoName = ''; PUB.instaCanvas = null; pubRender(); }
+function pubInstaFotoSet(i) { PUB.instaFotoIdx = +i; PUB.instaEigenesFoto = null; PUB.instaEigenesFotoName = ''; PUB.instaCanvas = null; pubInstaBereichFuellen(); }
 
-function pubInstaPersonSet(i) { PUB.instaPersonIdx = +i; PUB.instaCanvas = null; pubRender(); }
+function pubInstaPersonSet(i) { PUB.instaPersonIdx = +i; PUB.instaCanvas = null; pubInstaBereichFuellen(); }
 
 function pubInstaLokalesFoto(inp) {
   const f = inp && inp.files && inp.files[0]; if (!f) return;
   if (!/^image\/(jpeg|png|webp)$/i.test(f.type || '') || f.size > 15 * 1024 * 1024) { alert('Bitte ein JPG-, PNG- oder WebP-Bild bis 15 MB auswählen.'); inp.value = ''; return; }
   const rd = new FileReader();
-  rd.onload = () => { PUB.instaEigenesFoto = rd.result; PUB.instaEigenesFotoName = f.name || 'eigenes Foto'; PUB.instaFotoIdx = -1; PUB.instaCanvas = null; pubRender(); };
+  rd.onload = () => { PUB.instaEigenesFoto = rd.result; PUB.instaEigenesFotoName = f.name || 'eigenes Foto'; PUB.instaFotoIdx = -1; PUB.instaCanvas = null; pubInstaBereichFuellen(); };
   rd.onerror = () => alert('Das Foto konnte nicht gelesen werden.'); rd.readAsDataURL(f);
 }
 
@@ -6740,7 +6750,7 @@ function pubInstaHtml() {
   if (PUB.instaFotoIdx == null || PUB.instaFotoIdx >= fotos.length) PUB.instaFotoIdx = fotos.length ? 0 : -1;
   if (PUB.instaPersonIdx == null || PUB.instaPersonIdx >= personen.length) PUB.instaPersonIdx = -1;
   const saisonOpts = data.seasons.map((sn, i) => sn.carryOnly ? '' : `<option value="${i}" ${i === PUB.saisonIdx ? 'selected' : ''}>${esc(sn.name)}</option>`).join('');
-  if (!t) return `<div class="card pub-insta-werkstatt"><div class="pub-insta-kopf"><div><h2>📸 Instagram-Werkstatt</h2><p class="muted">Nur dieser Reiter ist kennwortgeschützt.</p></div><button class="btn klein" onclick="pubInstaAbmelden()">🔒 Abmelden</button></div>
+  if (!t) return `<div class="card pub-insta-werkstatt"><div class="pub-insta-kopf"><div><h2>📸 Instagram-Werkstatt</h2><p class="muted">Nur dieser Bereich ist kennwortgeschützt.</p></div><button class="btn klein" onclick="pubInstaAbmelden()">🔒 Abmelden</button></div>
     <label>Saison <select onchange="pubInstaSaison(this.value)">${saisonOpts}</select></label><p class="hinweis">In dieser Saison ist noch keine abgeschlossene Competition veröffentlicht.</p></div>`;
   const caption = instaCaption(t.nr);
   return `<div class="card pub-insta-werkstatt">
@@ -6764,8 +6774,15 @@ function pubInstaHtml() {
   </div>`;
 }
 
+function pubInstaBereichFuellen() {
+  const box = document.getElementById('pubInstaBox'); if (!box) return;
+  box.innerHTML = pubInstaHtml();
+  if (pubInstaIstFrei()) requestAnimationFrame(pubInstaVorschau);
+}
+
 async function pubInstaVorschau() {
-  if (PUB.tab !== 'instagram' || !pubInstaIstFrei()) return;
+  const bereich = document.getElementById('pubInstagram');
+  if (!bereich || !bereich.open || !pubInstaIstFrei()) return;
   const t = pubInstaAktTag(), box = document.getElementById('pubInstaPrev'); if (!t || !box) return;
   const token = (PUB.instaRenderToken || 0) + 1; PUB.instaRenderToken = token;
   box.innerHTML = '<span class="muted">Vorschau wird erstellt…</span>';
