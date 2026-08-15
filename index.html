@@ -3821,7 +3821,8 @@ async function instaPostCanvas(t, hoehe, variante) {
   // Gemeinsame, lokale Helfer für die neuen Designs. Sie bleiben bewusst in dieser Funktion,
   // damit App und öffentliche Post-Werkstatt beim Export exakt denselben Code verwenden.
   const neuStory = H >= 1800;
-  const neuSafeTop = neuStory ? 146 : 58;
+  const neuSafeTop = neuStory ? 150 : 58;
+  const neuKopfTop = neuStory ? neuSafeTop + 40 : neuSafeTop;
   const neuSafeBottom = neuStory ? 150 : 0;
   const neuSponsorTop = sponsoren.length ? H - neuSafeBottom - spBand : H - neuSafeBottom;
   const neuContentBottom = neuSponsorTop - (sponsoren.length ? 28 : 42);
@@ -3871,8 +3872,8 @@ async function instaPostCanvas(t, hoehe, variante) {
       else neuCover(foto, 0, 0, B, photoH, .78);
       if (!held) { instaDartboard(x, B - 80, 250, 330, .22); }
       x.fillStyle = 'rgba(17,18,20,.45)'; x.fillRect(0, 0, B, photoH);
-      zeichneLogo(M + 40, neuSafeTop, 40, false);
-      x.fillStyle = '#fff'; x.font = '700 18px ' + UI; txt(vereinName().toUpperCase(), M + (logo ? 102 : 0), neuSafeTop - 8, 3);
+      zeichneLogo(M + 40, neuKopfTop, 40, false);
+      x.fillStyle = '#fff'; x.font = '700 18px ' + UI; txt(vereinName().toUpperCase(), M + (logo ? 102 : 0), neuKopfTop - 8, 3);
       x.fillStyle = '#fff'; x.font = '650 ' + fit('COMPETITION ' + compNr, B - 2 * M, 92, GROT) + 'px ' + GROT; x.fillText('COMPETITION ' + compNr, M, photoH - 96);
       x.fillStyle = ACC; x.fillRect(M, photoH - 66, 92, 6);
       x.fillStyle = 'rgba(255,255,255,.78)'; x.font = '600 21px ' + UI; txt(sub, M, photoH - 26, 1);
@@ -3885,11 +3886,11 @@ async function instaPostCanvas(t, hoehe, variante) {
       if (!held) instaDartboard(x, 218, 500, 290, .22);
       x.fillStyle = 'rgba(17,18,20,.40)'; x.fillRect(0, 0, photoW, statY - 18);
       x.fillStyle = ACC; x.fillRect(photoW - 12, 0, 12, statY - 18);
-      zeichneLogo(M, neuSafeTop + 24, 40, false);
-      x.fillStyle = 'rgba(255,255,255,.74)'; x.font = '700 16px ' + UI; txt(vereinName().toUpperCase(), M, neuSafeTop + 92, 2);
+      zeichneLogo(M, neuKopfTop + 24, 40, false);
+      x.fillStyle = 'rgba(255,255,255,.74)'; x.font = '700 16px ' + UI; txt(vereinName().toUpperCase(), M, neuKopfTop + 92, 2);
       x.fillStyle = '#fff'; x.font = '650 104px ' + GROT; x.fillText(compNr, M, statY - 112);
       x.fillStyle = ACC; x.font = '700 18px ' + UI; txt('COMPETITION', M, statY - 72, 4);
-      bodyX = photoW + 54; bodyW = B - bodyX - 52; bodyTop = neuSafeTop;
+      bodyX = photoW + 54; bodyW = B - bodyX - 52; bodyTop = neuKopfTop;
       x.fillStyle = SOFT; x.font = '700 17px ' + UI; txt('MATCH RECAP', bodyX, bodyTop + 16, 4);
       x.fillStyle = INK; x.font = '650 ' + fit('COMPETITION ' + compNr, bodyW, 66, GROT) + 'px ' + GROT; x.fillText('COMPETITION ' + compNr, bodyX, bodyTop + 86);
       x.fillStyle = SOFT; x.font = '600 18px ' + UI; txt(sub, bodyX, bodyTop + 124, .5);
@@ -3928,7 +3929,7 @@ async function instaPostCanvas(t, hoehe, variante) {
     const PAPER = '#F3EFE5', INK = '#101114', SOFT = 'rgba(16,17,20,.55)', LINE = 'rgba(16,17,20,.17)';
     const ACC = mischHex(S().farbe || STANDARD_FARBE, '#E11B2E', .62);
     x.fillStyle = PAPER; x.fillRect(0, 0, B, H);
-    const headY = neuSafeTop, headH = neuStory ? 246 : 224;
+    const headY = neuKopfTop, headH = neuStory ? 246 : 224;
     x.fillStyle = INK; x.fillRect(0, 0, B, headY + headH);
     if (foto) { neuCover(foto, B * .58, 0, B * .42, headY + headH, .26); x.fillStyle = 'rgba(16,17,20,.42)'; x.fillRect(B * .58, 0, B * .42, headY + headH); }
     zeichneLogo(M + 40, headY + 28, 40, false);
@@ -3968,7 +3969,7 @@ async function instaPostCanvas(t, hoehe, variante) {
     x.fillStyle = PAPER; x.fillRect(0, 0, B, H);
     x.strokeStyle = 'rgba(21,21,21,.055)'; x.lineWidth = 1;
     for (let i = 0; i <= 12; i++) { const gx = GX + i * GW; x.beginPath(); x.moveTo(gx, neuSafeTop - 24); x.lineTo(gx, neuContentBottom); x.stroke(); }
-    const top = neuSafeTop;
+    const top = neuKopfTop;
     x.fillStyle = INK; x.font = '700 15px ' + UI; txt(vereinName().toUpperCase(), GX, top, 3);
     x.fillStyle = SOFT; x.font = '600 15px ' + UI; txt([datum, saison ? 'SAISON ' + saison : ''].filter(Boolean).join('  ·  '), B - GX, top, 2, 'r');
     x.fillStyle = ACC; x.fillRect(GX, top + 24, B - 2 * GX, 5);
@@ -4022,13 +4023,18 @@ async function instaPostCanvas(t, hoehe, variante) {
     const NAVY = '#09131F', NAVY2 = '#0D1B2A', WH = '#F4F7FA', SOFT = 'rgba(244,247,250,.56)', LINE = 'rgba(244,247,250,.15)';
     const ACC = mischHex(S().farbe || STANDARD_FARBE, '#FF4D5A', .68), SKY = '#77D7E8';
     x.fillStyle = NAVY; x.fillRect(0, 0, B, H);
-    instaDartboard(x, B - 70, neuSafeTop + 150, neuStory ? 330 : 260, .045);
-    zeichneLogo(M + 40, neuSafeTop + 10, 40, false);
+    if (foto) {
+      neuCover(foto, B * .52, 0, B * .48, neuContentBottom, .16);
+      const fotoFade = x.createLinearGradient(B * .36, 0, B, 0); fotoFade.addColorStop(0, NAVY); fotoFade.addColorStop(.68, 'rgba(9,19,31,.36)'); fotoFade.addColorStop(1, 'rgba(9,19,31,.12)');
+      x.fillStyle = fotoFade; x.fillRect(B * .34, 0, B * .66, neuContentBottom);
+    }
+    instaDartboard(x, B - 70, neuKopfTop + 150, neuStory ? 330 : 260, .045);
+    zeichneLogo(M + 40, neuKopfTop + 10, 40, false);
     const hx = M + (logo ? 102 : 0);
-    x.fillStyle = SOFT; x.font = '700 16px ' + UI; txt(vereinName().toUpperCase(), hx, neuSafeTop, 3);
-    x.fillStyle = WH; x.font = '650 ' + fit('COMPETITION ' + compNr, B - hx - M, 78, GROT) + 'px ' + GROT; x.fillText('COMPETITION ' + compNr, hx, neuSafeTop + 76);
-    x.fillStyle = SKY; x.font = '600 18px ' + UI; txt(sub, hx, neuSafeTop + 112, 1);
-    const heroY = neuSafeTop + 176;
+    x.fillStyle = SOFT; x.font = '700 16px ' + UI; txt(vereinName().toUpperCase(), hx, neuKopfTop, 3);
+    x.fillStyle = WH; x.font = '650 ' + fit('COMPETITION ' + compNr, B - hx - M, 78, GROT) + 'px ' + GROT; x.fillText('COMPETITION ' + compNr, hx, neuKopfTop + 76);
+    x.fillStyle = SKY; x.font = '600 18px ' + UI; txt(sub, hx, neuKopfTop + 112, 1);
+    const heroY = neuKopfTop + 176;
     x.strokeStyle = SKY; x.lineWidth = 2; x.beginPath(); x.moveTo(M + 14, heroY - 18); x.lineTo(M + 14, heroY + (neuStory ? 150 : 116)); x.stroke();
     x.beginPath(); x.arc(M + 14, heroY, 12, 0, 7); x.fillStyle = ACC; x.fill(); x.beginPath(); x.arc(M + 14, heroY, 4, 0, 7); x.fillStyle = WH; x.fill();
     x.fillStyle = ACC; x.font = '700 15px ' + UI; txt('START · TAGESSIEGER', M + 48, heroY - 2, 3);
@@ -4062,7 +4068,7 @@ async function instaPostCanvas(t, hoehe, variante) {
     const PAPER = '#F5F0E7', INK = '#171513', SOFT = 'rgba(23,21,19,.56)', LINE = 'rgba(23,21,19,.20)';
     const ACC = mischHex(S().farbe || STANDARD_FARBE, '#B51F2C', .66), SERIF = 'Georgia, "Times New Roman", serif';
     x.fillStyle = PAPER; x.fillRect(0, 0, B, H);
-    const top = neuSafeTop;
+    const top = neuKopfTop;
     x.fillStyle = INK; x.font = '700 18px ' + SERIF; txt(vereinName().toUpperCase(), M, top, 2);
     x.fillStyle = SOFT; x.font = '600 15px ' + UI; txt('MATCHDAY JOURNAL  ·  ' + datum, B - M, top, 2, 'r');
     x.strokeStyle = INK; x.lineWidth = 3; x.beginPath(); x.moveTo(M, top + 24); x.lineTo(B - M, top + 24); x.stroke();
@@ -4120,16 +4126,16 @@ async function instaPostCanvas(t, hoehe, variante) {
     const BG = '#06080D', PANEL = '#0B1018', WH = '#F5F8FA', SOFT = 'rgba(245,248,250,.52)', LINE = 'rgba(245,248,250,.13)';
     const CYAN = '#5CEBFF', ACC = mischHex(S().farbe || STANDARD_FARBE, '#FF4057', .70);
     x.fillStyle = BG; x.fillRect(0, 0, B, H);
-    const vanishY = neuSafeTop + (neuStory ? 370 : 300), floorBottom = neuContentBottom;
+    const vanishY = neuKopfTop + (neuStory ? 370 : 300), floorBottom = neuContentBottom;
     x.strokeStyle = 'rgba(92,235,255,.08)'; x.lineWidth = 1;
     [0, 180, 360, 720, 900, 1080].forEach(px => { x.beginPath(); x.moveTo(B / 2, vanishY); x.lineTo(px, floorBottom); x.stroke(); });
     for (let i = 1; i <= 8; i++) { const p = i / 8, yy = vanishY + (floorBottom - vanishY) * p * p; x.beginPath(); x.moveTo(M * (1 - p), yy); x.lineTo(B - M * (1 - p), yy); x.stroke(); }
-    zeichneLogo(M + 38, neuSafeTop + 4, 38, false);
+    zeichneLogo(M + 38, neuKopfTop + 4, 38, false);
     const hx = M + (logo ? 98 : 0);
-    x.fillStyle = SOFT; x.font = '700 15px ' + UI; txt(vereinName().toUpperCase(), hx, neuSafeTop - 4, 3);
-    x.fillStyle = WH; x.font = '650 ' + fit('COMPETITION ' + compNr, B - hx - M, 74, GROT) + 'px ' + GROT; x.fillText('COMPETITION ' + compNr, hx, neuSafeTop + 68);
-    x.fillStyle = CYAN; x.font = '600 17px ' + UI; txt(sub, hx, neuSafeTop + 102, 1);
-    const heroY = neuSafeTop + 160, heroH = neuStory ? 360 : 264, heroX = M, heroW = B - 2 * M;
+    x.fillStyle = SOFT; x.font = '700 15px ' + UI; txt(vereinName().toUpperCase(), hx, neuKopfTop - 4, 3);
+    x.fillStyle = WH; x.font = '650 ' + fit('COMPETITION ' + compNr, B - hx - M, 74, GROT) + 'px ' + GROT; x.fillText('COMPETITION ' + compNr, hx, neuKopfTop + 68);
+    x.fillStyle = CYAN; x.font = '600 17px ' + UI; txt(sub, hx, neuKopfTop + 102, 1);
+    const heroY = neuKopfTop + 160, heroH = neuStory ? 360 : 264, heroX = M, heroW = B - 2 * M;
     x.fillStyle = PANEL; x.fillRect(heroX, heroY, heroW, heroH);
     if (foto) neuCover(foto, heroX, heroY, heroW, heroH, .13);
     x.save(); x.shadowColor = CYAN; x.shadowBlur = 20; x.strokeStyle = CYAN; x.lineWidth = 3; x.strokeRect(heroX, heroY, heroW, heroH); x.restore();
