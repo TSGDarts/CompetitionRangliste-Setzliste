@@ -2556,7 +2556,7 @@
       <summary>📸 Instagram-Post erstellen <span class="muted" style="font-size:12px;font-weight:400">🔐 kennwortgeschützt</span></summary>
       <div class="pub-install-body" id="pubInstaBox"></div>
     </details>
-    <div class="web-fuss">Nur-Ansicht · TSG 08 Roth-Competition<br><b>Stand der Anzeige: 25.08.2026, 19:38 Uhr</b> <span class="muted">· zeigt, wann die Daten zuletzt veröffentlicht wurden</span></div>
+    <div class="web-fuss">Nur-Ansicht · TSG 08 Roth-Competition<br><b>Stand der Anzeige: 25.08.2026, 20:11 Uhr</b> <span class="muted">· zeigt, wann die Daten zuletzt veröffentlicht wurden</span></div>
   </div>
   <button id="pubTop" class="pub-top" title="Nach oben" aria-label="Nach oben">▲</button>
   <div id="printArea"></div>
@@ -4434,7 +4434,7 @@ function pubSaisonWahl() {
   return `<div class="pub-saiswahl"><label>Saison <select onchange="pubSaison(this.value)">${opts}</select></label></div>`;
 }
 
-function besteSaisonWinrate(sn, minSpiele = 10) {
+function pubWinrateDaten(sn) {
   const bilanzen = {};
   const spiele = pubAlleSpiele(sn);
   spiele.forEach(function (g) {
@@ -4452,10 +4452,7 @@ function besteSaisonWinrate(sn, minSpiele = 10) {
   }).sort(function (a, b) {
     return b.quote - a.quote || b.sp - a.sp || b.w - a.w || ((spieler(a.pid) || {}).name || '').localeCompare((spieler(b.pid) || {}).name || '', 'de');
   });
-  const liste = alle.filter(function (d) { return d.sp >= minSpiele; });
-  if (!liste.length) return { minSpiele: minSpiele, spieleGesamt: spiele.length, beste: [], alle: alle };
-  const bestwert = liste[0].quote;
-  return { minSpiele: minSpiele, spieleGesamt: spiele.length, beste: liste.filter(function (d) { return Math.abs(d.quote - bestwert) < 0.000001; }), alle: alle };
+  return alle;
 }
 
 function pubRanglisteHtml() {
@@ -5922,12 +5919,19 @@ function pubSaisonMatrixHtml() {
     </tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 
+function pubWinrateTag(v) { PUB.winrateTag = (v === '' || v == null) ? null : +v; pubRender(); }
+
 function pubWinrateTabelleHtml(sn) {
-  const wr = besteSaisonWinrate(sn, 10);
-  const alle = wr.alle || [];
-  if (!alle.length) return '<p class="muted" style="text-align:center;padding:22px 0">In dieser Saison sind noch keine Einzelspiele erfasst.</p>';
-  const besteIds = {};
-  (wr.beste || []).forEach(function (d) { besteIds[d.pid] = 1; });
+  const tage = (sn.days || []).filter(function (t) { return t.status === 'abgeschlossen'; }).slice().sort(function (a, b) { return b.nr - a.nr; });
+  const tagNr = PUB.winrateTag != null && tage.some(function (t) { return t.nr === +PUB.winrateTag; }) ? +PUB.winrateTag : null;
+  const tag = tagNr == null ? null : tage.find(function (t) { return t.nr === tagNr; });
+  const zeitraum = tag ? Object.assign({}, sn, { days: [tag] }) : sn;
+  const alle = pubWinrateDaten(zeitraum);
+  const auswahl = tage.length ? `<div class="pub-rl-stand" style="margin:0 0 12px">Zeitraum <select aria-label="Zeitraum der Winrate" onchange="pubWinrateTag(this.value)">
+    <option value="" ${tagNr == null ? 'selected' : ''}>Saison gesamt</option>
+    ${tage.map(function (t) { return `<option value="${t.nr}" ${t.nr === tagNr ? 'selected' : ''}>Competition ${t.nr}${datumKurz(t.date) ? ' · ' + esc(datumKurz(t.date)) : ''}</option>`; }).join('')}
+  </select></div>` : '';
+  if (!alle.length) return `${auswahl}<p class="muted" style="text-align:center;padding:22px 0">${tag ? `Für Competition ${tag.nr} sind keine Einzelspiele erfasst.` : 'In dieser Saison sind noch keine Einzelspiele erfasst.'}</p>`;
   let rang = 0, letzteQuote = null;
   const rows = alle.map(function (d, i) {
     if (letzteQuote == null || Math.abs(d.quote - letzteQuote) > 0.000001) { rang = i + 1; letzteQuote = d.quote; }
@@ -5935,13 +5939,13 @@ function pubWinrateTabelleHtml(sn) {
     const ohne = d.sp - d.w - d.l;
     return `<tr>
       <td class="num muted" data-sort="${rang}">${rang}</td>
-      <td class="name"><span class="pub-name-link" onclick="pubProfilOeffnen('${jsAttr(d.pid)}')">${esc(p.name || '?')}</span>${besteIds[d.pid] ? ' <span class="badge gruen" title="Beste Saison-Winrate unter Spielern mit mindestens 10 Spielen">Saisonbestwert</span>' : ''}</td>
+      <td class="name"><span class="pub-name-link" onclick="pubProfilOeffnen('${jsAttr(d.pid)}')">${esc(p.name || '?')}</span></td>
       <td>${esc(p.verein || '')}</td>
       <td class="num" data-sort="${d.sp}">${d.sp}</td><td class="num" data-sort="${d.w}">${d.w}</td><td class="num" data-sort="${d.l}">${d.l}</td>
       <td class="num" data-sort="${ohne}">${ohne || '–'}</td><td class="num" data-sort="${d.quote}"><b>${fmt1(d.quote)} %</b></td>
     </tr>`;
   }).join('');
-  return `<p class="muted" style="text-align:center;margin:0 0 10px;font-size:13px">Winrate = Siege ÷ alle abgeschlossenen Einzelspiele der gewählten Saison. Die Tabelle enthält jeden Spieler mit mindestens einem Spiel; der Saisonbestwert wird ab 10 Spielen ausgezeichnet. Namen antippen öffnet das Profil.</p>
+  return `${auswahl}<p class="muted" style="text-align:center;margin:0 0 10px;font-size:13px">Winrate = Siege ÷ alle abgeschlossenen Einzelspiele ${tag ? `bei Competition ${tag.nr}` : 'der gewählten Saison'}. Namen antippen öffnet das Profil.</p>
     <div class="tbl-huelle"><div class="tbl-scroll"><table class="daten raster kompakt" data-rank="1"><thead><tr>
       ${sortTh('#', 'num')}${sortTh('Name', 'text', 'name')}${sortTh('Verein', 'text')}${sortTh('Spiele', 'num')}${sortTh('Siege', 'num')}${sortTh('Niederl.', 'num')}${sortTh('Ohne Sieger', 'num')}${sortTh('Winrate', 'num')}
     </tr></thead><tbody>${rows}</tbody></table></div></div>`;
@@ -5989,17 +5993,12 @@ function pubStatistikHtml() {
   tage.forEach(function (t) { Object.keys(t.results || {}).forEach(function (pid) { spielerSet[pid] = 1; const r = t.results[pid] || {}; if (r.avg != null) { avgSum += r.avg; avgN++; } }); });
   const seasonAvg = avgN ? avgSum / avgN : null;
   const spielerAnz = Object.keys(spielerSet).length;
-  const winrate = besteSaisonWinrate(sn, 10);
-  const winrateExtra = winrate.beste.length
-    ? winrate.beste.map(function (d) { return `<span class="pub-name-link" onclick="pubProfilOeffnen('${jsAttr(d.pid)}')">${esc((spieler(d.pid) || {}).name || '?')}</span>${winrate.beste.length === 1 ? `<div class="muted" style="font-size:12px;margin-top:3px">${d.w} Siege aus ${d.sp} Spielen</div>` : ` <span class="muted">${d.w}/${d.sp}</span>`}`; }).join(' · ')
-    : `<span class="muted" style="font-size:12px">Noch niemand mit mindestens ${winrate.minSpiele} Spielen</span>`;
   const summary = [
     { titel: 'Competitions', wert: daten.length },
     { titel: 'Teilnahmen gesamt', wert: teilnGesamt },
     { titel: '180er gesamt', wert: total180 },
     { titel: 'Ø Average (Saison)', wert: seasonAvg != null ? 'Ø' + fmt1(seasonAvg) : '–' },
-    { titel: 'Ø Teilnehmer / Comp.', wert: fmt1(avgTeiln) },
-    { titel: 'Beste Winrate (ab 10 Spielen)', wert: winrate.beste.length ? fmt1(winrate.beste[0].quote) + ' %' : '–', extra: winrateExtra }
+    { titel: 'Ø Teilnehmer / Comp.', wert: fmt1(avgTeiln) }
   ].map(function (c) { return `<div class="stat-sum"><div class="rek-wert">${c.wert}</div><div class="rek-tit">${c.titel}</div>${c.extra ? `<div class="rek-name">${c.extra}</div>` : ''}</div>`; }).join('');
   const wahl = `<div class="stat-wahl">
     ${metriken.map(function (x) { return `<button class="${x.key === mKey ? 'active' : ''}" onclick="pubStatMetric('${x.key}')">${x.label}</button>`; }).join('')}
@@ -6265,6 +6264,29 @@ function pubProfilBilanzZeile(pid) {
     ? `<b style="font-size:17px">${fmt1(b.quote)} %</b> <span class="muted">· ${b.w} ${b.w === 1 ? 'Sieg' : 'Siege'} aus ${b.sp} Spielen · ${b.l} ${b.l === 1 ? 'Niederlage' : 'Niederlagen'}${unent > 0 ? ` · ${unent} ohne Sieger` : ''} · Legs ${b.lw}:${b.ll}</span>`
     : `<span class="muted">${alleS ? 'noch keine Einzelspiele erfasst' : 'in dieser Saison noch keine Einzelspiele erfasst'}</span>`;
   return `<div class="pt-zeile"><span class="pt-label">📈 Winrate</span> ${text}${umschalter}</div>`;
+}
+
+function pubProfilWinrateCompetitionsHtml(pid) {
+  const sn = aktSaison();
+  const zeilen = (sn.days || []).filter(function (t) { return t.status === 'abgeschlossen'; }).map(function (t) {
+    const b = pubSpielBilanz(pid, [Object.assign({}, sn, { days: [t] })]);
+    return { tag: t, bilanz: b };
+  }).filter(function (x) { return x.bilanz.sp > 0; }).sort(function (a, b) { return b.tag.nr - a.tag.nr; });
+  if (!zeilen.length) return '';
+  const rows = zeilen.map(function (x) {
+    const t = x.tag, b = x.bilanz, ohne = b.sp - b.w - b.l;
+    return `<tr>
+      <td class="name">${pubSpieltagLink(sn.name, t.nr, `Competition ${t.nr}`)}</td>
+      <td>${datumKurz(t.date) ? esc(datumKurz(t.date)) : '–'}</td>
+      <td class="num">${b.sp}</td><td class="num">${b.w}</td><td class="num">${b.l}</td><td class="num">${ohne || '–'}</td>
+      <td class="num"><b>${fmt1(b.quote)} %</b></td>
+    </tr>`;
+  }).join('');
+  return `<details class="pub-install" open style="margin:10px 0 4px"><summary>📈 Winrate je Competition · Saison ${esc(sn.name)} (${zeilen.length})</summary>
+    <div class="pub-install-body"><div class="tbl-huelle"><div class="tbl-scroll"><table class="daten raster kompakt"><thead><tr>
+      <th>Competition</th><th>Datum</th><th class="num">Spiele</th><th class="num">Siege</th><th class="num">Niederl.</th><th class="num">Ohne Sieger</th><th class="num">Winrate</th>
+    </tr></thead><tbody>${rows}</tbody></table></div></div></div>
+  </details>`;
 }
 
 function pubProfilRekScopeIdx() { const v = PUB.profilRekScope; if (v === 'alle') return true; return (typeof v === 'number' && data.seasons[v] && !data.seasons[v].carryOnly) ? v : data.seasons.indexOf(aktSaison()); }
@@ -6547,6 +6569,7 @@ function pubProfilHtml(pid) {
     <div class="pt-zeile" style="margin-top:8px"><span class="pt-label">Rangliste</span> ${rlInfo}</div>
     <div class="pt-zeile"><span class="pt-label">Setzliste</span> ${slInfo}</div>
     ${pubProfilBilanzZeile(pid)}
+    ${pubProfilWinrateCompetitionsHtml(pid)}
     <div class="pt-zeile"><span class="pt-label">🆚 Vergleichen</span>
       <select onchange="pubProfilVergleich(this.value)"><option value="">– Spieler wählen –</option>${data.players.slice().filter(x => x.id !== pid).sort((a, b) => a.name.localeCompare(b.name, 'de')).map(x => `<option value="${x.id}" ${PUB.profilVergleich === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select>
       ${PUB.profilVergleich && spieler(PUB.profilVergleich) ? `<button class="btn klein" style="margin-left:6px" onclick="pubProfilVergleich('')">✕ Vergleich aus</button>` : ''}
@@ -6645,7 +6668,7 @@ function pubRender() {
 
 function pubTab(t) { PUB.profilPid = null; PUB.vereinProfil = null; PUB.profilTag = null; PUB.rekordKey = null; PUB.turnierIdx = null; PUB.tab = t; pubRender(); window.scrollTo(0, 0); if (t === 'suchen') { const f = document.getElementById('pubSuchFeld'); if (f) f.focus(); } }
 
-function pubSaison(v) { PUB.saisonIdx = +v; PUB.tagNr = null; PUB.szTag = null; PUB.spieltagAnsicht = null; PUB.suchTag = {}; PUB.profilPid = null; PUB.vereinProfil = null; PUB.profilTag = null; PUB.rekordKey = null; PUB.instaTagNr = null; PUB.instaCanvas = null; pubRender(); }
+function pubSaison(v) { PUB.saisonIdx = +v; PUB.tagNr = null; PUB.szTag = null; PUB.spieltagAnsicht = null; PUB.suchTag = {}; PUB.profilPid = null; PUB.vereinProfil = null; PUB.profilTag = null; PUB.rekordKey = null; PUB.winrateTag = null; PUB.instaTagNr = null; PUB.instaCanvas = null; pubRender(); }
 
 function pubHashSchreiben() {
   const teile = [];
@@ -6661,6 +6684,7 @@ function pubHashSchreiben() {
   if (!PUB.profilPid && PUB.turnierIdx != null) teile.push('turnier=' + PUB.turnierIdx);
   // Ansicht im Statistiken-Reiter (Spieler-Statistik / Vereinswertung / Ewige Tabelle / Saison-Matrix) im Link erhalten
   if (!PUB.profilPid && !PUB.vereinProfil && PUB.tab === 'statistik' && PUB.statAnsicht && PUB.statAnsicht !== 'gesamt') teile.push('stat=' + PUB.statAnsicht);
+  if (!PUB.profilPid && !PUB.vereinProfil && PUB.tab === 'statistik' && PUB.statAnsicht === 'winrate' && PUB.winrateTag != null) teile.push('wrcomp=' + PUB.winrateTag);
   // Sortierung der Saison-Matrix (Standard = nach Punkten) im Link erhalten
   if (!PUB.profilPid && !PUB.vereinProfil && PUB.tab === 'statistik' && PUB.statAnsicht === 'matrix' && PUB.matrixSort === 'name') teile.push('mtx=name');
   if (PUB.rekordAlle) teile.push('rek=alle');   // eigene Saison-Auswahl der Rekorde-Box im Link erhalten
@@ -6687,6 +6711,7 @@ function pubHashLesen() {
   if (q.spieltag) { PUB.tab = 'spieltage'; PUB.spieltagAnsicht = +q.spieltag || null; }
   // Ansicht im Statistiken-Reiter direkt öffnen: #tab=statistik&stat=ewig | vereine | spieler | matrix
   if (q.stat && ['spieler', 'ewig', 'vereine', 'matrix', 'winrate'].indexOf(q.stat) >= 0 && document.querySelector('.pub-tab[data-tab="statistik"]')) { PUB.tab = 'statistik'; PUB.statAnsicht = q.stat; }
+  if (q.wrcomp != null) { const n = parseInt(q.wrcomp, 10); PUB.winrateTag = isNaN(n) ? null : n; }
   if (q.mtx) PUB.matrixSort = (q.mtx === 'name') ? 'name' : 'punkte';   // Sortierung der Saison-Matrix
   if (q.turnier != null && document.getElementById('pubTurniereBox')) { PUB.turnierIdx = parseInt(q.turnier, 10); if (isNaN(PUB.turnierIdx)) PUB.turnierIdx = null; }   // öffnet den Turniere-Bereich unten (pubRender klappt ihn auf)
   if (q.rek) {   // Rekorde-Box mit gewählter Saison (Name) bzw. "alle" öffnen
@@ -7601,7 +7626,7 @@ const PUB = { tab: "rangliste", saisonIdx: 3, saisonIdxStart: 3, filterTage: 5, 
   deltaSpalten: (function(){ var d = {"hl":true,"d180":true,"d171":true,"hf":true,"topHf":true,"bull":true,"avg":true,"s140":true,"s100":true,"s80":true,"a9":true,"a12":true,"a15":true,"a18":true,"legs":true}; try { return Object.assign({}, d, JSON.parse(lsGet("tsgPubDelta")) || {}); } catch(e){ return d; } })(),
   hlFarben: (function(){ try { return JSON.parse(lsGet("tsgPubHlFarben")) || null; } catch(e){ return null; } })(),
   oSetzPlatz: (lsGet("tsgPubOSetz")==="1"), tblZoom: 1, wischGezeigt: false,
-  suche: "", tagNr: null, szTag: null, spieltagAnsicht: null, suchTag: {}, profilPid: null, vereinProfil: null, profilTag: null, profilRekordKey: null, profilRekScope: null, profilVergleich: null, vglScope: null, rivalenScope: null, rekordKey: null, rekordLimit: 15, rekordAlle: false, rekSaison: null, legFilter: null, duellSaison: null, duellLimit: 10, duellGegner: null, profilChart: "platz", profilChartZoom: 1, profilGrpAlle: false, profilBilanzAlle: false, statMetric: "teiln", statTrendMetric: "teilnAvg", statAnsicht: "gesamt", matrixSort: "punkte", turnierIdx: null, turnierTag: null, instaFrei: false, instaVersuche: 0, instaSperreBis: 0, instaTagNr: null, instaVariante: "q", instaVorschauHoehe: 1350, instaFotoIdx: null, instaPersonIdx: -1, instaCanvas: null, instaEigenesFoto: null, instaEigenesFotoName: "", instaRenderToken: 0 };
+  suche: "", tagNr: null, szTag: null, spieltagAnsicht: null, suchTag: {}, profilPid: null, vereinProfil: null, profilTag: null, profilRekordKey: null, profilRekScope: null, profilVergleich: null, vglScope: null, rivalenScope: null, rekordKey: null, rekordLimit: 15, rekordAlle: false, rekSaison: null, legFilter: null, duellSaison: null, duellLimit: 10, duellGegner: null, profilChart: "platz", profilChartZoom: 1, profilGrpAlle: false, profilBilanzAlle: false, statMetric: "teiln", statTrendMetric: "teilnAvg", statAnsicht: "gesamt", winrateTag: null, matrixSort: "punkte", turnierIdx: null, turnierTag: null, instaFrei: false, instaVersuche: 0, instaSperreBis: 0, instaTagNr: null, instaVariante: "q", instaVorschauHoehe: 1350, instaFotoIdx: null, instaPersonIdx: -1, instaCanvas: null, instaEigenesFoto: null, instaEigenesFotoName: "", instaRenderToken: 0 };
 const ui = PUB; // gemeinsame Canvas-Vorlagen verwenden im öffentlichen Reiter den PUB-Zustand
 function aktSaison(){ return data.seasons[PUB.saisonIdx] || data.seasons[0]; }
 PUB.hlFarbenDefault = (function(){ var cs = getComputedStyle(document.documentElement); var o = {}; ["180","171","hf","leg","bull","avg"].forEach(function(k){ o[k] = cs.getPropertyValue("--hlc-"+k).trim(); }); return o; })();
