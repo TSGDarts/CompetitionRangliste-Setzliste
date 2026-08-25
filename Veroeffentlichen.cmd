@@ -55,7 +55,7 @@ if errorlevel 1 (
   git --git-dir="%PUBLISH_GIT%" --work-tree="%PUBLISH_WORKTREE%" commit -m "Rangliste/Setzliste aktualisiert" 1>nul
   if errorlevel 1 goto :sendefehler
 ) else (
-  echo (keine Aenderungen - trotzdem senden)
+  echo Keine Aenderungen - trotzdem senden.
 )
 
 echo Sende zu GitHub...
