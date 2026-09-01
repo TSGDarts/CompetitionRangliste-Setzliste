@@ -10,54 +10,461 @@ REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
 UID:termin-20230716-vereinsmeisterschaft-2023@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20230716
 SUMMARY:🏆 Vereinsmeisterschaft 2023
 END:VEVENT
 BEGIN:VEVENT
 UID:termin-20241227-vereinsmeisterschaft-2024@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20241227
 SUMMARY:🏆 Vereinsmeisterschaft 2024
 END:VEVENT
 BEGIN:VEVENT
 UID:termin-20250712-vereinsmeisterschaft-2025@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20250712
 SUMMARY:🏆 Vereinsmeisterschaft 2025
 END:VEVENT
 BEGIN:VEVENT
 UID:termin-20260712-vereinsmeisterschaft-2026@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;TZID=Europe/Berlin:20260712T140000
 DTEND;TZID=Europe/Berlin:20260712T170000
 SUMMARY:🏆 Vereinsmeisterschaft 2026
 END:VEVENT
 BEGIN:VEVENT
 UID:termin-20270628-playoffs-saison-2026-27-top-16-der-rangl@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;TZID=Europe/Berlin:20270628T190000
 DTEND;TZID=Europe/Berlin:20270628T220000
 SUMMARY:🏁 Playoffs Saison 2026/27 (Top 16 der Rangliste)
 END:VEVENT
 BEGIN:VEVENT
 UID:termin-20270711-vereinsmeisterschaft-2027@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;TZID=Europe/Berlin:20270711T140000
 DTEND;TZID=Europe/Berlin:20270711T170000
 SUMMARY:🏆 Vereinsmeisterschaft 2027
 END:VEVENT
 BEGIN:VEVENT
+UID:competition-20260706-competition-1@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260706T190000
+DTEND;TZID=Europe/Berlin:20260706T220000
+SUMMARY:🎯 Competition 1
+URL:https://www.2k-dart-software.com/frontend/events/4/event/50734/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260713-competition-2@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260713T190000
+DTEND;TZID=Europe/Berlin:20260713T220000
+SUMMARY:🎯 Competition 2
+URL:https://www.2k-dart-software.com/frontend/events/4/event/50735/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260720-competition-3@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260720T190000
+DTEND;TZID=Europe/Berlin:20260720T220000
+SUMMARY:🎯 Competition 3
+URL:https://www.2k-dart-software.com/frontend/events/4/event/50736/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260727-competition-4@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260727T190000
+DTEND;TZID=Europe/Berlin:20260727T220000
+SUMMARY:🎯 Competition 4
+URL:https://www.2k-dart-software.com/frontend/events/4/event/50737/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260803-competition-5@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260803T190000
+DTEND;TZID=Europe/Berlin:20260803T220000
+SUMMARY:🎯 Competition 5
+URL:https://www.2k-dart-software.com/frontend/events/4/event/51859/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260810-competition-6@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260810T190000
+DTEND;TZID=Europe/Berlin:20260810T220000
+SUMMARY:🎯 Competition 6
+URL:https://www.2k-dart-software.com/frontend/events/4/event/51860/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260817-competition-7@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260817T190000
+DTEND;TZID=Europe/Berlin:20260817T220000
+SUMMARY:🎯 Competition 7
+URL:https://www.2k-dart-software.com/frontend/events/4/event/51861/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260824-competition-8@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260824T190000
+DTEND;TZID=Europe/Berlin:20260824T220000
+SUMMARY:🎯 Competition 8
+URL:https://2k-dart-software.com/frontend/events/4/event/52416/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260831-competition-9@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260831T190000
+DTEND;TZID=Europe/Berlin:20260831T220000
+SUMMARY:🎯 Competition 9
+URL:https://2k-dart-software.com/frontend/events/4/event/52417/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260907-competition-10@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260907T190000
+DTEND;TZID=Europe/Berlin:20260907T220000
+SUMMARY:🎯 Competition 10
+URL:https://2k-dart-software.com/frontend/events/4/event/52418/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260914-competition-11@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260914T190000
+DTEND;TZID=Europe/Berlin:20260914T220000
+SUMMARY:🎯 Competition 11
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53508/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260921-competition-12@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260921T190000
+DTEND;TZID=Europe/Berlin:20260921T220000
+SUMMARY:🎯 Competition 12
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53509/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20260928-competition-13@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260928T190000
+DTEND;TZID=Europe/Berlin:20260928T220000
+SUMMARY:🎯 Competition 13
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53510/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261005-competition-14@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261005T190000
+DTEND;TZID=Europe/Berlin:20261005T220000
+SUMMARY:🎯 Competition 14
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53511/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261012-competition-15@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261012T190000
+DTEND;TZID=Europe/Berlin:20261012T220000
+SUMMARY:🎯 Competition 15
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53512/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261019-competition-16@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261019T190000
+DTEND;TZID=Europe/Berlin:20261019T220000
+SUMMARY:🎯 Competition 16
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53513/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261026-competition-17@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261026T190000
+DTEND;TZID=Europe/Berlin:20261026T220000
+SUMMARY:🎯 Competition 17
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53514/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261102-competition-18@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261102T190000
+DTEND;TZID=Europe/Berlin:20261102T220000
+SUMMARY:🎯 Competition 18
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53515/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261109-competition-19@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261109T190000
+DTEND;TZID=Europe/Berlin:20261109T220000
+SUMMARY:🎯 Competition 19
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53516/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261116-competition-20@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261116T190000
+DTEND;TZID=Europe/Berlin:20261116T220000
+SUMMARY:🎯 Competition 20
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53517/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261123-competition-21@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261123T190000
+DTEND;TZID=Europe/Berlin:20261123T220000
+SUMMARY:🎯 Competition 21
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53518/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261130-competition-22@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261130T190000
+DTEND;TZID=Europe/Berlin:20261130T220000
+SUMMARY:🎯 Competition 22
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53519/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261207-competition-23@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261207T190000
+DTEND;TZID=Europe/Berlin:20261207T220000
+SUMMARY:🎯 Competition 23
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53520/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261214-competition-24@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261214T190000
+DTEND;TZID=Europe/Berlin:20261214T220000
+SUMMARY:🎯 Competition 24
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53521/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261221-competition-25@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261221T190000
+DTEND;TZID=Europe/Berlin:20261221T220000
+SUMMARY:🎯 Competition 25
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53522/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20261228-competition-26@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261228T190000
+DTEND;TZID=Europe/Berlin:20261228T220000
+SUMMARY:🎯 Competition 26
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53523/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270104-competition-27@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270104T190000
+DTEND;TZID=Europe/Berlin:20270104T220000
+SUMMARY:🎯 Competition 27
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53524/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270111-competition-28@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270111T190000
+DTEND;TZID=Europe/Berlin:20270111T220000
+SUMMARY:🎯 Competition 28
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53525/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270118-competition-29@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270118T190000
+DTEND;TZID=Europe/Berlin:20270118T220000
+SUMMARY:🎯 Competition 29
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53526/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270125-competition-30@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270125T190000
+DTEND;TZID=Europe/Berlin:20270125T220000
+SUMMARY:🎯 Competition 30
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53527/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270201-competition-31@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270201T190000
+DTEND;TZID=Europe/Berlin:20270201T220000
+SUMMARY:🎯 Competition 31
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53528/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270208-competition-32@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270208T190000
+DTEND;TZID=Europe/Berlin:20270208T220000
+SUMMARY:🎯 Competition 32
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53529/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270215-competition-33@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270215T190000
+DTEND;TZID=Europe/Berlin:20270215T220000
+SUMMARY:🎯 Competition 33
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53530/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270222-competition-34@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270222T190000
+DTEND;TZID=Europe/Berlin:20270222T220000
+SUMMARY:🎯 Competition 34
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53531/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270301-competition-35@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270301T190000
+DTEND;TZID=Europe/Berlin:20270301T220000
+SUMMARY:🎯 Competition 35
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53532/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270308-competition-36@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270308T190000
+DTEND;TZID=Europe/Berlin:20270308T220000
+SUMMARY:🎯 Competition 36
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53533/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270315-competition-37@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270315T190000
+DTEND;TZID=Europe/Berlin:20270315T220000
+SUMMARY:🎯 Competition 37
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53534/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270322-competition-38@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270322T190000
+DTEND;TZID=Europe/Berlin:20270322T220000
+SUMMARY:🎯 Competition 38
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53535/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270329-competition-39@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270329T190000
+DTEND;TZID=Europe/Berlin:20270329T220000
+SUMMARY:🎯 Competition 39
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53536/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270405-competition-40@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270405T190000
+DTEND;TZID=Europe/Berlin:20270405T220000
+SUMMARY:🎯 Competition 40
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53537/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270412-competition-41@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270412T190000
+DTEND;TZID=Europe/Berlin:20270412T220000
+SUMMARY:🎯 Competition 41
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53538/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270419-competition-42@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270419T190000
+DTEND;TZID=Europe/Berlin:20270419T220000
+SUMMARY:🎯 Competition 42
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53539/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270426-competition-43@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270426T190000
+DTEND;TZID=Europe/Berlin:20270426T220000
+SUMMARY:🎯 Competition 43
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53540/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270503-competition-44@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270503T190000
+DTEND;TZID=Europe/Berlin:20270503T220000
+SUMMARY:🎯 Competition 44
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53541/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270510-competition-45@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270510T190000
+DTEND;TZID=Europe/Berlin:20270510T220000
+SUMMARY:🎯 Competition 45
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53542/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270517-competition-46@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270517T190000
+DTEND;TZID=Europe/Berlin:20270517T220000
+SUMMARY:🎯 Competition 46
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53543/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270524-competition-47@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270524T190000
+DTEND;TZID=Europe/Berlin:20270524T220000
+SUMMARY:🎯 Competition 47
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53544/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270531-competition-48@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270531T190000
+DTEND;TZID=Europe/Berlin:20270531T220000
+SUMMARY:🎯 Competition 48
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53545/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270607-competition-49@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270607T190000
+DTEND;TZID=Europe/Berlin:20270607T220000
+SUMMARY:🎯 Competition 49
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53546/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:competition-20270614-competition-50@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270614T190000
+DTEND;TZID=Europe/Berlin:20270614T220000
+SUMMARY:🎯 Competition 50
+URL:https://www.2k-dart-software.com/frontend/events/4/event/53547/participants
+END:VEVENT
+BEGIN:VEVENT
 UID:turnier-20260725-sommerturnier-nesselbacherschbiggersyndi@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;TZID=Europe/Berlin:20260725T100000
 DTEND;TZID=Europe/Berlin:20260725T130000
 SUMMARY:🏟 Sommerturnier NesselbacherSchbiggerSyndikat
 URL:https://www.darthelfer.de/public/tournament/515a986b-531c-4e7c-8d67-557b3d432303
 END:VEVENT
 BEGIN:VEVENT
+UID:turnier-20260801-doppel-rothsee-dart-masters-allersberg@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260801T120000
+DTEND;TZID=Europe/Berlin:20260801T150000
+SUMMARY:🏟 Doppel Rothsee Dart Masters Allersberg
+END:VEVENT
+BEGIN:VEVENT
 UID:turnier-20260801-11-kleinloher-steeldarts-open@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;TZID=Europe/Berlin:20260801T130000
 DTEND;TZID=Europe/Berlin:20260801T160000
 SUMMARY:🏟 11. Kleinloher Steeldarts Open
@@ -65,186 +472,273 @@ URL:https://www.2k-dart-software.com/frontend/events/1/event/35148/participants
 DESCRIPTION:Meldeschluss: 31.07.2026
 END:VEVENT
 BEGIN:VEVENT
-UID:turnier-20260801-doppel-rothsee-dart-masters-allersberg@tsg-competition
-DTSTAMP:20260715T212757Z
-DTSTART;TZID=Europe/Berlin:20260801T120000
-DTEND;TZID=Europe/Berlin:20260801T150000
-SUMMARY:🏟 Doppel Rothsee Dart Masters Allersberg
-END:VEVENT
-BEGIN:VEVENT
 UID:turnier-20260802-rothsee-dart-masters-allersberg@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;TZID=Europe/Berlin:20260802T100000
 DTEND;TZID=Europe/Berlin:20260802T130000
 SUMMARY:🏟 Rothsee Dart Masters Allersberg
 END:VEVENT
 BEGIN:VEVENT
+UID:turnier-20260821-2-fengschler-darts-open-doppel@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;VALUE=DATE:20260821
+SUMMARY:🏟 2. Fengschler Darts Open Doppel
+END:VEVENT
+BEGIN:VEVENT
+UID:turnier-20260822-2-fengschler-darts-open@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;VALUE=DATE:20260822
+SUMMARY:🏟 2. Fengschler Darts Open
+END:VEVENT
+BEGIN:VEVENT
+UID:turnier-20260822-gibsy-open-2026@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260822T110000
+DTEND;TZID=Europe/Berlin:20260822T140000
+SUMMARY:🏟 Gibsy Open 2026
+URL:https://www.darthelfer.de/public/tournament/950556fb-e35c-4109-8cfa-757cdf74da97
+END:VEVENT
+BEGIN:VEVENT
 UID:turnier-20260829-2-golden-arrows-einzelturnier-schwabach@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;TZID=Europe/Berlin:20260829T100000
 DTEND;TZID=Europe/Berlin:20260829T130000
 SUMMARY:🏟 2. Golden Arrows Einzelturnier Schwabach
 URL:https://2k-dart-software.com/frontend/events/2/event/33348/participants
 END:VEVENT
 BEGIN:VEVENT
-UID:turnier-20260912-1-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
-DTSTART;VALUE=DATE:20260912
-SUMMARY:🏟 1. Ranglistenturnier BDV
+UID:turnier-20260905-tsg-sommer-cup-2026@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260905T140000
+DTEND;TZID=Europe/Berlin:20260905T170000
+SUMMARY:🏟 TSG Sommer Cup 2026
+URL:https://www.2k-dart-software.com/frontend/events/4/event/52111/participants
 END:VEVENT
 BEGIN:VEVENT
-UID:turnier-20261004-1-bezirksranglistenturnier-mittelfranken@tsg-competition
-DTSTAMP:20260715T212757Z
-DTSTART;VALUE=DATE:20261004
-SUMMARY:🏟 1. Bezirksranglistenturnier Mittelfranken
+UID:turnier-20260912-1-ranglistenturnier-bdv-doppel-baiersdor@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260912T100000
+DTEND;TZID=Europe/Berlin:20260912T130000
+SUMMARY:🏟 1. Ranglistenturnier BDV Doppel Baiersdorf
+URL:https://www.2k-dart-software.com/frontend/events/1/event/36850/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:turnier-20260913-1-bdv-ranglistenturnier-einzel-baiersdor@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260913T100000
+DTEND;TZID=Europe/Berlin:20260913T130000
+SUMMARY:🏟 1. BDV Ranglistenturnier Einzel Baiersdorf
+URL:https://www.2k-dart-software.com/frontend/events/1/event/36844/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:turnier-20260913-1-dart-turnier-abenberg@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20260913T100000
+DTEND;TZID=Europe/Berlin:20260913T130000
+SUMMARY:🏟 1. Dart Turnier Abenberg
+URL:https://www.2k-dart-software.com/frontend/events/6/event/28232/participants
+END:VEVENT
+BEGIN:VEVENT
+UID:turnier-20261003-elotec-darts-open-2026@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261003T110000
+DTEND;TZID=Europe/Berlin:20261003T140000
+SUMMARY:🏟 EloTec Darts Open 2026
+URL:https://www.2k-dart-software.com/frontend/events/6/event/21692/participants
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20261010-2-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20261010
 SUMMARY:🏟 2. Ranglistenturnier BDV
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20261031-gold-silber-bronze-turnier-roth@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20261031
 SUMMARY:🏟 Gold Silber Bronze Turnier Roth
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20261101-2-bezirksranglistenturnier-mittelfranken@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20261101
 SUMMARY:🏟 2. Bezirksranglistenturnier Mittelfranken
 END:VEVENT
 BEGIN:VEVENT
+UID:turnier-20261108-jugendcompetition-mittelfranken-oberpfal@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20261108T100000
+DTEND;TZID=Europe/Berlin:20261108T130000
+SUMMARY:🏟 Jugendcompetition Mittelfranken/Oberpfalz Deining
+URL:https://www.2k-dart-software.com/frontend/events/1/event/36815/participants
+END:VEVENT
+BEGIN:VEVENT
 UID:turnier-20261114-3-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20261114
 SUMMARY:🏟 3. Ranglistenturnier BDV
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20261121-2-ranglistenturnier-ddv-roßtal@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20261121
 SUMMARY:🏟 2. Ranglistenturnier DDV Roßtal
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20261122-2-ranglistenturnier-ddv-roßtal@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20261122
 SUMMARY:🏟 2. Ranglistenturnier DDV Roßtal
 END:VEVENT
 BEGIN:VEVENT
+UID:turnier-20270110-jugendcompetition-mittelfranken-oberpfal@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270110T100000
+DTEND;TZID=Europe/Berlin:20270110T130000
+SUMMARY:🏟 Jugendcompetition Mittelfranken/Oberpfalz Hirschaid
+URL:https://www.2k-dart-software.com/frontend/events/1/event/36817/participants
+END:VEVENT
+BEGIN:VEVENT
 UID:turnier-20270116-4-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20270116
 SUMMARY:🏟 4. Ranglistenturnier BDV
 END:VEVENT
 BEGIN:VEVENT
+UID:turnier-20270214-jugendcompetition-mittelfranken-oberpfal@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270214T100000
+DTEND;TZID=Europe/Berlin:20270214T130000
+SUMMARY:🏟 Jugendcompetition Mittelfranken/Oberpfalz Kleinschwarzenlohe
+URL:https://www.2k-dart-software.com/frontend/events/1/event/36820/participants
+END:VEVENT
+BEGIN:VEVENT
 UID:turnier-20270221-3-bezirksranglistenturnier-mittelfranken@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20270221
 SUMMARY:🏟 3. Bezirksranglistenturnier Mittelfranken
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20270313-5-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20270313
 SUMMARY:🏟 5. Ranglistenturnier BDV
 END:VEVENT
 BEGIN:VEVENT
+UID:turnier-20270404-jugendcompetition-mittelfranken-oberpfal@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270404T100000
+DTEND;TZID=Europe/Berlin:20270404T130000
+SUMMARY:🏟 Jugendcompetition Mittelfranken/Oberpfalz Roth
+URL:https://www.2k-dart-software.com/frontend/events/1/event/36822/participants
+END:VEVENT
+BEGIN:VEVENT
 UID:turnier-20270410-6-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20270410
 SUMMARY:🏟 6. Ranglistenturnier BDV
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20270425-4-bezirksranglistenturnier-mittelfranken@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20270425
 SUMMARY:🏟 4. Bezirksranglistenturnier Mittelfranken
 END:VEVENT
 BEGIN:VEVENT
+UID:turnier-20270530-jugendcompetition-mittelfranken-oberpfal@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;TZID=Europe/Berlin:20270530T100000
+DTEND;TZID=Europe/Berlin:20270530T130000
+SUMMARY:🏟 Jugendcompetition Mittelfranken/Oberpfalz Fichtelberg
+URL:https://www.2k-dart-software.com/frontend/events/1/event/36824/participants
+END:VEVENT
+BEGIN:VEVENT
 UID:turnier-20270704-5-bezirksranglistenturnier-mittelfranken@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20270704
 SUMMARY:🏟 5. Bezirksranglistenturnier Mittelfranken
 END:VEVENT
 BEGIN:VEVENT
+UID:turnier-20270725-jugendcompetition-mittelfranken-oberpfal@tsg-competition
+DTSTAMP:20260901T093605Z
+DTSTART;VALUE=DATE:20270725
+SUMMARY:🏟 Jugendcompetition Mittelfranken/Oberpfalz Finalturnier
+END:VEVENT
+BEGIN:VEVENT
 UID:turnier-20270911-1-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20270911
 SUMMARY:🏟 1. Ranglistenturnier BDV
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20271002-1-bezirksranglistenturnier-mittelfranken@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20271002
 SUMMARY:🏟 1. Bezirksranglistenturnier Mittelfranken
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20271009-2-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20271009
 SUMMARY:🏟 2. Ranglistenturnier BDV
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20271113-3-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20271113
 SUMMARY:🏟 3. Ranglistenturnier BDV
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20271120-2-ranglistenturnier-ddv-roßtal@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20271120
 SUMMARY:🏟 2. Ranglistenturnier DDV Roßtal
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20271121-2-ranglistenturnier-ddv-roßtal@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20271121
 SUMMARY:🏟 2. Ranglistenturnier DDV Roßtal
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20271127-2-bezirksranglistenturnier-mittelfranken@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20271127
 SUMMARY:🏟 2. Bezirksranglistenturnier Mittelfranken
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20280108-4-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20280108
 SUMMARY:🏟 4. Ranglistenturnier BDV
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20280311-5-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20280311
 SUMMARY:🏟 5. Ranglistenturnier BDV
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20280325-3-bezirksranglistenturnier-mittelfranken@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20280325
 SUMMARY:🏟 3. Bezirksranglistenturnier Mittelfranken
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20280408-6-ranglistenturnier-bdv@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20280408
 SUMMARY:🏟 6. Ranglistenturnier BDV
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20280520-4-bezirksranglistenturnier-mittelfranken@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20280520
 SUMMARY:🏟 4. Bezirksranglistenturnier Mittelfranken
 END:VEVENT
 BEGIN:VEVENT
 UID:turnier-20280701-5-bezirksranglistenturnier-mittelfranken@tsg-competition
-DTSTAMP:20260715T212757Z
+DTSTAMP:20260901T093605Z
 DTSTART;VALUE=DATE:20280701
 SUMMARY:🏟 5. Bezirksranglistenturnier Mittelfranken
 END:VEVENT
